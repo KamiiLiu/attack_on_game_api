@@ -5,7 +5,7 @@ AttackOnGame API是桌遊揪團網站【聚人】使用的後端API項目，目�
 
 ## 如何安装
 ```bash
-git clone https://your-repository-url/attackongame_api.git
+git clone https://github.com/KamiiLiu/attack_on_game_api.git
 cd attackongame_api
 npm install
 ```
