@@ -1,9 +1,9 @@
 {
-    "endOfLine": "lf",
-    "semi": true,
-    "singleQuote": true,
-    "tabs": false,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "pugWrapAttributesThreshold": -1
-  }
+  "endOfLine": "lf",
+  "semi": true,
+  "singleQuote": true,
+  "tabs": false,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "pugWrapAttributesThreshold": -1
+}
