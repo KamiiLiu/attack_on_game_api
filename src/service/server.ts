@@ -4,5 +4,5 @@ app.listen(PORT, () => {
   console.log(`你現在收看的是http://localhost:${PORT}`);
 });
 app.get('/', (req, res) => {
-    res.send('莎莎給油');
+    res.send('莎莎給油~');
   });
