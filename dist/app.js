@@ -6,10 +6,8 @@ var __importDefault =
   };
 Object.defineProperty(exports, '__esModule', { value: true });
 const express_1 = __importDefault(require('express'));
+const cors_1 = __importDefault(require('cors'));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-console.log('你安装成功哩QQ');
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
+app.use((0, cors_1.default)());
 exports.default = app;

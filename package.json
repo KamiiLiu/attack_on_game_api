@@ -7,7 +7,7 @@
     "format": "prettier --write .",
     "lint": "eslint src/**/*.ts --fix",
     "dev:build": "tsc -w",
-    "dev:run": "nodemon --exec \"npm run format && node\" ./dist/service/server.js",
+    "dev:run": "nodemon --exec \"npm run format && npm run lint && node\" ./dist/service/server.js",
     "dev": "npm run lint && concurrently \"npm run dev:build\" \"npm run dev:run\"",
     "start": "ts-node src/app.ts",
     "build": "npm run format && tsc"
