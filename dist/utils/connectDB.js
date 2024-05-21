@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
-const { dbUserName, dbPassword, dbName } = process.env;
-const uri = `mongodb+srv://${dbUserName}:${dbPassword}@cluster0.4va9e.mongodb.net/${dbName}`;
+const { dbUserName, dbPassword, dbName, dbClusterName } = process.env;
+const uri = `mongodb+srv://${dbUserName}:${dbPassword}@${dbClusterName}.mongodb.net/${dbName}`;
 function connectDB() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
