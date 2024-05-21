@@ -7,6 +7,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
   extends: [
+    'eslint-config-love',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
@@ -14,6 +15,7 @@ module.exports = {
   env: {
     node: true,
     jest: true,
+    es6: true,
   },
   ignorePatterns: ['.eslintrc.js'],
   rules: {

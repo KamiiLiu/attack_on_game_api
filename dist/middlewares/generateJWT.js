@@ -5,12 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const generateJWT = (req, res, next) => {
-    const { user } = req;
+    const user = req.user;
     if (!user) {
-        res.status(401).json({ status: false, message: 'No user found' });
-        next();
-        return;
+        return res.status(401).send('Unauthorized');
     }
+    // Now you can use `user` as `IUser`.
     const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET);
     res.status(200).json({
         status: true,
