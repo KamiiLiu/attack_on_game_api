@@ -16,10 +16,5 @@
     "*.ts": "typescript",
     "*.tsx": "typescriptreact"
   },
-  "editor.tabSize": 2,
-  "files.eol": "\n",
-  "javascript.validate.enable": true,
-  "typescript.format.enable": true,
-  "typescript.validate.enable": true
   "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
 }

@@ -15,6 +15,7 @@ export interface IEvent extends Document {
   minParticipants: number;
   currentParticipantsCount: number;
   participationFee: string;
+  isAvailable: boolean;
   eventImageUrl: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;

@@ -1,39 +1,39 @@
 import { Router } from 'express';
 import EventController from '@/controllers/eventController';
 import { jwtAuthenticator } from '../middlewares/auth';
-import eventValidator from '@/validators/eventValidator';
+
 const router = Router();
 
-router.get('/events', eventValidator, EventController.getEventList);
-router.post(
+router.get('/events', EventController.getEventList);
+router.get(
   '/events/:eventId',
   jwtAuthenticator,
-  eventValidator,
-  EventController.createOrder,
+
+  EventController.getEventDetail,
 );
 router.patch(
   '/event/:eventId',
   jwtAuthenticator,
-  eventValidator,
+
   EventController.updatedEvent,
 );
 router.post(
   '/event',
   jwtAuthenticator,
-  eventValidator,
+
   EventController.createEvent,
 );
-router.get('/:shopId/event', eventValidator, EventController.updateOrder);
+router.get('/:shopId/event', EventController.updateOrder);
 router.patch(
   '/events/:eventId/publish',
   jwtAuthenticator,
-  eventValidator,
+
   EventController.publishEvent,
 );
 router.patch(
   '/events/:eventId/unpublish',
   jwtAuthenticator,
-  eventValidator,
+
   EventController.unpublishEvent,
 );
 
