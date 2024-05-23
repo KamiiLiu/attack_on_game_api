@@ -7,6 +7,7 @@ const userController = {
     const { name, email, password } = req.body;
     try {
       // Check if the user already exists
+      console.log('oaoaoaoa', name, email, password);
       const userExists = await User.findOne({ email });
       if (userExists) {
         res.status(409).json({ status: false, message: 'User already exists' });
