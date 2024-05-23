@@ -1,7 +1,14 @@
 import { Response } from 'express';
 import { IEvent } from '@/interfaces/EventInterface';
-import eventEnum from '@/enums/eventEnum';
-
+import eventEnum from '@/enums/EventStatus';
+import dayjs from '@/utils/dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isBetween from 'dayjs/plugin/isBetween';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrAfter);
+const now = new Date();
 export const handleEventNotFound = (
   event: IEvent | null,
   res: Response,

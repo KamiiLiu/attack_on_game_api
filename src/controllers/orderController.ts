@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
+import { validationResult } from 'express-validator';
 import Ticket from '@/models/Ticket';
 import Order from '@/models/Order';
 import Player from '@/models/Player';
 import Event from '@/models/Event';
-import { validationResult } from 'express-validator';
+
 import orderValidator from '@/validators/orderValidator';
 const OrderController = {
   validate: orderValidator,

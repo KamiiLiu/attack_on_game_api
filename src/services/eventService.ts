@@ -2,14 +2,6 @@ import Event from '@/models/Event';
 import { EventStatus } from '@/enums/EventStatus';
 import { IEvent } from '@/interfaces/EventInterface';
 import { Request, Response, NextFunction } from 'express';
-import dayjs from '@/utils/dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import isBetween from 'dayjs/plugin/isBetween';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-dayjs.extend(isSameOrBefore);
-dayjs.extend(isBetween);
-dayjs.extend(isSameOrAfter);
-const now = new Date();
 const EventService = {
   async findEvent(eventId: string, res: Response, checkVisibility = false) {
     const event = await Event.findById(eventId);
