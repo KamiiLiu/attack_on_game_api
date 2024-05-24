@@ -4,7 +4,6 @@ import { jwtAuthenticator } from '../middlewares/auth';
 
 const router = Router();
 
-router.get('/events', EventController.getEventList);
 router.get(
   '/events/:eventId',
   jwtAuthenticator,
@@ -17,13 +16,10 @@ router.patch(
 
   EventController.updatedEvent,
 );
-router.post(
-  '/event',
-  jwtAuthenticator,
 
-  EventController.createEvent,
-);
-router.get('/:shopId/event', EventController.updateOrder);
+// router.get('/events', EventController.getEventList);
+router.post('/event', jwtAuthenticator, EventController.createEvent);
+// router.get('/:shopId/event', EventController.updateOrder);
 router.patch(
   '/events/:eventId/publish',
   jwtAuthenticator,
@@ -39,4 +35,4 @@ router.patch(
 
 export default router;
 //TODO: query
-//TODO: 確認currentParticipantsCount人數
+//TODO: 如何確認currentParticipantsCount人數?應該寫在eventUtils

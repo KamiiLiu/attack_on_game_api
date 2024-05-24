@@ -1,44 +1,34 @@
-import { Response } from 'express';
 import { IEvent } from '@/interfaces/EventInterface';
-import eventEnum from '@/enums/EventStatus';
+import {
+  ActivityFormationStatus,
+  ActivityRegistrationStatus,
+} from '@/enums/EventStatus';
 import dayjs from '@/utils/dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import isBetween from 'dayjs/plugin/isBetween';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-dayjs.extend(isSameOrBefore);
-dayjs.extend(isBetween);
-dayjs.extend(isSameOrAfter);
-const now = new Date();
-export const handleEventNotFound = (
-  event: IEvent | null,
-  res: Response,
-): boolean => {
-  if (!event) {
-    res.status(404).json({ message: '沒有這個活動捏！！' });
-    return false;
-  }
-  return true;
-};
-
-export const handleEventOffShelf = (event: IEvent, res: Response): boolean => {
-  if (!event.isAvailable) {
-    res.status(404).json({ message: '這個活動已被商家下架' });
-    return false;
-  }
-  return true;
-};
-
-export const findEventStatus = (event: IEvent): string => {
-  if (!event.isAvailable) {
-    return eventEnum.OFF_SHELF;
-  } else if (event.currentParticipantsCount < event.minParticipants) {
-    return eventEnum.NOT_FORMED;
+const now = dayjs();
+const findEventFormationStatus = (event: IEvent): string => {
+  if (event.currentParticipantsCount < event.minParticipants) {
+    return ActivityFormationStatus.NOT_FORMED;
   } else if (event.currentParticipantsCount < event.maxParticipants) {
-    return eventEnum.FORMED;
+    return ActivityFormationStatus.FORMED;
   } else if (event.currentParticipantsCount === event.maxParticipants) {
-    return eventEnum.FULL;
+    return ActivityFormationStatus.FULL;
   } else {
     console.warn('怪怪的');
-    return eventEnum.OTHER;
+    return ActivityFormationStatus.OTHER;
   }
+};
+const findActivityRegistrationStatus = (event: IEvent): string => {
+  if (now.isBefore(event.registrationStartTime)) {
+    return ActivityRegistrationStatus.NOT_STARTED;
+  } else if (now.isAfter(event.registrationEndTime)) {
+    return ActivityRegistrationStatus.CLOSED;
+  } else {
+    return ActivityRegistrationStatus.OPEN;
+  }
+};
+export const handleEventPublish = (event: IEvent): boolean => {
+  if (event.isPublish) {
+    return true;
+  }
+  return false;
 };

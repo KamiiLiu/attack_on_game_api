@@ -62,7 +62,7 @@ const eventValidator = [
     .withMessage('活動圖片URL不能為空哦！')
     .isURL()
     .withMessage('活動圖片URL格式不對哦！'),
-  body('isAvailable')
+  body('isPublish')
     .notEmpty()
     .withMessage('活動上架狀態不能為空哦！')
     .isBoolean()
