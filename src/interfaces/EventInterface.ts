@@ -10,12 +10,13 @@ export interface IEvent extends Document {
   registrationStartTime: Date;
   registrationEndTime: Date;
   isFoodAllowed: boolean;
+  address: string;
   maxParticipants: number;
   minParticipants: number;
   currentParticipantsCount: number;
   participationFee: number;
   isPublish: boolean;
-  eventImageUrl: string;
+  eventImageUrl: [string];
   createdAt: Date;
   updatedAt: Date;
 }

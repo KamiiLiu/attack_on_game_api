@@ -1,20 +1,21 @@
 import { IEvent } from '@/interfaces/EventInterface';
 import {
-  ActivityFormationStatus,
+  ActivityFormationStatus as STATUS,
   ActivityRegistrationStatus,
 } from '@/enums/EventStatus';
 import dayjs from '@/utils/dayjs';
+
 const now = dayjs();
 const findEventFormationStatus = (event: IEvent): string => {
   if (event.currentParticipantsCount < event.minParticipants) {
-    return ActivityFormationStatus.NOT_FORMED;
+    return STATUS.NOT_FORMED;
   } else if (event.currentParticipantsCount < event.maxParticipants) {
-    return ActivityFormationStatus.FORMED;
+    return STATUS.FORMED;
   } else if (event.currentParticipantsCount === event.maxParticipants) {
-    return ActivityFormationStatus.FULL;
+    return STATUS.FULL;
   } else {
     console.warn('怪怪的');
-    return ActivityFormationStatus.OTHER;
+    return STATUS.OTHER;
   }
 };
 const findActivityRegistrationStatus = (event: IEvent): string => {
@@ -32,3 +33,38 @@ export const handleEventPublish = (event: IEvent): boolean => {
   }
   return false;
 };
+interface Query {
+  registrationStartTime: { $lte: Date };
+  registrationEndTime: { $gte: Date };
+  $expr?: object;
+}
+export const buildAllTimeQuery = (status: STATUS): Query => {
+  const query = {} as Query;
+  return buildBaseTimeQuery(query, status);
+};
+export const buildRegistrationTimeQuery = (status: STATUS): Query => {
+  const query: Query = {
+    registrationStartTime: { $lte: new Date() },
+    registrationEndTime: { $gte: new Date() },
+  };
+  return buildBaseTimeQuery(query, status);
+};
+function buildBaseTimeQuery(query: Query, status: STATUS): Query {
+  if (status === STATUS.NOT_FORMED) {
+    query.$expr = {
+      $lte: ['$currentParticipantsCount', '$minParticipants'],
+    };
+  } else if (status === STATUS.FORMED) {
+    query.$expr = {
+      $and: [
+        { $gte: ['$currentParticipantsCount', '$minParticipants'] },
+        { $lte: ['$currentParticipantsCount', '$maxParticipants'] },
+      ],
+    };
+  } else if (status === STATUS.FULL) {
+    query.$expr = {
+      $eq: ['$currentParticipantsCount', '$maxParticipants'],
+    };
+  }
+  return query;
+}

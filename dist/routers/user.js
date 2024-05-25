@@ -11,3 +11,4 @@ router.post('/', userController_1.default.create);
 router.put('/:id', auth_1.jwtAuthenticator, userController_1.default.updated);
 router.get('/:id', auth_1.jwtAuthenticator, userController_1.default.getById);
 exports.default = router;
+//# sourceMappingURL=user.js.map

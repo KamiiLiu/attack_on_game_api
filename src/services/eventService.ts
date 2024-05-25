@@ -1,105 +1,137 @@
 import Event from '@/models/Event';
 import { IEvent } from '@/interfaces/EventInterface';
-import { handleEventPublish } from '@/utils/eventUtils';
+import {
+  handleEventPublish,
+  buildAllTimeQuery,
+  buildRegistrationTimeQuery,
+} from '@/utils/eventUtils';
+import { ActivityFormationStatus as STATUS } from '@/enums/EventStatus';
+import {
+  handleServerError,
+  handleClientError,
+  handleSuccess,
+} from '@/utils/responseHandlers';
+import mongoose from 'mongoose';
+//TODO:上傳照片的方式可能也要研究一下
+//TODO:寫一個fs模塊，批量上傳假資料
 const EventService = {
-  async createEvent(data: Partial<IEvent>) {
+  async createEvent(eventData: Partial<IEvent>) {
     try {
-      // TODO:是否存在這個商店
       const existingEvent = await Event.findOne({
-        title: data.title,
-        eventStartTime: data.eventStartTime,
+        title: eventData.title,
+        eventStartTime: eventData.eventStartTime,
       });
       if (existingEvent) {
-        return { success: false, status: 409, message: '已存在相同的活動' };
+        return handleClientError('已存在相同的活動', 409);
       }
-
-      const event = new Event(data);
+      const event = new Event(eventData);
       await Event.create(event);
-      return { success: true, status: 201, message: '建立成功' };
+      return handleSuccess(201);
     } catch (error) {
-      return {
-        success: false,
-        status: 500,
-        message: `創建活動時發生錯誤: ${error}`,
-      };
+      return handleServerError(error, '創建活動時發生錯誤');
     }
   },
-  async findEvent(eventId: string, checkVisibility = false) {
+  async findEventList({
+    limit = 10,
+    status = STATUS.DEFAULT,
+    skip = 0,
+    registrationOpen = false,
+  }) {
+    try {
+      const query = registrationOpen
+        ? buildRegistrationTimeQuery(status)
+        : buildAllTimeQuery(status);
+      const eventData = await Event.find(query)
+        .skip(skip * limit)
+        .limit(limit)
+        .sort({ eventStartTime: 1 });
+      if (!eventData.length) {
+        return handleClientError('此次搜尋，網站沒有任何結果');
+      }
+      return handleSuccess(201, undefined, eventData);
+    } catch (error) {
+      return handleServerError(error, '尋找店家資料時發生意外');
+    }
+  },
+  async findShopEvent(storeId: string, checkVisibility = true) {
+    try {
+      //TODO:把query也放進來
+      /*
+      {
+    limit = 10,
+    status = STATUS.DEFAULT,
+    skip = 0,
+    registrationOpen = false,
+  }
+      */
+      const query: { storeId: mongoose.Types.ObjectId; [key: string]: any } = {
+        storeId: new mongoose.Types.ObjectId(storeId),
+      };
+      if (checkVisibility) {
+        query['isPublish'] = true;
+      }
+      const events = await Event.find(query).sort({ eventStartTime: 1 }); //由近排到遠
+      if (!events) {
+        return handleClientError('這家商店沒有活動');
+      }
+      return handleSuccess(200, undefined, events);
+    } catch (error) {
+      return handleServerError(error, '尋找店家資料時發生意外');
+    }
+  },
+  async findEventByEventId(eventId: string, checkVisibility = false) {
     try {
       const event = await Event.findById(eventId);
       if (!event) {
-        return { success: false, status: 404, message: '沒有這個活動捏！！' };
+        return handleClientError('找不到這個活動');
       }
       if (checkVisibility) {
-        const isPublish = handleEventPublish(event as IEvent);
-        if (!isPublish) {
-          return {
-            success: false,
-            status: 404,
-            message: '這個活動已被商家下架',
-          };
+        if (!handleEventPublish(event as IEvent)) {
+          return handleClientError('這個活動已被商家下架');
         }
       }
-      return { success: true, status: 200, data: event };
+      return { success: true, status: 200, eventData: event, message: 'OK' };
     } catch (error) {
-      return {
-        success: false,
-        status: 500,
-        message: `更新活動時發生錯誤${error}`,
-      };
+      return handleServerError(error, '更新活動資料時發生意外');
     }
   },
-  async updateEvent(eventId: string, data: IEvent) {
+  async updateEvent(eventId: string, eventData: IEvent) {
     try {
-      const event = await Event.findById(eventId);
-      if (!event) {
-        return { success: false, status: 404, message: '沒有這個活動捏！！' };
-      }
-      if (!event.isPublish) {
-        return { success: false, status: 404, message: '這個活動已被商家下架' };
-      }
-
-      const updatedEvent = await Event.findByIdAndUpdate(eventId, data, {
-        new: true,
-      });
-      if (!updatedEvent) {
-        return {
-          success: false,
-          status: 404,
-          message: '更新後沒有找到這個活動捏！！',
-        };
-      }
-      return { success: true, status: 200, event: updatedEvent };
-    } catch (error) {
-      return {
-        success: false,
-        status: 500,
-        message: `更新活動時發生錯誤${error}`,
+      const query = {
+        _id: eventId,
+        $expr: {
+          $and: [
+            { $gte: [eventData.currentParticipantsCount, '$minParticipants'] },
+            { $lte: [eventData.currentParticipantsCount, '$maxParticipants'] },
+          ],
+        },
       };
+      const updatedEvent = await Event.findOneAndUpdate(query, eventData, {
+        new: true,
+      }); //TODO:updatedAt: new Date()
+      if (!updatedEvent) {
+        return handleClientError('沒有這個活動～或活動已被下架');
+      }
+      return handleSuccess();
+    } catch (error) {
+      return handleServerError(error, '更新活動資料時發生意外');
+    }
+  },
+  async updatePublishStatus(eventId: string, status: boolean = true) {
+    try {
+      const updatedEvent = await Event.findByIdAndUpdate(
+        new mongoose.Types.ObjectId(eventId),
+        { isPublish: status, updatedAt: new Date() },
+        { new: true },
+      );
+      if (!updatedEvent) {
+        return handleClientError('找不到這個活動');
+      }
+      return handleSuccess();
+    } catch (error) {
+      return handleServerError(error, '更新活動資料時發生意外');
     }
   },
 };
 
 export default EventService;
-/*
-export interface IEvent extends Document {
-  _id: Types.ObjectId;
-  storeId: Types.ObjectId;
-  title: string;
-  description: string;
-  eventStartTime: Timestamp;
-  eventEndTime: Timestamp;
-  registrationStartTime: Timestamp;
-  registrationEndTime: Timestamp;
-  isFoodAllowed: boolean;
-  maxParticipants: number;
-  minParticipants: number;
-  currentParticipantsCount: number;
-  participationFee: string;
-  isPublish: boolean;
-  eventImageUrl: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-}
-
-*/

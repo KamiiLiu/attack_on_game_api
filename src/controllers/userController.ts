@@ -5,6 +5,7 @@ import { hash } from 'bcrypt';
 const userController = {
   async create(req: Request, res: Response, next: NextFunction) {
     const { name, email, password } = req.body;
+    console.log('aaa');
     try {
       const userExists = await User.findOne({ email });
       if (userExists) {

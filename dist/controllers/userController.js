@@ -18,8 +18,8 @@ const userController = {
     create(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, email, password } = req.body;
+            console.log('aaa');
             try {
-                // Check if the user already exists
                 const userExists = yield User_1.default.findOne({ email });
                 if (userExists) {
                     res.status(409).json({ status: false, message: 'User already exists' });
@@ -68,3 +68,4 @@ const userController = {
     },
 };
 exports.default = userController;
+//# sourceMappingURL=userController.js.map

@@ -7,15 +7,15 @@
     "format": "prettier --write .",
     "lint": "eslint src/**/*.ts --fix",
     "dev:build": "tsc -w",
-    "dev:run": "nodemon ./dist/service/server.js",
+    "dev:run": "nodemon -r tsconfig-paths/register ./dist/service/server.js",
     "dev": "concurrently \"npm run dev:build\" \"npm run dev:run\"",
-    "start": "ts-node src/app.ts",
+    "start": "NODE_PATH=src node server.js",
     "build": "npm run format && tsc"
   },
   "author": "",
   "license": "ISC",
   "_moduleAliases": {
-    "@": "src"
+    "@": "dist/"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

@@ -1,5 +1,6 @@
 export enum ActivityFormationStatus {
-  NOT_FORMED = '未成團',
+  DEFAULT = '全部',
+  NOT_FORMED = '揪團中',
   FORMED = '已成團',
   FULL = '已滿團',
   OTHER = '其他狀態',
