@@ -46,7 +46,7 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             avatar,
             preferGame,
         });
-        res.status(201).json(player);
+        res.status(201).json({ status: true, message: 'Player created' });
     }
     catch (error) {
         res.status(500).json({ error: error });
@@ -67,7 +67,7 @@ const getPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!player) {
             return res.status(404).json({ status: false, message: 'Player not found' });
         }
-        res.status(200).json(player);
+        res.status(200).json({ status: true, data: player });
     }
     catch (error) {
         res.status(500).json({ status: false, message: error });
@@ -85,7 +85,7 @@ const updatePlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         // udpate player
         const player = yield Player_1.default.findOneAndUpdate({ user: req.params.id }, req.body, { new: true });
-        res.status(200).json(player);
+        res.status(200).json({ status: true, message: 'Player updated', data: player });
     }
     catch (error) {
         res.status(500).json({ error: error });

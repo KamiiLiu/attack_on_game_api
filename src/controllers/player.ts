@@ -38,7 +38,7 @@ export const createPlayer = async (req: Request, res: Response) => {
             avatar,
             preferGame,
         });
-        res.status(201).json(player);
+        res.status(201).json({ status: true, message: 'Player created' });
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -60,7 +60,7 @@ export const getPlayer = async (req: Request, res: Response) => {
         if (!player) {
             return res.status(404).json({ status: false, message: 'Player not found' });
         }
-        res.status(200).json(player);
+        res.status(200).json({ status: true, data: player });
     } catch (error) {
         res.status(500).json({ status: false, message: error });
     }
@@ -82,7 +82,7 @@ export const updatePlayer = async (req: Request, res: Response) => {
             { new: true }
         );
 
-        res.status(200).json(player);
+        res.status(200).json({ status: true, message: 'Player updated', data: player });
     } catch (error) {
         res.status(500).json({ error: error });
     }
