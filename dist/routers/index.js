@@ -14,7 +14,4 @@ router.use('/user', user_1.default);
 router.use('/player', player_1.default);
 router.post('/login', auth_1.localAuthenticator, generateJWT_1.default);
 router.use('/event', event_1.default);
-router.get('/profile', auth_1.jwtAuthenticator, (req, res) => {
-    res.status(200).json({ user: req.user });
-});
 exports.default = router;

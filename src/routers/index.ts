@@ -10,7 +10,4 @@ router.use('/user', UserRouter);
 router.use('/player', PlayerRouter);
 router.post('/login', localAuthenticator, generateJWT);
 router.use('/event', EventRouter);
-router.get('/profile', jwtAuthenticator, (req, res) => {
-    res.status(200).json({ user: req.user });
-});
 export default router;
