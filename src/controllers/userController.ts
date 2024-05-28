@@ -23,7 +23,6 @@ const userController = {
       await User.create({ role, email, password: hashedPassword });
       res.status(200).json({ status: true, menubar: 'User created' });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   },
@@ -49,9 +48,7 @@ const userController = {
   },
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await User.findById(
-        req.params.id,
-        { password: 0 });
+      const user = await User.findById(req.params.id, { password: 0 });
       if (!user) {
         res.status(404).json({ status: false, message: 'User not found' });
         return;

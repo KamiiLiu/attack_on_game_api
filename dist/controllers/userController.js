@@ -37,7 +37,6 @@ const userController = {
                 res.status(200).json({ status: true, menubar: 'User created' });
             }
             catch (error) {
-                console.log(error);
                 next(error);
             }
         });

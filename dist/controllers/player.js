@@ -24,7 +24,9 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
             console.log(errors.array());
-            return res.status(400).json({ status: false, message: errors.array()[0].msg });
+            return res
+                .status(400)
+                .json({ status: false, message: errors.array()[0].msg });
         }
         const { name, phone, avatar, preferGame } = req.body;
         const user = (0, help_1.getUser)(req);
@@ -34,12 +36,13 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return res.status(404).json({ status: false, message: 'User not found' });
         }
         // check if the player exists
-        const playerExists = yield Player_1.default
-            .findOne({ user });
+        const playerExists = yield Player_1.default.findOne({ user });
         if (playerExists) {
-            return res.status(409).json({ status: false, message: 'Player already exists' });
+            return res
+                .status(409)
+                .json({ status: false, message: 'Player already exists' });
         }
-        const player = yield Player_1.default.create({
+        yield Player_1.default.create({
             name,
             user: user._id,
             phone,
@@ -60,12 +63,16 @@ const getPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
             console.log(errors.array());
-            return res.status(400).json({ status: false, message: errors.array()[0].msg });
+            return res
+                .status(400)
+                .json({ status: false, message: errors.array()[0].msg });
         }
         const player = yield Player_1.default.findOne({ user: req.params.id });
         // check if the player exists
         if (!player) {
-            return res.status(404).json({ status: false, message: 'Player not found' });
+            return res
+                .status(404)
+                .json({ status: false, message: 'Player not found' });
         }
         res.status(200).json({ status: true, data: player });
     }
@@ -81,11 +88,15 @@ const updatePlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
             console.log(errors.array());
-            return res.status(400).json({ status: false, message: errors.array()[0].msg });
+            return res
+                .status(400)
+                .json({ status: false, message: errors.array()[0].msg });
         }
         // udpate player
         const player = yield Player_1.default.findOneAndUpdate({ user: req.params.id }, req.body, { new: true });
-        res.status(200).json({ status: true, message: 'Player updated', data: player });
+        res
+            .status(200)
+            .json({ status: true, message: 'Player updated', data: player });
     }
     catch (error) {
         res.status(500).json({ error: error });
