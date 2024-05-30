@@ -66,5 +66,7 @@ function buildBaseTimeQuery(query: Query, status: STATUS): Query {
       $eq: ['$currentParticipantsCount', '$maxParticipants'],
     };
   }
+  console.log('query2', query);
+  console.log('status', status);
   return query;
 }

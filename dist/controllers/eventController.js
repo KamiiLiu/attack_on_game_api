@@ -19,6 +19,7 @@ const EventController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield eventService_1.default.findEventList(req.query);
+                console.log('xxx');
                 (0, responseHandlers_1.handleResult)(result, res);
             }
             catch (error) {

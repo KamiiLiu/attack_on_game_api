@@ -3,7 +3,7 @@ import { IEvent } from '@/interfaces/EventInterface';
 const EventSchema: Schema = new Schema({
   storeId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Store',
+    ref: 'store',
     required: true,
   },
   title: { type: String, required: true },

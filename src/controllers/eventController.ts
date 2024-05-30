@@ -5,6 +5,7 @@ const EventController = {
   async getEventList(req: Request, res: Response) {
     try {
       const result = await EventService.findEventList(req.query);
+      console.log('xxx');
       handleResult(result, res);
     } catch (error) {
       handleServerError(error);

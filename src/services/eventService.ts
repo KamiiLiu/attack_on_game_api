@@ -24,8 +24,8 @@ const EventService = {
       if (existingEvent) {
         return handleClientError('已存在相同的活動', 409);
       }
-      const event = new Event(eventData);
-      await Event.create(event);
+      const newEvent = new Event(eventData);
+      await newEvent.save();
       return handleSuccess(201);
     } catch (error) {
       return handleServerError(error, '創建活動時發生錯誤');
@@ -41,7 +41,8 @@ const EventService = {
       const query = registrationOpen
         ? buildRegistrationTimeQuery(status)
         : buildAllTimeQuery(status);
-      const eventData = await Event.find(query)
+      console.log('query', query);
+      const eventData = await Event.find()
         .skip(skip * limit)
         .limit(limit)
         .sort({ eventStartTime: 1 });

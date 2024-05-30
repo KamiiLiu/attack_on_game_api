@@ -2,22 +2,22 @@ import mongoose, { Schema } from 'mongoose';
 import { IOrder } from '../interfaces/OrderInterface';
 
 const OrderSchema: Schema = new Schema({
+  storeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'stores',
+    required: true,
+  },
   playerId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Player',
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'players',
     required: true,
   },
-  payment: {
-    type: Number,
-    required: true,
-  },
-  discount: {
-    type: Number,
-    required: true,
-  },
+  quantity: { type: Number, required: true },
+  payment: { type: Number, required: true },
+  discount: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
-
-// 创建并导出用户模型
 const Order = mongoose.model<IOrder>('Order', OrderSchema);
 
 export default Order;

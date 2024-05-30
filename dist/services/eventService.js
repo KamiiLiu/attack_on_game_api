@@ -30,8 +30,8 @@ const EventService = {
                 if (existingEvent) {
                     return (0, responseHandlers_1.handleClientError)('已存在相同的活動', 409);
                 }
-                const event = new Event_1.default(eventData);
-                yield Event_1.default.create(event);
+                const newEvent = new Event_1.default(eventData);
+                yield newEvent.save();
                 return (0, responseHandlers_1.handleSuccess)(201);
             }
             catch (error) {
@@ -45,7 +45,8 @@ const EventService = {
                 const query = registrationOpen
                     ? (0, eventUtils_1.buildRegistrationTimeQuery)(status)
                     : (0, eventUtils_1.buildAllTimeQuery)(status);
-                const eventData = yield Event_1.default.find(query)
+                console.log('query', query);
+                const eventData = yield Event_1.default.find()
                     .skip(skip * limit)
                     .limit(limit)
                     .sort({ eventStartTime: 1 });

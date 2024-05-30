@@ -27,7 +27,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const EventSchema = new mongoose_1.Schema({
     storeId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'Store',
+        ref: 'store',
         required: true,
     },
     title: { type: String, required: true },

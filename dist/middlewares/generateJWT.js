@@ -16,7 +16,7 @@ const generateJWT = (req, res, next) => {
         data: {
             user: {
                 _id: user._id,
-                name: user.name,
+                role: user.role,
                 email: user.email,
             },
             token,
