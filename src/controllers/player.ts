@@ -17,15 +17,14 @@ export const createPlayer = async (req: Request, res: Response) => {
         .json({ status: false, message: errors.array()[0].msg });
     }
     const { name, phone, avatar, preferGame } = req.body;
-    const user = getUser(req);
-
+    const userId = getUser(req)._id;
     // check if the user exists
-    const userExists = await User.findById(user);
+    const userExists = await User.findById(userId);
     if (!userExists) {
       return res.status(404).json({ status: false, message: 'User not found' });
     }
     // check if the player exists
-    const playerExists = await Player.findOne({ user });
+    const playerExists = await Player.findOne({ userId });
     if (playerExists) {
       return res
         .status(409)
@@ -33,14 +32,15 @@ export const createPlayer = async (req: Request, res: Response) => {
     }
     await Player.create({
       name,
-      user: user._id,
+      user: userId,
       phone,
       avatar,
       preferGame,
     });
     res.status(201).json({ status: true, message: 'Player created' });
   } catch (error) {
-    res.status(500).json({ error: error });
+    console.log(error);
+    res.status(500).json({ status: false, message: "It's has some error when created player data ", error: error });
   }
 };
 

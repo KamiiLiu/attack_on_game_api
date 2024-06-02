@@ -35,7 +35,7 @@ const PlayerSchema = new mongoose_1.Schema({
     avatar: { type: String, required: true },
     preferGame: {
         type: [String],
-        required: true
-    }
+        required: true,
+    },
 });
 exports.default = mongoose_1.default.model('Player', PlayerSchema);
