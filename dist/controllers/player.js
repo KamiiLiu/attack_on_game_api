@@ -30,13 +30,20 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         const { name, phone, avatar, preferGame } = req.body;
         const userId = (0, help_1.getUser)(req)._id;
+        const role = (0, help_1.getUser)(req).role;
+        // check if the user is an player
+        if (role !== 'player') {
+            return res
+                .status(401)
+                .json({ status: false, message: 'You are not an player' });
+        }
         // check if the user exists
         const userExists = yield User_1.default.findById(userId);
         if (!userExists) {
             return res.status(404).json({ status: false, message: 'User not found' });
         }
         // check if the player exists
-        const playerExists = yield Player_1.default.findOne({ userId });
+        const playerExists = yield Player_1.default.findOne({ user: userId });
         if (playerExists) {
             return res
                 .status(409)

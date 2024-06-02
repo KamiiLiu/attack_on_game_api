@@ -18,13 +18,21 @@ export const createPlayer = async (req: Request, res: Response) => {
     }
     const { name, phone, avatar, preferGame } = req.body;
     const userId = getUser(req)._id;
+    const role = getUser(req).role;
+    // check if the user is an player
+    if (role !== 'player') {
+      return res
+        .status(401)
+        .json({ status: false, message: 'You are not an player' });
+    }
+
     // check if the user exists
     const userExists = await User.findById(userId);
     if (!userExists) {
       return res.status(404).json({ status: false, message: 'User not found' });
     }
     // check if the player exists
-    const playerExists = await Player.findOne({ userId });
+    const playerExists = await Player.findOne({ user: userId });
     if (playerExists) {
       return res
         .status(409)
