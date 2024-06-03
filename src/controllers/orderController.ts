@@ -1,26 +1,26 @@
-import { Request, Response } from 'express';
-import OrderService from '@/services/orderService';
-import { handleResult, handleServerError } from '@/utils/responseHandlers';
+// import { Request, Response } from 'express';
+// import OrderService from '@/services/orderService';
+// import { handleResult, handleServerError } from '@/utils/responseHandlers';
 const OrderController = {
-  async getOrderList(req: Request, res: Response) {
-    try {
-      const result = await OrderService.findEventList(req.query);
-      console.log('xxx');
-      handleResult(result, res);
-    } catch (error) {
-      handleServerError(error);
-    }
-  },
-  async createOrder(req: Request, res: Response) {
-    try {
-      const storeId = '665185043aae4f4d91cc4c25';
-      const eventData = { ...req.body, storeId };
-      const result = await OrderService.createEvent(eventData);
-      handleResult(result, res);
-    } catch (error) {
-      handleServerError(error);
-    }
-  },
+  // async getOrderList(req: Request, res: Response) {
+  //   try {
+  //     const result = await OrderService.findEventList(req.query);
+  //     console.log('xxx');
+  //     handleResult(result, res);
+  //   } catch (error) {
+  //     handleServerError(error);
+  //   }
+  // },
+  // async createOrder(req: Request, res: Response) {
+  //   try {
+  //     const storeId = '665185043aae4f4d91cc4c25';
+  //     const eventData = { ...req.body, storeId };
+  //     const result = await OrderService.createEvent(eventData);
+  //     handleResult(result, res);
+  //   } catch (error) {
+  //     handleServerError(error);
+  //   }
+  // },
 };
 export default OrderController;
 // import orderValidator from '@/validators/orderValidator';

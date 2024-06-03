@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import orderController from '@/controllers/orderController';
+// import orderController from '@/controllers/orderController';
 // import { jwtAuthenticator } from '../middlewares/auth';
 
 const router = Router();
 
 // router.get('/cart/:eventId', jwtAuthenticator, orderController.getCartItems);
-router.post('/', orderController.createOrder);
-router.get('/', orderController.getOrderList);
+// router.post('/', orderController.createOrder);
+// router.get('/', orderController.getOrderList);
 // router.post(
 //   '/order/:userId/order',
 //   jwtAuthenticator,

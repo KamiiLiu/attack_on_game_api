@@ -1,18 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActivityRegistrationStatus = exports.ActivityFormationStatus = void 0;
-var ActivityFormationStatus;
-(function (ActivityFormationStatus) {
-    ActivityFormationStatus["DEFAULT"] = "\u5168\u90E8";
-    ActivityFormationStatus["NOT_FORMED"] = "\u63EA\u5718\u4E2D";
-    ActivityFormationStatus["FORMED"] = "\u5DF2\u6210\u5718";
-    ActivityFormationStatus["FULL"] = "\u5DF2\u6EFF\u5718";
-    ActivityFormationStatus["OTHER"] = "\u5176\u4ED6\u72C0\u614B";
-})(ActivityFormationStatus || (exports.ActivityFormationStatus = ActivityFormationStatus = {}));
-var ActivityRegistrationStatus;
-(function (ActivityRegistrationStatus) {
-    ActivityRegistrationStatus["NOT_STARTED"] = "\u672A\u5230\u5831\u540D\u6642\u9593";
-    ActivityRegistrationStatus["OPEN"] = "\u5831\u540D\u6642\u9593";
-    ActivityRegistrationStatus["CLOSED"] = "\u4E0D\u53EF\u5831\u540D\u6642\u9593";
-})(ActivityRegistrationStatus || (exports.ActivityRegistrationStatus = ActivityRegistrationStatus = {}));
+exports.EventRegistrationStatus = exports.EventFormationStatus = void 0;
+var EventFormationStatus;
+(function (EventFormationStatus) {
+    EventFormationStatus[EventFormationStatus["ALL"] = 0] = "ALL";
+    EventFormationStatus[EventFormationStatus["NOT_FORMED"] = 1] = "NOT_FORMED";
+    EventFormationStatus[EventFormationStatus["FORMED"] = 2] = "FORMED";
+    EventFormationStatus[EventFormationStatus["FULL"] = 3] = "FULL";
+    EventFormationStatus[EventFormationStatus["OTHER"] = 4] = "OTHER";
+})(EventFormationStatus || (exports.EventFormationStatus = EventFormationStatus = {}));
+var EventRegistrationStatus;
+(function (EventRegistrationStatus) {
+    EventRegistrationStatus[EventRegistrationStatus["NOT_STARTED"] = 1] = "NOT_STARTED";
+    EventRegistrationStatus[EventRegistrationStatus["OPEN"] = 2] = "OPEN";
+    EventRegistrationStatus[EventRegistrationStatus["CLOSED"] = 3] = "CLOSED";
+    EventRegistrationStatus[EventRegistrationStatus["ALL"] = 0] = "ALL";
+})(EventRegistrationStatus || (exports.EventRegistrationStatus = EventRegistrationStatus = {}));
+/*
+export enum EventFormationStatus {
+  ALL = '全部',
+  NOT_FORMED = '揪團中',
+  FORMED = '已成團',
+  FULL = '已滿團',
+  OTHER = '其他狀態',
+}
+
+export enum EventRegistrationStatus {
+  NOT_STARTED = '未到報名時間',
+  OPEN = '報名時間',
+  CLOSED = '不可報名時間',
+  ALL = '全部',
+}
+*/
 //# sourceMappingURL=EventStatus.js.map

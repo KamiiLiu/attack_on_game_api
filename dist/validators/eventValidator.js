@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
+const dayjs_1 = __importDefault(require("@/utils/dayjs"));
 const allowedParams = [
     'storeId',
     'title',
@@ -32,23 +36,39 @@ const eventValidator = [
     (0, express_validator_1.body)('eventStartTime')
         .notEmpty()
         .withMessage('活動開始時間不能為空哦！')
-        .isISO8601()
-        .withMessage('活動開始時間格式不對哦！'),
+        .custom((value) => {
+        if (!(0, dayjs_1.default)(value).isValid()) {
+            throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+        }
+        return true;
+    }),
     (0, express_validator_1.body)('eventEndTime')
         .notEmpty()
         .withMessage('活動結束時間不能為空哦！')
-        .isISO8601()
-        .withMessage('活動結束時間格式不對哦！'),
+        .custom((value) => {
+        if (!(0, dayjs_1.default)(value).isValid()) {
+            throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+        }
+        return true;
+    }),
     (0, express_validator_1.body)('registrationStartTime')
         .notEmpty()
         .withMessage('註冊開始時間不能為空哦！')
-        .isISO8601()
-        .withMessage('註冊開始時間格式不對哦！'),
+        .custom((value) => {
+        if (!(0, dayjs_1.default)(value).isValid()) {
+            throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+        }
+        return true;
+    }),
     (0, express_validator_1.body)('registrationEndTime')
         .notEmpty()
         .withMessage('註冊結束時間不能為空哦！')
-        .isISO8601()
-        .withMessage('註冊結束時間格式不對哦！'),
+        .custom((value) => {
+        if (!(0, dayjs_1.default)(value).isValid()) {
+            throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+        }
+        return true;
+    }),
     (0, express_validator_1.body)('address')
         .notEmpty()
         .withMessage('地址不能為空哦！')

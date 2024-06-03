@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Order_1 = __importDefault(require("@/models/Order"));
-const responseHandlers_1 = require("@/utils/responseHandlers");
+//import mongoose from 'mongoose';
 const OrderService = {
     createOrder(OrderData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,14 +23,14 @@ const OrderService = {
                     createdAt: OrderData.createdAt,
                 });
                 if (existingOrder) {
-                    return (0, responseHandlers_1.handleClientError)('同一時間重複下訂單', 409);
+                    //return handleClientError('同一時間重複下訂單', 409);
                 }
                 const newOrder = new Order_1.default(OrderData);
                 yield newOrder.save();
-                return (0, responseHandlers_1.handleSuccess)(201);
+                //return handleSuccess(201);
             }
             catch (error) {
-                return (0, responseHandlers_1.handleServerError)(error, '創建訂單時發生錯誤');
+                //return handleServerError(error, '創建訂單時發生錯誤');
             }
         });
     },

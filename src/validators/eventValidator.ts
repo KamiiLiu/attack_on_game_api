@@ -1,4 +1,5 @@
 import { body, check } from 'express-validator';
+import dayjs from '@/utils/dayjs';
 const allowedParams = [
   'storeId',
   'title',
@@ -30,23 +31,39 @@ const eventValidator = [
   body('eventStartTime')
     .notEmpty()
     .withMessage('活動開始時間不能為空哦！')
-    .isISO8601()
-    .withMessage('活動開始時間格式不對哦！'),
+    .custom((value) => {
+      if (!dayjs(value).isValid()) {
+        throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+      }
+      return true;
+    }),
   body('eventEndTime')
     .notEmpty()
     .withMessage('活動結束時間不能為空哦！')
-    .isISO8601()
-    .withMessage('活動結束時間格式不對哦！'),
+    .custom((value) => {
+      if (!dayjs(value).isValid()) {
+        throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+      }
+      return true;
+    }),
   body('registrationStartTime')
     .notEmpty()
     .withMessage('註冊開始時間不能為空哦！')
-    .isISO8601()
-    .withMessage('註冊開始時間格式不對哦！'),
+    .custom((value) => {
+      if (!dayjs(value).isValid()) {
+        throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+      }
+      return true;
+    }),
   body('registrationEndTime')
     .notEmpty()
     .withMessage('註冊結束時間不能為空哦！')
-    .isISO8601()
-    .withMessage('註冊結束時間格式不對哦！'),
+    .custom((value) => {
+      if (!dayjs(value).isValid()) {
+        throw new Error('註冊結束時間格式不對哦！必須是有效日期');
+      }
+      return true;
+    }),
   body('address')
     .notEmpty()
     .withMessage('地址不能為空哦！')

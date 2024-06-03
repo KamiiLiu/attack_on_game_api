@@ -5,10 +5,10 @@ export interface IEvent extends Document {
   storeId: mongoose.Types.ObjectId;
   title: string;
   description: string;
-  eventStartTime: Date;
-  eventEndTime: Date;
-  registrationStartTime: Date;
-  registrationEndTime: Date;
+  eventStartTime: string;
+  eventEndTime: string;
+  registrationStartTime: string;
+  registrationEndTime: string;
   isFoodAllowed: boolean;
   address: string;
   maxParticipants: number;
@@ -16,7 +16,7 @@ export interface IEvent extends Document {
   currentParticipantsCount: number;
   participationFee: number;
   isPublish: boolean;
-  eventImageUrl: [string];
-  createdAt: Date;
-  updatedAt: Date;
+  eventImageUrl: string[];
+  createdAt: string;
+  updatedAt: string;
 }

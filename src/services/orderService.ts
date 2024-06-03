@@ -1,11 +1,6 @@
 import Order from '@/models/Order';
 import { IOrder } from '@/interfaces/OrderInterface';
-import {
-  handleServerError,
-  handleClientError,
-  handleSuccess,
-} from '@/utils/responseHandlers';
-import mongoose from 'mongoose';
+//import mongoose from 'mongoose';
 
 const OrderService = {
   async createOrder(OrderData: Partial<IOrder>) {
@@ -15,13 +10,13 @@ const OrderService = {
         createdAt: OrderData.createdAt,
       });
       if (existingOrder) {
-        return handleClientError('同一時間重複下訂單', 409);
+        //return handleClientError('同一時間重複下訂單', 409);
       }
       const newOrder = new Order(OrderData);
       await newOrder.save();
-      return handleSuccess(201);
+      //return handleSuccess(201);
     } catch (error) {
-      return handleServerError(error, '創建訂單時發生錯誤');
+      //return handleServerError(error, '創建訂單時發生錯誤');
     }
   },
 };
