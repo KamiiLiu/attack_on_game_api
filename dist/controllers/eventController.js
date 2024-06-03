@@ -41,9 +41,9 @@ class EventController extends baseController_1.BaseController {
             try {
                 const isResSuccess = yield this.eventService.updatedEvent(req.params.id, req.body);
                 if (isResSuccess) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.CREATED, exports.EventMessages.SUCCESS_CREATED);
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.UPDATED, exports.EventMessages.SUCCESS_UPDATE);
                 }
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, exports.EventMessages.FAILED_CREATED);
+                return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, exports.EventMessages.FAILED_UPDATE);
             }
             catch (error) {
                 return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, exports.EventMessages.SERVER_ERROR, error);

@@ -29,14 +29,21 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 .json({ status: false, message: errors.array()[0].msg });
         }
         const { name, phone, avatar, preferGame } = req.body;
-        const user = (0, help_1.getUser)(req);
+        const userId = (0, help_1.getUser)(req)._id;
+        const role = (0, help_1.getUser)(req).role;
+        // check if the user is an player
+        if (role !== 'player') {
+            return res
+                .status(401)
+                .json({ status: false, message: 'You are not an player' });
+        }
         // check if the user exists
-        const userExists = yield User_1.default.findById(user);
+        const userExists = yield User_1.default.findById(userId);
         if (!userExists) {
             return res.status(404).json({ status: false, message: 'User not found' });
         }
         // check if the player exists
-        const playerExists = yield Player_1.default.findOne({ user });
+        const playerExists = yield Player_1.default.findOne({ user: userId });
         if (playerExists) {
             return res
                 .status(409)
@@ -44,7 +51,7 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         yield Player_1.default.create({
             name,
-            user: user._id,
+            user: userId,
             phone,
             avatar,
             preferGame,
@@ -52,7 +59,14 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(201).json({ status: true, message: 'Player created' });
     }
     catch (error) {
-        res.status(500).json({ error: error });
+        console.log(error);
+        res
+            .status(500)
+            .json({
+            status: false,
+            message: "It's has some error when created player data ",
+            error: error,
+        });
     }
 });
 exports.createPlayer = createPlayer;

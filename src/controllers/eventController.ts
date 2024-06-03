@@ -50,13 +50,13 @@ export class EventController extends BaseController {
       );
       if (isResSuccess) {
         return this.formatResponse(
-          CustomResponseType.CREATED,
-          EventMessages.SUCCESS_CREATED,
+          CustomResponseType.UPDATED,
+          EventMessages.SUCCESS_UPDATE,
         );
       }
       return this.formatResponse(
         CustomResponseType.DATABASE_OPERATION_FAILED,
-        EventMessages.FAILED_CREATED,
+        EventMessages.FAILED_UPDATE,
       );
     } catch (error) {
       return this.formatResponse(
