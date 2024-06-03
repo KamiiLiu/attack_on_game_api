@@ -70,8 +70,6 @@ function buildBaseTimeQuery(query, status) {
       $eq: ['$currentParticipantsCount', '$maxParticipants'],
     };
   }
-  console.log('query2', query);
-  console.log('status', status);
   return query;
 }
 //# sourceMappingURL=eventUtils.js.map

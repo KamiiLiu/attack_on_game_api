@@ -112,60 +112,6 @@ class EventController extends baseController_1.BaseController {
     }
 }
 exports.EventController = EventController;
-/*
-class EventController {
-  private readonly eventService = new EventService();
-  public getEventList = (req: Request, res: Response) => =>{
-    try {
-      const result = await this.eventService.findEventList(req.query);
-      handleResult(result, res);
-    } catch (error) {
-      handleServerError(error);
-    }
-  };
-  public getEventDetail = (req: Request, res: Response) => =>{
-    try {
-      const { eventId } = req.params;
-      const isPublish: boolean = req.query.isPublish === 'true';
-      const result = await this.eventService.findEventByEventId(
-        eventId,
-        isPublish,
-      );
-      handleResult(result, res);
-    } catch (error) {
-      handleServerError(error);
-    }
-  };
-  public getEventsByShop = (req: Request, res: Response) => =>{
-    try {
-      const isPublish: boolean = req.query.isPublish === 'true';
-      const { storeId } = req.params;
-      const result = await this.eventService.findShopEvent(storeId, isPublish);
-      handleResult(result, res);
-    } catch (error) {
-      handleServerError(error);
-    }
-  };
-  public updatedEvent = (req: Request, res: Response) => =>{
-    try {
-      const { eventId } = req.params;
-      const result = await this.eventService.updateEvent(eventId, req.body);
-      handleResult(result, res);
-    } catch (error) {
-      handleServerError(error);
-    }
-  };
-  public createEvent = (req: Request, res: Response) => =>{
-    try {
-      const storeId = '665185043aae4f4d91cc4c25';
-      const createProductDto = new CreateEventDTO({ ...req.body, storeId });
-      const result = await this.eventService.createEvent(createProductDto);
-      handleResult(result, res);
-    } catch (error) {
-      handleServerError(error);
-    }
-  };
-  */
 // public publishEvent = (req: Request, res: Response) => =>{
 //   try {
 //     const { eventId } = req.body;

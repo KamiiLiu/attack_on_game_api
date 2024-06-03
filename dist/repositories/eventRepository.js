@@ -24,13 +24,11 @@ class EventRepository {
     createEvent(content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('ssss', content);
                 const event = new EventModel_1.default(content);
                 yield event.save();
                 return true;
             }
             catch (error) {
-                console.log(error);
                 return false;
             }
         });
@@ -38,8 +36,7 @@ class EventRepository {
     updatedEvent(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(content.updatedAt);
-                const result = yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
+                yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
                     title: content.title,
                     address: content.address,
                     eventStartTime: content.eventStartTime,
@@ -52,12 +49,10 @@ class EventRepository {
                     participationFee: content.participationFee,
                     eventImageUrl: content.eventImageUrl,
                     updatedAt: content.updatedAt,
-                }, { new: true });
-                console.log(result);
+                });
                 return true;
             }
             catch (error) {
-                console.log(error);
                 return false;
             }
         });

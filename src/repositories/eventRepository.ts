@@ -14,19 +14,16 @@ export class EventRepository {
   }
   public async createEvent(content: Partial<EventDTO>): Promise<boolean> {
     try {
-      console.log('ssss', content);
       const event = new EventModel(content);
       await event.save();
       return true;
     } catch (error) {
-      console.log(error);
       return false;
     }
   }
   public async updatedEvent(id: string, content: EventDTO): Promise<boolean> {
     try {
-      console.log(content.updatedAt);
-      const result = await EventModel.findOneAndUpdate(
+      await EventModel.findOneAndUpdate(
         { _id: id },
         {
           title: content.title,
@@ -42,12 +39,9 @@ export class EventRepository {
           eventImageUrl: content.eventImageUrl,
           updatedAt: content.updatedAt,
         },
-        { new: true },
       );
-      console.log(result);
       return true;
     } catch (error) {
-      console.log(error);
       return false;
     }
   }

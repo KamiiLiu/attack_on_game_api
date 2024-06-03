@@ -13,7 +13,6 @@ export class EventService {
 
   public async createEvent(content: IEvent): Promise<boolean> {
     const _content = new EventDTO(content).toDetailDTO();
-    console.log('xxx', _content);
     return await this.eventRepository.createEvent(_content);
   }
   public async updatedEvent(id: string, content: IEvent): Promise<boolean> {

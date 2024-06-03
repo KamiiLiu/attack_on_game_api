@@ -1,65 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePlayerValidator = exports.createPlayerValidator = void 0;
+exports.loginValidator = exports.userUpdateValidator = exports.userCreateValidator = void 0;
 const express_validator_1 = require("express-validator");
-exports.createPlayerValidator = [
-    (0, express_validator_1.body)('name')
+const User_1 = require("../models/User");
+exports.userCreateValidator = [
+    (0, express_validator_1.body)('email')
         .notEmpty()
-        .withMessage('Name is required')
-        .isString()
-        .withMessage('Name must be a string'),
-    (0, express_validator_1.body)('phone')
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Email is invalid'),
+    (0, express_validator_1.body)('password')
         .notEmpty()
-        .withMessage('Phone is required')
-        .isString()
-        .withMessage('Phone must be a string')
-        .custom((value) => {
-        if (!value.match(/^0[0-9]{9}$/)) {
-            throw new Error('Invalid phone number');
-        }
-        return true;
-    }),
-    (0, express_validator_1.body)('avatar')
+        .withMessage('Password is required')
+        .isLength({ min: 8 })
+        .withMessage('Password is too short'),
+    (0, express_validator_1.body)('role')
         .notEmpty()
-        .withMessage('Avatar is required')
-        .isString()
-        .withMessage('Avatar must be a string')
-        .custom((value) => {
-        if (!/^https?:\/\/.+\..+$/.test(value)) {
-            throw new Error('Invalid avatar');
-        }
-        return true;
-    }),
-    (0, express_validator_1.body)('preferGame')
-        .notEmpty()
-        .withMessage('PreferGame is required')
-        .isArray()
-        .withMessage('PreferGame must be an array'),
+        .withMessage('Role is required')
+        .isIn(Object.values(User_1.UserRole))
+        .withMessage('Role is invalid'),
 ];
-exports.updatePlayerValidator = [
-    (0, express_validator_1.body)('name').optional().isString().withMessage('Name must be a string'),
-    (0, express_validator_1.body)('phone')
+exports.userUpdateValidator = [
+    (0, express_validator_1.body)('password')
         .optional()
-        .isString()
-        .withMessage('Phone must be a string')
-        .custom((value) => {
-        if (!value.match(/^0[0-9]{9}$/)) {
-            throw new Error('Invalid phone number');
-        }
-        return true;
-    }),
-    (0, express_validator_1.body)('avatar')
-        .optional()
-        .isString()
-        .withMessage('Avatar must be a string')
-        .custom((value) => {
-        if (!/^https?:\/\/.+\..+$/.test(value)) {
-            throw new Error('Invalid avatar');
-        }
-        return true;
-    }),
-    (0, express_validator_1.body)('preferGame')
-        .optional()
-        .isArray()
-        .withMessage('PreferGame must be an array'),
+        .isLength({ min: 8 })
+        .withMessage('Password is too short'),
 ];
+exports.loginValidator = [
+    (0, express_validator_1.body)('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Email is invalid'),
+    (0, express_validator_1.body)('password')
+        .notEmpty()
+        .withMessage('Password is required')
+        .isLength({ min: 8 })
+        .withMessage('Password is too short'),
+];
+//# sourceMappingURL=user.js.map

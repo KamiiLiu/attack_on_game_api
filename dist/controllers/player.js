@@ -23,7 +23,6 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         // check for validation errors
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
-            console.log(errors.array());
             return res
                 .status(400)
                 .json({ status: false, message: errors.array()[0].msg });
@@ -59,8 +58,11 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(201).json({ status: true, message: 'Player created' });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).json({ status: false, message: "It's has some error when created player data ", error: error });
+        res.status(500).json({
+            status: false,
+            message: "It's has some error when created player data ",
+            error: error,
+        });
     }
 });
 exports.createPlayer = createPlayer;
@@ -70,7 +72,6 @@ const getPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         //check for validation errors
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
-            console.log(errors.array());
             return res
                 .status(400)
                 .json({ status: false, message: errors.array()[0].msg });
@@ -95,7 +96,6 @@ const updatePlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         // check for validation errors
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
-            console.log(errors.array());
             return res
                 .status(400)
                 .json({ status: false, message: errors.array()[0].msg });
@@ -111,3 +111,4 @@ const updatePlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.updatePlayer = updatePlayer;
+//# sourceMappingURL=player.js.map

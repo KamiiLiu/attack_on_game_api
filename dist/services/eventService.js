@@ -19,7 +19,6 @@ class EventService {
     createEvent(content) {
         return __awaiter(this, void 0, void 0, function* () {
             const _content = new eventDTO_1.EventDTO(content).toDetailDTO();
-            console.log('xxx', _content);
             return yield this.eventRepository.createEvent(_content);
         });
     }

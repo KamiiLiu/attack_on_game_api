@@ -39,3 +39,4 @@ const PlayerSchema = new mongoose_1.Schema({
     },
 });
 exports.default = mongoose_1.default.model('Player', PlayerSchema);
+//# sourceMappingURL=Player.js.map
