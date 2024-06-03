@@ -63,4 +63,3 @@ exports.updatePlayerValidator = [
         .isArray()
         .withMessage('PreferGame must be an array'),
 ];
-//# sourceMappingURL=playerValidator.js.map

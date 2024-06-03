@@ -6,6 +6,8 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint src/**/*.ts --fix",
+    "format": "prettier --write .",
+    "lint": "eslint src/**/*.ts --fix",
     "dev:build": "tsc -w",
     "dev:run": "nodemon ./dist/service/server.js",
     "dev": "concurrently \"npm run dev:build\" \"npm run dev:run\"",

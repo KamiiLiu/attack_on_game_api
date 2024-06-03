@@ -38,4 +38,3 @@ exports.loginValidator = [
         .isLength({ min: 8 })
         .withMessage('Password is too short'),
 ];
-//# sourceMappingURL=user.js.map

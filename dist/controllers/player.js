@@ -60,13 +60,7 @@ const createPlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (error) {
         console.log(error);
-        res
-            .status(500)
-            .json({
-            status: false,
-            message: "It's has some error when created player data ",
-            error: error,
-        });
+        res.status(500).json({ status: false, message: "It's has some error when created player data ", error: error });
     }
 });
 exports.createPlayer = createPlayer;
@@ -117,4 +111,3 @@ const updatePlayer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.updatePlayer = updatePlayer;
-//# sourceMappingURL=player.js.map

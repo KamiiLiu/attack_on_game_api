@@ -12,4 +12,3 @@ const getUser = (req) => {
     return user;
 };
 exports.getUser = getUser;
-//# sourceMappingURL=help.js.map

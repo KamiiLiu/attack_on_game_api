@@ -48,13 +48,7 @@ export const createPlayer = async (req: Request, res: Response) => {
     res.status(201).json({ status: true, message: 'Player created' });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({
-        status: false,
-        message: "It's has some error when created player data ",
-        error: error,
-      });
+    res.status(500).json({ status: false, message: "It's has some error when created player data ", error: error });
   }
 };
 
