@@ -4,14 +4,16 @@ exports.SortOrder = exports.SortBy = exports.EventRegistrationStatus = exports.E
 var EventFormationStatus;
 (function (EventFormationStatus) {
     EventFormationStatus[EventFormationStatus["ALL"] = 0] = "ALL";
-    EventFormationStatus[EventFormationStatus["FORMING"] = 1] = "FORMING";
+    EventFormationStatus[EventFormationStatus["NOT_FORMED"] = 1] = "NOT_FORMED";
     EventFormationStatus[EventFormationStatus["FORMED"] = 2] = "FORMED";
+    EventFormationStatus[EventFormationStatus["FULL"] = 3] = "FULL";
 })(EventFormationStatus || (exports.EventFormationStatus = EventFormationStatus = {}));
 var EventRegistrationStatus;
 (function (EventRegistrationStatus) {
     EventRegistrationStatus[EventRegistrationStatus["ALL"] = 0] = "ALL";
-    EventRegistrationStatus[EventRegistrationStatus["OPEN"] = 1] = "OPEN";
-    EventRegistrationStatus[EventRegistrationStatus["CLOSED"] = 2] = "CLOSED";
+    EventRegistrationStatus[EventRegistrationStatus["OPEN"] = 2] = "OPEN";
+    EventRegistrationStatus[EventRegistrationStatus["CLOSED"] = 3] = "CLOSED";
+    EventRegistrationStatus[EventRegistrationStatus["NOT_STARTED"] = 1] = "NOT_STARTED";
 })(EventRegistrationStatus || (exports.EventRegistrationStatus = EventRegistrationStatus = {}));
 var SortBy;
 (function (SortBy) {

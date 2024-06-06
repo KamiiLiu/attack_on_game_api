@@ -1,13 +1,15 @@
 export enum EventFormationStatus {
   ALL = 0,
-  FORMING = 1,
+  NOT_FORMED = 1,
   FORMED = 2,
+  FULL = 3,
 }
 
 export enum EventRegistrationStatus {
   ALL = 0,
-  OPEN = 1,
-  CLOSED = 2,
+  OPEN = 2,
+  CLOSED = 3,
+  NOT_STARTED = 1,
 }
 
 export enum SortBy {
