@@ -36,7 +36,7 @@ class BaseController {
                     return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, failureMessage);
                 }
                 else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, failureMessage);
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
                 }
             }
             catch (error) {

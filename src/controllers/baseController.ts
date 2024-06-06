@@ -33,8 +33,9 @@ export class BaseController {
         );
       } else {
         return this.formatResponse(
-          CustomResponseType.DATABASE_OPERATION_FAILED,
-          failureMessage,
+          CustomResponseType.SUCCESS,
+          successMessage,
+          result,
         );
       }
     } catch (error) {
