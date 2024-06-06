@@ -8,13 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventService = void 0;
+//TODO:上傳照片的方式可能也要研究一下
+//TODO:寫一個fs模塊，批量上傳假資料
+const lodash_1 = __importDefault(require("lodash"));
 const eventDTO_1 = require("@/dto/event/eventDTO");
 const eventRepository_1 = require("@/repositories/eventRepository");
+const eventQueryParams_1 = require("@/services/eventQueryParams");
 class EventService {
     constructor() {
         this.eventRepository = new eventRepository_1.EventRepository();
+        this.queryParams = new eventQueryParams_1.QueryParamsParser();
     }
     createEvent(content) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -22,23 +30,22 @@ class EventService {
             return yield this.eventRepository.createEvent(_content);
         });
     }
-    updatedEvent(id, content) {
+    updateEvent(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             const _content = new eventDTO_1.EventDTO(content);
-            return yield this.eventRepository.updatedEvent(id, _content);
+            return yield this.eventRepository.updateEvent(id, _content);
         });
     }
     getDetailEvent(id_1) {
         return __awaiter(this, arguments, void 0, function* (id, isPublish = true) {
             const _event = yield this.eventRepository.getEventById(id);
-            if (_event) {
+            if (!lodash_1.default.isEmpty(_event)) {
                 const _eventDTO = new eventDTO_1.EventDTO(_event);
-                if (isPublish) {
-                    return _eventDTO.isPublish ? _eventDTO.toDetailDTO() : null;
-                }
-                else {
-                    return _eventDTO.toDetailDTO();
-                }
+                return isPublish
+                    ? _eventDTO.isPublish
+                        ? _eventDTO.toDetailDTO()
+                        : null
+                    : _eventDTO.toDetailDTO();
             }
             return null;
         });
@@ -46,7 +53,7 @@ class EventService {
     getSummaryEvent(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const _event = yield this.eventRepository.getEventById(id);
-            if (_event) {
+            if (!lodash_1.default.isEmpty(_event)) {
                 const _eventDTO = new eventDTO_1.EventDTO(_event);
                 return _eventDTO.isPublish && _eventDTO.isRegisterable
                     ? _eventDTO.toSummaryDTO()
@@ -55,58 +62,20 @@ class EventService {
             return null;
         });
     }
-    getEvents(optionsReq) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const eventData = yield this.eventRepository.getAllEvents(optionsReq);
-            return eventData.map((event) => new eventDTO_1.EventDTO(event).toDetailDTO());
-        });
-    }
     getEventsByStore(storeId, optionsReq) {
         return __awaiter(this, void 0, void 0, function* () {
-            const eventData = yield this.eventRepository.getEventsByStoreId(storeId, optionsReq);
-            return eventData.map((event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+            const queryParams = this.queryParams.parse(optionsReq);
+            const eventData = yield this.eventRepository.getEventsByStoreId(storeId, queryParams);
+            return lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+        });
+    }
+    getEvents(optionsReq) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryParams = this.queryParams.parse(optionsReq);
+            const eventData = yield this.eventRepository.getAllEvents(queryParams);
+            return lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
         });
     }
 }
 exports.EventService = EventService;
-/*
-  async updateEvent(eventId: string, eventData: IEvent) {
-    try {
-      const query = {
-        _id: eventId,
-        $expr: {
-          $and: [
-            { $gte: [eventData.currentParticipantsCount, '$minParticipants'] };
-            { $lte: [eventData.currentParticipantsCount, '$maxParticipants'] };
-          ],
-        };
-      };
-      const updatedEvent = await Event.findOneAndUpdate(query, eventData, {
-        new: true,
-      }); //TODO:updatedAt: new Date()
-      if (!updatedEvent) {
-        return handleClientError('沒有這個活動～或活動已被下架');
-      }
-      return handleSuccess();
-    } catch (error) {
-      return handleServerError(error, '更新活動資料時發生意外');
-    }
-  };
-  async updatePublishStatus(eventId: string, status: boolean = true) {
-    try {
-      const updatedEvent = await Event.findByIdAndUpdate(
-        new mongoose.Types.ObjectId(eventId),
-        { isPublish: status, updatedAt: new Date() };
-        { new: true };
-      );
-      if (!updatedEvent) {
-        return handleClientError('找不到這個活動');
-      }
-      return handleSuccess();
-    } catch (error) {
-      return handleServerError(error, '更新活動資料時發生意外');
-    }
-  };
-};
- */
 //# sourceMappingURL=eventService.js.map

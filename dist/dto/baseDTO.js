@@ -6,16 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseDTO = void 0;
 const mongoose_1 = require("mongoose");
 const dayjs_1 = __importDefault(require("@/utils/dayjs"));
-const TIME_FOMMATER_1 = __importDefault(require("@/const/TIME_FOMMATER"));
+const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
 class BaseDTO {
     constructor(dto) {
         this._id = dto._id || new mongoose_1.Types.ObjectId();
         this.createdAt =
-            (0, dayjs_1.default)(dto.createdAt).format(TIME_FOMMATER_1.default) ||
-                (0, dayjs_1.default)().format(TIME_FOMMATER_1.default);
+            (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
+                (0, dayjs_1.default)().format(TIME_FORMATTER_1.default);
         this.updatedAt =
-            (0, dayjs_1.default)(dto.createdAt).format(TIME_FOMMATER_1.default) ||
-                (0, dayjs_1.default)().format(TIME_FOMMATER_1.default);
+            (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
+                (0, dayjs_1.default)().format(TIME_FORMATTER_1.default);
     }
 }
 exports.BaseDTO = BaseDTO;

@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import dayjs from '@/utils/dayjs';
-import TIME_FOMMATER from '@/const/TIME_FOMMATER';
+import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 interface DTO {
   _id: Types.ObjectId;
   createdAt: string;
@@ -13,10 +13,10 @@ export class BaseDTO {
   constructor(dto: DTO) {
     this._id = dto._id || new Types.ObjectId();
     this.createdAt =
-      dayjs(dto.createdAt).format(TIME_FOMMATER) ||
-      dayjs().format(TIME_FOMMATER);
+      dayjs(dto.createdAt).format(TIME_FORMATTER) ||
+      dayjs().format(TIME_FORMATTER);
     this.updatedAt =
-      dayjs(dto.createdAt).format(TIME_FOMMATER) ||
-      dayjs().format(TIME_FOMMATER);
+      dayjs(dto.createdAt).format(TIME_FORMATTER) ||
+      dayjs().format(TIME_FORMATTER);
   }
 }

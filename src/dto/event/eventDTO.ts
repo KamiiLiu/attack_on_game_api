@@ -6,7 +6,7 @@ dayjs.extend(isSameOrAfter);
 import { BaseDTO } from '@/dto/baseDTO';
 import { IEvent } from '@/interfaces/EventInterface';
 import { Types } from 'mongoose';
-import TIME_FOMMATER from '@/const/TIME_FOMMATER';
+import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 export class EventDTO extends BaseDTO {
   private readonly _storeId!: Types.ObjectId;
   private readonly _title!: string;
@@ -30,13 +30,13 @@ export class EventDTO extends BaseDTO {
     this._address = dto.address;
     this._isFoodAllowed = dto.isFoodAllowed;
     this._description = dto.description;
-    this._eventStartTime = dayjs(dto.eventStartTime).format(TIME_FOMMATER);
-    this._eventEndTime = dayjs(dto.eventEndTime).format(TIME_FOMMATER);
+    this._eventStartTime = dayjs(dto.eventStartTime).format(TIME_FORMATTER);
+    this._eventEndTime = dayjs(dto.eventEndTime).format(TIME_FORMATTER);
     this._registrationStartTime = dayjs(dto.registrationStartTime).format(
-      TIME_FOMMATER,
+      TIME_FORMATTER,
     );
     this._registrationEndTime = dayjs(dto.registrationEndTime).format(
-      TIME_FOMMATER,
+      TIME_FORMATTER,
     );
     this._maxParticipants = dto.maxParticipants;
     this._minParticipants = dto.minParticipants;
@@ -48,8 +48,8 @@ export class EventDTO extends BaseDTO {
   public get isRegisterable() {
     const now = dayjs();
     return (
-      now.isSameOrBefore(this._eventEndTime) &&
-      now.isSameOrAfter(this._eventStartTime)
+      now.isSameOrBefore(this._registrationEndTime) &&
+      now.isSameOrAfter(this._registrationStartTime)
     );
   }
   public get storeId() {

@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventController = exports.EventMessages = void 0;
 const eventService_1 = require("@/services/eventService");
 const baseController_1 = require("@/controllers/baseController");
-const CustomResponseType_1 = require("@/enums/CustomResponseType");
 exports.EventMessages = {
     SUCCESS_CREATED: '建立活動成功，你真棒！',
     FAILED_CREATED: '建立活動失敗，幫你哭。',
@@ -24,113 +23,30 @@ exports.EventMessages = {
 };
 class EventController extends baseController_1.BaseController {
     constructor() {
-        super();
+        super(exports.EventMessages.SERVER_ERROR);
         this.createEvent = (req) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const isResSuccess = yield this.eventService.createEvent(req.body);
-                if (isResSuccess) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.CREATED, exports.EventMessages.SUCCESS_CREATED);
-                }
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, exports.EventMessages.FAILED_CREATED);
-            }
-            catch (error) {
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, exports.EventMessages.SERVER_ERROR, error);
-            }
+            return this.handleServiceResponse(() => this.eventService.createEvent(req.body), exports.EventMessages.SUCCESS_CREATED, exports.EventMessages.FAILED_CREATED);
         });
-        this.updatedEvent = (req) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const isResSuccess = yield this.eventService.updatedEvent(req.params.id, req.body);
-                if (isResSuccess) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.UPDATED, exports.EventMessages.SUCCESS_UPDATE);
-                }
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, exports.EventMessages.FAILED_UPDATE);
-            }
-            catch (error) {
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, exports.EventMessages.SERVER_ERROR, error);
-            }
+        this.updateEvent = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.updateEvent(req.params.id, req.body), exports.EventMessages.SUCCESS_UPDATE, exports.EventMessages.FAILED_UPDATE);
         });
-        // 取得事件摘要資料的方法
         this.getEventSummary = (req) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const event = yield this.eventService.getSummaryEvent(req.params.id);
-                if (event) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, exports.EventMessages.SUCCESS_REQUEST, event);
-                }
-                else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.NOT_FOUND, exports.EventMessages.BAD_REQUEST);
-                }
-            }
-            catch (error) {
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, exports.EventMessages.SERVER_ERROR, error);
-            }
+            return this.handleServiceResponse(() => this.eventService.getSummaryEvent(req.params.id), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
         });
-        // 下架活動的方法
-        //public deactivateEvent = async (req: Request): Promise<ResponseDTO> => {};
+        this.getOwnEvent = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.getDetailEvent(req.body.storeId, Boolean(req.query.isPublish)), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
+        });
         this.getEventDetail = (req) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const event = yield this.eventService.getDetailEvent(req.params.id, Boolean(req.query.isPublish));
-                if (event) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, exports.EventMessages.SUCCESS_REQUEST, event);
-                }
-                else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.NOT_FOUND, exports.EventMessages.BAD_REQUEST);
-                }
-            }
-            catch (error) {
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, exports.EventMessages.SERVER_ERROR, error);
-            }
+            return this.handleServiceResponse(() => this.eventService.getDetailEvent(req.params.id, Boolean(req.query.isPublish)), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
         });
         this.getEvents = (req) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const events = yield this.eventService.getEvents(req);
-                if (events.length !== 0) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, exports.EventMessages.SUCCESS_REQUEST, events);
-                }
-                else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.NOT_FOUND, exports.EventMessages.BAD_REQUEST);
-                }
-            }
-            catch (error) {
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, exports.EventMessages.SERVER_ERROR, error);
-            }
+            return this.handleServiceResponse(() => this.eventService.getEvents(req), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
         });
         this.getEventsByStore = (req) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const events = yield this.eventService.getEventsByStore(req.params.storeId, req);
-                if (events.length !== 0) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, exports.EventMessages.SUCCESS_REQUEST, events);
-                }
-                else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.NOT_FOUND, exports.EventMessages.BAD_REQUEST);
-                }
-            }
-            catch (error) {
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, exports.EventMessages.SERVER_ERROR, error);
-            }
+            return this.handleServiceResponse(() => this.eventService.getEventsByStore(req.params.storeId, req), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
         });
         this.eventService = new eventService_1.EventService();
     }
 }
 exports.EventController = EventController;
-// public publishEvent = (req: Request, res: Response) => =>{
-//   try {
-//     const { eventId } = req.body;
-//     const result = await this.eventService.updatePublishStatus(eventId, true);
-//     handleResult(result, res);
-//   } catch (error) {
-//     handleServerError(error);
-//   }
-// };
-// public unpublishEvent = (req: Request, res: Response) => =>{
-//   try {
-//     const { eventId } = req.body;
-//     const result = await this.eventService.updatePublishStatus(
-//       eventId,
-//       false,
-//     );
-//     handleResult(result, res);
-//   } catch (error) {
-//     handleServerError(error);
-//   }
-// };
 //# sourceMappingURL=eventController.js.map

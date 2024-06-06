@@ -10,7 +10,7 @@ const isSameOrAfter_1 = __importDefault(require("dayjs/plugin/isSameOrAfter"));
 dayjs_1.default.extend(isSameOrBefore_1.default);
 dayjs_1.default.extend(isSameOrAfter_1.default);
 const baseDTO_1 = require("@/dto/baseDTO");
-const TIME_FOMMATER_1 = __importDefault(require("@/const/TIME_FOMMATER"));
+const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
 class EventDTO extends baseDTO_1.BaseDTO {
     constructor(dto) {
         super(dto);
@@ -19,10 +19,10 @@ class EventDTO extends baseDTO_1.BaseDTO {
         this._address = dto.address;
         this._isFoodAllowed = dto.isFoodAllowed;
         this._description = dto.description;
-        this._eventStartTime = (0, dayjs_1.default)(dto.eventStartTime).format(TIME_FOMMATER_1.default);
-        this._eventEndTime = (0, dayjs_1.default)(dto.eventEndTime).format(TIME_FOMMATER_1.default);
-        this._registrationStartTime = (0, dayjs_1.default)(dto.registrationStartTime).format(TIME_FOMMATER_1.default);
-        this._registrationEndTime = (0, dayjs_1.default)(dto.registrationEndTime).format(TIME_FOMMATER_1.default);
+        this._eventStartTime = (0, dayjs_1.default)(dto.eventStartTime).format(TIME_FORMATTER_1.default);
+        this._eventEndTime = (0, dayjs_1.default)(dto.eventEndTime).format(TIME_FORMATTER_1.default);
+        this._registrationStartTime = (0, dayjs_1.default)(dto.registrationStartTime).format(TIME_FORMATTER_1.default);
+        this._registrationEndTime = (0, dayjs_1.default)(dto.registrationEndTime).format(TIME_FORMATTER_1.default);
         this._maxParticipants = dto.maxParticipants;
         this._minParticipants = dto.minParticipants;
         this._currentParticipantsCount = dto.currentParticipantsCount;
@@ -32,8 +32,8 @@ class EventDTO extends baseDTO_1.BaseDTO {
     }
     get isRegisterable() {
         const now = (0, dayjs_1.default)();
-        return (now.isSameOrBefore(this._eventEndTime) &&
-            now.isSameOrAfter(this._eventStartTime));
+        return (now.isSameOrBefore(this._registrationEndTime) &&
+            now.isSameOrAfter(this._registrationStartTime));
     }
     get storeId() {
         return this._storeId;

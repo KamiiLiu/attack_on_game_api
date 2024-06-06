@@ -1,6 +1,6 @@
 import Order from '@/models/Order';
 import { IOrder } from '@/interfaces/OrderInterface';
-//import mongoose from 'mongoose';
+//import oose from 'mongoose';
 
 const OrderService = {
   async createOrder(OrderData: Partial<IOrder>) {

@@ -15,12 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventRepository = void 0;
 const EventModel_1 = __importDefault(require("@/models/EventModel"));
 const EventQuery_1 = require("@/queries/EventQuery");
-const eventRequest_1 = require("@/enums/eventRequest");
 class EventRepository {
-    constructor() {
-        this.defaultLimit = eventRequest_1.DefaultQuery.LIMIT;
-        this.defaultSkip = eventRequest_1.DefaultQuery.SKIP;
-    }
     createEvent(content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -33,7 +28,7 @@ class EventRepository {
             }
         });
     }
-    updatedEvent(id, content) {
+    updateEvent(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
@@ -63,50 +58,38 @@ class EventRepository {
             return event;
         });
     }
-    getAllEvents(req) {
+    getAllEvents(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { truthLimit, truthSkip, truthFormationStatus, truthRegistrationStatus, } = this.parseQueryParams(req);
-            const eventQuery = new EventQuery_1.EventQuery(req.query, {
-                forStatus: truthFormationStatus,
-                regStatus: truthRegistrationStatus,
+            const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
+            const eventQuery = new EventQuery_1.EventQuery({}, {
+                forStatus: formationStatus,
+                regStatus: registrationStatus,
             });
             const query = eventQuery.buildEventQuery();
-            return this._getEventsData(query, truthSkip, truthLimit);
+            return this._getEventsData(query, skip, limit, sortBy, sortOrder);
         });
     }
-    getEventsByStoreId(storeId, req) {
+    getEventsByStoreId(storeId, queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { truthLimit, truthSkip, truthFormationStatus, truthRegistrationStatus, } = this.parseQueryParams(req);
-            const eventQuery = new EventQuery_1.EventQuery(Object.assign({ storeId }, req.query), {
-                forStatus: truthFormationStatus,
-                regStatus: truthRegistrationStatus,
+            const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
+            const eventQuery = new EventQuery_1.EventQuery({ storeId }, {
+                forStatus: formationStatus,
+                regStatus: registrationStatus,
             });
             const query = eventQuery.buildEventQuery();
-            return this._getEventsData(query, truthSkip, truthLimit);
+            return this._getEventsData(query, skip, limit, sortBy, sortOrder);
         });
     }
-    _getEventsData(eventQuery, skip, limit) {
+    _getEventsData(eventQuery, skip, limit, sortBy, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
+            const sortOptions = { [sortBy]: sortOrder };
             const eventData = yield EventModel_1.default.find(eventQuery)
                 .skip(skip)
                 .limit(limit)
-                .sort({ eventStartTime: 1 })
+                .sort(sortOptions)
                 .exec();
             return eventData || [];
         });
-    }
-    parseQueryParams(req) {
-        const { limit = eventRequest_1.DefaultQuery.LIMIT, skip = eventRequest_1.DefaultQuery.SKIP, formationStatus = eventRequest_1.DefaultQuery.FOR_STATUS, registrationStatus = eventRequest_1.DefaultQuery.REG_STATUS, } = req.query || {};
-        const truthLimit = Math.min(Number(limit), eventRequest_1.DefaultQuery.MAX_LIMIT);
-        const truthSkip = Number(skip);
-        const truthFormationStatus = Number(formationStatus);
-        const truthRegistrationStatus = Number(registrationStatus);
-        return {
-            truthLimit,
-            truthSkip,
-            truthFormationStatus,
-            truthRegistrationStatus,
-        };
     }
 }
 exports.EventRepository = EventRepository;

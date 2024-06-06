@@ -1,17 +1,10 @@
 import EventModel from '@/models/EventModel';
 import { EventDTO } from '@/dto/event/eventDTO';
 import { IEvent } from '@/interfaces/EventInterface';
-import { Request } from 'express';
 import { EventQuery } from '@/queries/EventQuery';
-import { DefaultQuery } from '@/enums/eventRequest';
+import { QueryParams } from '@/services/eventQueryParams';
+import { SortOrder } from 'mongoose';
 export class EventRepository {
-  private readonly defaultLimit: number;
-  private readonly defaultSkip: number;
-
-  constructor() {
-    this.defaultLimit = DefaultQuery.LIMIT;
-    this.defaultSkip = DefaultQuery.SKIP;
-  }
   public async createEvent(content: Partial<EventDTO>): Promise<boolean> {
     try {
       const event = new EventModel(content);
@@ -21,7 +14,7 @@ export class EventRepository {
       return false;
     }
   }
-  public async updatedEvent(id: string, content: EventDTO): Promise<boolean> {
+  public async updateEvent(id: string, content: EventDTO): Promise<boolean> {
     try {
       await EventModel.findOneAndUpdate(
         { _id: id },
@@ -49,70 +42,60 @@ export class EventRepository {
     const event = await EventModel.findById(id);
     return event;
   }
-  public async getAllEvents(req: Request): Promise<IEvent[]> {
+  public async getAllEvents(queryParams: QueryParams): Promise<IEvent[]> {
     const {
-      truthLimit,
-      truthSkip,
-      truthFormationStatus,
-      truthRegistrationStatus,
-    } = this.parseQueryParams(req);
-    const eventQuery = new EventQuery(req.query, {
-      forStatus: truthFormationStatus,
-      regStatus: truthRegistrationStatus,
-    });
-    const query = eventQuery.buildEventQuery();
-    return this._getEventsData(query, truthSkip, truthLimit);
-  }
-  public async getEventsByStoreId(
-    storeId: string,
-    req: Request,
-  ): Promise<IEvent[]> {
-    const {
-      truthLimit,
-      truthSkip,
-      truthFormationStatus,
-      truthRegistrationStatus,
-    } = this.parseQueryParams(req);
+      limit,
+      skip,
+      formationStatus,
+      registrationStatus,
+      sortBy,
+      sortOrder,
+    } = queryParams;
     const eventQuery = new EventQuery(
-      { storeId, ...req.query },
+      {},
       {
-        forStatus: truthFormationStatus,
-        regStatus: truthRegistrationStatus,
+        forStatus: formationStatus,
+        regStatus: registrationStatus,
       },
     );
     const query = eventQuery.buildEventQuery();
-    return this._getEventsData(query, truthSkip, truthLimit);
+    return this._getEventsData(query, skip, limit, sortBy, sortOrder);
+  }
+  public async getEventsByStoreId(
+    storeId: string,
+    queryParams: QueryParams,
+  ): Promise<IEvent[]> {
+    const {
+      limit,
+      skip,
+      formationStatus,
+      registrationStatus,
+      sortBy,
+      sortOrder,
+    } = queryParams;
+    const eventQuery = new EventQuery(
+      { storeId },
+      {
+        forStatus: formationStatus,
+        regStatus: registrationStatus,
+      },
+    );
+    const query = eventQuery.buildEventQuery();
+    return this._getEventsData(query, skip, limit, sortBy, sortOrder);
   }
   private async _getEventsData(
     eventQuery: any,
     skip: number,
     limit: number,
+    sortBy: string,
+    sortOrder: SortOrder,
   ): Promise<IEvent[]> {
+    const sortOptions: { [key: string]: SortOrder } = { [sortBy]: sortOrder };
     const eventData = await EventModel.find(eventQuery)
       .skip(skip)
       .limit(limit)
-      .sort({ eventStartTime: 1 })
+      .sort(sortOptions)
       .exec();
     return eventData || [];
-  }
-  private parseQueryParams(req: Request) {
-    const {
-      limit = DefaultQuery.LIMIT,
-      skip = DefaultQuery.SKIP,
-      formationStatus = DefaultQuery.FOR_STATUS,
-      registrationStatus = DefaultQuery.REG_STATUS,
-    } = req.query || {};
-
-    const truthLimit = Math.min(Number(limit), DefaultQuery.MAX_LIMIT);
-    const truthSkip = Number(skip);
-    const truthFormationStatus = Number(formationStatus);
-    const truthRegistrationStatus = Number(registrationStatus);
-
-    return {
-      truthLimit,
-      truthSkip,
-      truthFormationStatus,
-      truthRegistrationStatus,
-    };
   }
 }

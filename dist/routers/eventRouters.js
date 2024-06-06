@@ -19,7 +19,7 @@ router.get(
 router.patch(
   '/event/:eventId',
   auth_1.jwtAuthenticator,
-  eventController_1.default.updatedEvent,
+  eventController_1.default.updateEvent,
 );
 // router.get('/events', EventController.getEventList);
 router.post('/event', eventController_1.default.createEvent);

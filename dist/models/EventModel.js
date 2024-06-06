@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const dayjs_1 = __importDefault(require("@/utils/dayjs"));
-const TIME_FOMMATER_1 = __importDefault(require("@/const/TIME_FOMMATER"));
+const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
 const EventSchema = new mongoose_1.Schema({
     storeId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
@@ -49,8 +49,8 @@ const EventSchema = new mongoose_1.Schema({
     eventImageUrl: { type: [String], required: true },
     currentParticipantsCount: { type: Number, default: 0 },
     isPublish: { type: Boolean, default: true },
-    createdAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FOMMATER_1.default) },
-    updatedAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FOMMATER_1.default) },
+    createdAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
+    updatedAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
 });
 EventSchema.index({ title: 1, updatedAt: 1 }, { unique: true });
 const EventModel = mongoose_1.default.model('Event', EventSchema);
