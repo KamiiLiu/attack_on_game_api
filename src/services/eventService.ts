@@ -19,6 +19,8 @@ export class EventService {
   }
   public async updateEvent(id: string, content: IEvent): Promise<boolean> {
     const _content = new EventDTO(content);
+    console.log('xxxx');
+    console.log(_content);
     return await this.eventRepository.updateEvent(id, _content);
   }
   public async getDetailEvent(

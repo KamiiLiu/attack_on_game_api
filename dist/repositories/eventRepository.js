@@ -21,10 +21,10 @@ class EventRepository {
             try {
                 const event = new EventModel_1.default(content);
                 yield event.save();
-                return true;
+                return { success: true };
             }
             catch (error) {
-                return false;
+                return { success: false, error };
             }
         });
     }
@@ -33,6 +33,8 @@ class EventRepository {
             try {
                 yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
                     title: content.title,
+                    description: content.description,
+                    isFoodAllowed: content.isFoodAllowed,
                     address: content.address,
                     eventStartTime: content.eventStartTime,
                     eventEndTime: content.eventEndTime,
@@ -45,50 +47,74 @@ class EventRepository {
                     eventImageUrl: content.eventImageUrl,
                     updatedAt: content.updatedAt,
                 });
-                return true;
+                return { success: true };
             }
             catch (error) {
-                return false;
+                console.log('xxxx');
+                console.log(error);
+                return { success: false, error };
             }
         });
     }
     getEventById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const event = yield EventModel_1.default.findById(id);
-            return event;
+            try {
+                const event = yield EventModel_1.default.findById(id);
+                return { event };
+            }
+            catch (error) {
+                return { event: null, error };
+            }
         });
     }
     getAllEvents(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
-            const eventQuery = new EventQuery_1.EventQuery({}, {
-                forStatus: formationStatus,
-                regStatus: registrationStatus,
-            });
-            const query = eventQuery.buildEventQuery();
-            return this._getEventsData(query, skip, limit, sortBy, sortOrder);
+            try {
+                const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
+                const eventQuery = new EventQuery_1.EventQuery({}, {
+                    forStatus: formationStatus,
+                    regStatus: registrationStatus,
+                });
+                const query = eventQuery.buildEventQuery();
+                const events = yield this._getEventsData(query, skip, limit, sortBy, sortOrder);
+                return { events };
+            }
+            catch (error) {
+                return { events: [], error };
+            }
         });
     }
     getEventsByStoreId(storeId, queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
-            const eventQuery = new EventQuery_1.EventQuery({ storeId }, {
-                forStatus: formationStatus,
-                regStatus: registrationStatus,
-            });
-            const query = eventQuery.buildEventQuery();
-            return this._getEventsData(query, skip, limit, sortBy, sortOrder);
+            try {
+                const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
+                const eventQuery = new EventQuery_1.EventQuery({ storeId }, {
+                    forStatus: formationStatus,
+                    regStatus: registrationStatus,
+                });
+                const query = eventQuery.buildEventQuery();
+                const events = yield this._getEventsData(query, skip, limit, sortBy, sortOrder);
+                return { events };
+            }
+            catch (error) {
+                return { events: [], error };
+            }
         });
     }
     _getEventsData(eventQuery, skip, limit, sortBy, sortOrder) {
         return __awaiter(this, void 0, void 0, function* () {
-            const sortOptions = { [sortBy]: sortOrder };
-            const eventData = yield EventModel_1.default.find(eventQuery)
-                .skip(skip)
-                .limit(limit)
-                .sort(sortOptions)
-                .exec();
-            return eventData || [];
+            try {
+                const sortOptions = { [sortBy]: sortOrder };
+                const eventData = yield EventModel_1.default.find(eventQuery)
+                    .skip(skip)
+                    .limit(limit)
+                    .sort(sortOptions)
+                    .exec();
+                return eventData || [];
+            }
+            catch (error) {
+                return [];
+            }
         });
     }
 }

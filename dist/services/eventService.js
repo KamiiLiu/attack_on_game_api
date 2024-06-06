@@ -33,6 +33,8 @@ class EventService {
     updateEvent(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             const _content = new eventDTO_1.EventDTO(content);
+            console.log('xxxx');
+            console.log(_content);
             return yield this.eventRepository.updateEvent(id, _content);
         });
     }

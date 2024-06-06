@@ -32,11 +32,12 @@ class BaseController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield serviceMethod();
-                if (lodash_1.default.isEmpty(result)) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, failureMessage);
+                console.log(result);
+                if (result) {
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
                 }
                 else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, failureMessage);
                 }
             }
             catch (error) {

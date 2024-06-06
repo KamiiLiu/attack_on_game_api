@@ -5,21 +5,29 @@ import { EventQuery } from '@/queries/EventQuery';
 import { QueryParams } from '@/services/eventQueryParams';
 import { SortOrder } from 'mongoose';
 export class EventRepository {
-  public async createEvent(content: Partial<EventDTO>): Promise<boolean> {
+  public async createEvent(
+    content: Partial<EventDTO>,
+  ): Promise<{ success: boolean; error?: any }> {
     try {
       const event = new EventModel(content);
       await event.save();
-      return true;
+      return { success: true };
     } catch (error) {
-      return false;
+      return { success: false, error };
     }
   }
-  public async updateEvent(id: string, content: EventDTO): Promise<boolean> {
+
+  public async updateEvent(
+    id: string,
+    content: EventDTO,
+  ): Promise<{ success: boolean; error?: any }> {
     try {
       await EventModel.findOneAndUpdate(
         { _id: id },
         {
           title: content.title,
+          description: content.description,
+          isFoodAllowed: content.isFoodAllowed,
           address: content.address,
           eventStartTime: content.eventStartTime,
           eventEndTime: content.eventEndTime,
@@ -33,56 +41,92 @@ export class EventRepository {
           updatedAt: content.updatedAt,
         },
       );
-      return true;
+      return { success: true };
     } catch (error) {
-      return false;
+      console.log('xxxx');
+      console.log(error);
+      return { success: false, error };
     }
   }
-  public async getEventById(id: string): Promise<IEvent | null> {
-    const event = await EventModel.findById(id);
-    return event;
+
+  public async getEventById(
+    id: string,
+  ): Promise<{ event: IEvent | null; error?: any }> {
+    try {
+      const event = await EventModel.findById(id);
+      return { event };
+    } catch (error) {
+      return { event: null, error };
+    }
   }
-  public async getAllEvents(queryParams: QueryParams): Promise<IEvent[]> {
-    const {
-      limit,
-      skip,
-      formationStatus,
-      registrationStatus,
-      sortBy,
-      sortOrder,
-    } = queryParams;
-    const eventQuery = new EventQuery(
-      {},
-      {
-        forStatus: formationStatus,
-        regStatus: registrationStatus,
-      },
-    );
-    const query = eventQuery.buildEventQuery();
-    return this._getEventsData(query, skip, limit, sortBy, sortOrder);
+
+  public async getAllEvents(
+    queryParams: QueryParams,
+  ): Promise<{ events: IEvent[]; error?: any }> {
+    try {
+      const {
+        limit,
+        skip,
+        formationStatus,
+        registrationStatus,
+        sortBy,
+        sortOrder,
+      } = queryParams;
+      const eventQuery = new EventQuery(
+        {},
+        {
+          forStatus: formationStatus,
+          regStatus: registrationStatus,
+        },
+      );
+      const query = eventQuery.buildEventQuery();
+      const events = await this._getEventsData(
+        query,
+        skip,
+        limit,
+        sortBy,
+        sortOrder,
+      );
+      return { events };
+    } catch (error) {
+      return { events: [], error };
+    }
   }
+
   public async getEventsByStoreId(
     storeId: string,
     queryParams: QueryParams,
-  ): Promise<IEvent[]> {
-    const {
-      limit,
-      skip,
-      formationStatus,
-      registrationStatus,
-      sortBy,
-      sortOrder,
-    } = queryParams;
-    const eventQuery = new EventQuery(
-      { storeId },
-      {
-        forStatus: formationStatus,
-        regStatus: registrationStatus,
-      },
-    );
-    const query = eventQuery.buildEventQuery();
-    return this._getEventsData(query, skip, limit, sortBy, sortOrder);
+  ): Promise<{ events: IEvent[]; error?: any }> {
+    try {
+      const {
+        limit,
+        skip,
+        formationStatus,
+        registrationStatus,
+        sortBy,
+        sortOrder,
+      } = queryParams;
+      const eventQuery = new EventQuery(
+        { storeId },
+        {
+          forStatus: formationStatus,
+          regStatus: registrationStatus,
+        },
+      );
+      const query = eventQuery.buildEventQuery();
+      const events = await this._getEventsData(
+        query,
+        skip,
+        limit,
+        sortBy,
+        sortOrder,
+      );
+      return { events };
+    } catch (error) {
+      return { events: [], error };
+    }
   }
+
   private async _getEventsData(
     eventQuery: any,
     skip: number,
@@ -90,12 +134,16 @@ export class EventRepository {
     sortBy: string,
     sortOrder: SortOrder,
   ): Promise<IEvent[]> {
-    const sortOptions: { [key: string]: SortOrder } = { [sortBy]: sortOrder };
-    const eventData = await EventModel.find(eventQuery)
-      .skip(skip)
-      .limit(limit)
-      .sort(sortOptions)
-      .exec();
-    return eventData || [];
+    try {
+      const sortOptions: { [key: string]: SortOrder } = { [sortBy]: sortOrder };
+      const eventData = await EventModel.find(eventQuery)
+        .skip(skip)
+        .limit(limit)
+        .sort(sortOptions)
+        .exec();
+      return eventData || [];
+    } catch (error) {
+      return [];
+    }
   }
 }
