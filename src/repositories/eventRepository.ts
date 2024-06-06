@@ -20,9 +20,9 @@ export class EventRepository {
   public async updateEvent(
     id: string,
     content: EventDTO,
-  ): Promise<{ success: boolean; error?: any }> {
+  ): Promise<{ success: boolean; data?: IEvent | null; error?: any }> {
     try {
-      await EventModel.findOneAndUpdate(
+      const updatedData = await EventModel.findOneAndUpdate(
         { _id: id },
         {
           title: content.title,
@@ -40,29 +40,35 @@ export class EventRepository {
           eventImageUrl: content.eventImageUrl,
           updatedAt: content.updatedAt,
         },
-      );
-      return { success: true };
+        { new: true },
+      )
+        .lean()
+        .exec(); // 使用 lean() 來提高查詢效能，並將結果轉為純 JavaScript 對象
+
+      if (!updatedData) {
+        return { success: false, error: 'Event not found', data: null };
+      }
+
+      return { success: true, data: updatedData as IEvent };
     } catch (error) {
-      console.log('xxxx');
-      console.log(error);
       return { success: false, error };
     }
   }
 
   public async getEventById(
     id: string,
-  ): Promise<{ event: IEvent | null; error?: any }> {
+  ): Promise<{ success: boolean; error?: any; data?: IEvent | null }> {
     try {
       const event = await EventModel.findById(id);
-      return { event };
+      return { success: true, data: event };
     } catch (error) {
-      return { event: null, error };
+      return { success: false, error };
     }
   }
 
   public async getAllEvents(
     queryParams: QueryParams,
-  ): Promise<{ events: IEvent[]; error?: any }> {
+  ): Promise<{ success: boolean; error?: any; data?: IEvent[] | null }> {
     try {
       const {
         limit,
@@ -87,16 +93,16 @@ export class EventRepository {
         sortBy,
         sortOrder,
       );
-      return { events };
+      return { success: true, data: events };
     } catch (error) {
-      return { events: [], error };
+      return { success: false, error };
     }
   }
 
   public async getEventsByStoreId(
     storeId: string,
     queryParams: QueryParams,
-  ): Promise<{ events: IEvent[]; error?: any }> {
+  ): Promise<{ success: boolean; error?: any; data?: IEvent[] | null }> {
     try {
       const {
         limit,
@@ -121,9 +127,9 @@ export class EventRepository {
         sortBy,
         sortOrder,
       );
-      return { events };
+      return { success: true, data: events };
     } catch (error) {
-      return { events: [], error };
+      return { success: false, error };
     }
   }
 

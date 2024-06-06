@@ -31,7 +31,7 @@ class EventRepository {
     updateEvent(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
+                const updatedData = yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
                     title: content.title,
                     description: content.description,
                     isFoodAllowed: content.isFoodAllowed,
@@ -46,12 +46,15 @@ class EventRepository {
                     participationFee: content.participationFee,
                     eventImageUrl: content.eventImageUrl,
                     updatedAt: content.updatedAt,
-                });
-                return { success: true };
+                }, { new: true })
+                    .lean()
+                    .exec(); // 使用 lean() 來提高查詢效能，並將結果轉為純 JavaScript 對象
+                if (!updatedData) {
+                    return { success: false, error: 'Event not found', data: null };
+                }
+                return { success: true, data: updatedData };
             }
             catch (error) {
-                console.log('xxxx');
-                console.log(error);
                 return { success: false, error };
             }
         });
@@ -60,10 +63,10 @@ class EventRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const event = yield EventModel_1.default.findById(id);
-                return { event };
+                return { success: true, data: event };
             }
             catch (error) {
-                return { event: null, error };
+                return { success: false, error };
             }
         });
     }
@@ -77,10 +80,10 @@ class EventRepository {
                 });
                 const query = eventQuery.buildEventQuery();
                 const events = yield this._getEventsData(query, skip, limit, sortBy, sortOrder);
-                return { events };
+                return { success: true, data: events };
             }
             catch (error) {
-                return { events: [], error };
+                return { success: false, error };
             }
         });
     }
@@ -94,10 +97,10 @@ class EventRepository {
                 });
                 const query = eventQuery.buildEventQuery();
                 const events = yield this._getEventsData(query, skip, limit, sortBy, sortOrder);
-                return { events };
+                return { success: true, data: events };
             }
             catch (error) {
-                return { events: [], error };
+                return { success: false, error };
             }
         });
     }

@@ -33,49 +33,60 @@ class EventService {
     updateEvent(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             const _content = new eventDTO_1.EventDTO(content);
-            console.log('xxxx');
-            console.log(_content);
-            return yield this.eventRepository.updateEvent(id, _content);
+            const _event = yield this.eventRepository.updateEvent(id, _content);
+            if (!lodash_1.default.isEmpty(_event.data)) {
+                const _eventDTO = new eventDTO_1.EventDTO(_event.data);
+                return { success: _event.success, data: _eventDTO.toDetailDTO() };
+            }
+            return { success: _event.success, error: _event.error };
         });
     }
     getDetailEvent(id_1) {
         return __awaiter(this, arguments, void 0, function* (id, isPublish = true) {
             const _event = yield this.eventRepository.getEventById(id);
-            if (!lodash_1.default.isEmpty(_event)) {
-                const _eventDTO = new eventDTO_1.EventDTO(_event);
-                return isPublish
-                    ? _eventDTO.isPublish
-                        ? _eventDTO.toDetailDTO()
-                        : null
-                    : _eventDTO.toDetailDTO();
+            if (!lodash_1.default.isEmpty(_event.data)) {
+                const _eventDTO = new eventDTO_1.EventDTO(_event.data);
+                if (isPublish && !_eventDTO.isPublish) {
+                    return { success: _event.success };
+                }
+                return { success: _event.success, data: _eventDTO.toDetailDTO() };
             }
-            return null;
+            return { success: _event.success, error: _event.error };
         });
     }
     getSummaryEvent(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const _event = yield this.eventRepository.getEventById(id);
-            if (!lodash_1.default.isEmpty(_event)) {
-                const _eventDTO = new eventDTO_1.EventDTO(_event);
-                return _eventDTO.isPublish && _eventDTO.isRegisterable
-                    ? _eventDTO.toSummaryDTO()
-                    : null;
+            if (!lodash_1.default.isEmpty(_event.data)) {
+                const _eventDTO = new eventDTO_1.EventDTO(_event.data);
+                if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
+                    return { success: _event.success, data: _eventDTO.toSummaryDTO() };
+                }
+                return { success: _event.success };
             }
-            return null;
+            return { success: _event.success, error: _event.error };
         });
     }
     getEventsByStore(storeId, optionsReq) {
         return __awaiter(this, void 0, void 0, function* () {
             const queryParams = this.queryParams.parse(optionsReq);
             const eventData = yield this.eventRepository.getEventsByStoreId(storeId, queryParams);
-            return lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+            if (eventData.success) {
+                const eventDTOs = lodash_1.default.map(eventData.data, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+                return { success: eventData.success, data: eventDTOs };
+            }
+            return { success: eventData.success, error: eventData.error };
         });
     }
     getEvents(optionsReq) {
         return __awaiter(this, void 0, void 0, function* () {
             const queryParams = this.queryParams.parse(optionsReq);
             const eventData = yield this.eventRepository.getAllEvents(queryParams);
-            return lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+            if (eventData.success) {
+                const eventDTOs = lodash_1.default.map(eventData.data, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+                return { success: eventData.success, data: eventDTOs };
+            }
+            return { success: eventData.success, error: eventData.error };
         });
     }
 }
