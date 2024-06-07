@@ -72,14 +72,11 @@ export class EventController extends BaseController {
   };
 
   public getEvents = async (req: Request): Promise<ResponseDTO> => {
-    const aaa = await this.handleServiceResponse(
+    return await this.handleServiceResponse(
       () => this.eventService.getEvents(req),
       EventMessages.SUCCESS_REQUEST,
       EventMessages.BAD_REQUEST,
     );
-    console.log('xxxxx');
-    console.log(aaa);
-    return aaa;
   };
 
   public getEventsByStore = async (req: Request): Promise<ResponseDTO> => {

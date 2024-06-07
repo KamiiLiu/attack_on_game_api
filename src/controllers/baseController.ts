@@ -26,8 +26,6 @@ export class BaseController {
   ): Promise<ResponseDTO> {
     try {
       const result = await serviceMethod();
-      console.log('xxxxx');
-      console.log(result);
       if (!_.isEmpty(result.data)) {
         return this.formatResponse(
           CustomResponseType.SUCCESS,
@@ -41,7 +39,6 @@ export class BaseController {
         );
       }
     } catch (error) {
-      console.log(error);
       const errorMessage = _.get(error, 'message', this.server_error_msg);
       return this.formatResponse(CustomResponseType.SYSTEM_ERROR, errorMessage);
     }

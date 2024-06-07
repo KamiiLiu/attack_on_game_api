@@ -32,8 +32,6 @@ class BaseController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield serviceMethod();
-                console.log('xxxxx');
-                console.log(result);
                 if (!lodash_1.default.isEmpty(result.data)) {
                     return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
                 }
@@ -42,7 +40,6 @@ class BaseController {
                 }
             }
             catch (error) {
-                console.log(error);
                 const errorMessage = lodash_1.default.get(error, 'message', this.server_error_msg);
                 return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, errorMessage);
             }

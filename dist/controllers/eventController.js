@@ -40,10 +40,7 @@ class EventController extends baseController_1.BaseController {
             return this.handleServiceResponse(() => this.eventService.getDetailEvent(req.params.id, Boolean(req.query.isPublish)), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
         });
         this.getEvents = (req) => __awaiter(this, void 0, void 0, function* () {
-            const aaa = yield this.handleServiceResponse(() => this.eventService.getEvents(req), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
-            console.log('xxxxx');
-            console.log(aaa);
-            return aaa;
+            return yield this.handleServiceResponse(() => this.eventService.getEvents(req), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);
         });
         this.getEventsByStore = (req) => __awaiter(this, void 0, void 0, function* () {
             return this.handleServiceResponse(() => this.eventService.getEventsByStore(req.params.storeId, req), exports.EventMessages.SUCCESS_REQUEST, exports.EventMessages.BAD_REQUEST);

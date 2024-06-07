@@ -32,7 +32,7 @@ const handleClientError = (message, code = 404) => {
 };
 exports.handleClientError = handleClientError;
 const handleError = (error, statusCode, message) => {
-  console.error(message, error);
+  e.error(message, error);
   return {
     success: false,
     status: statusCode,
