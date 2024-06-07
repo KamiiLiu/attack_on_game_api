@@ -37,10 +37,11 @@ export class BaseController {
       } else {
         return this.formatResponse(
           CustomResponseType.DATABASE_OPERATION_FAILED,
-          result.error.message || failureMessage,
+          _.get(result, 'error.message', failureMessage),
         );
       }
     } catch (error) {
+      console.log(error);
       const errorMessage = _.get(error, 'message', this.server_error_msg);
       return this.formatResponse(CustomResponseType.SYSTEM_ERROR, errorMessage);
     }

@@ -38,10 +38,11 @@ class BaseController {
                     return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
                 }
                 else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, result.error.message || failureMessage);
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, lodash_1.default.get(result, 'error.message', failureMessage));
                 }
             }
             catch (error) {
+                console.log(error);
                 const errorMessage = lodash_1.default.get(error, 'message', this.server_error_msg);
                 return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, errorMessage);
             }
