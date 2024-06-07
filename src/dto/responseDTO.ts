@@ -1,8 +1,8 @@
 import { CustomResponseType } from '@/enums/CustomResponseType';
-
+import { SPECIAL_ERROR_MSG } from '@/errors/CustomError';
 export class ResponseDTO {
   public readonly status: CustomResponseType = CustomResponseType.SYSTEM_ERROR;
-  public readonly message: string = '';
+  public readonly message: string = SPECIAL_ERROR_MSG;
   public readonly data: unknown = null;
 
   constructor(options: {

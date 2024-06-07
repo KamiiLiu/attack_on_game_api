@@ -15,23 +15,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventRepository = void 0;
 const EventModel_1 = __importDefault(require("@/models/EventModel"));
 const EventQuery_1 = require("@/queries/EventQuery");
+const CustomResponseType_1 = require("@/enums/CustomResponseType");
+const CustomError_1 = require("@/errors/CustomError");
 class EventRepository {
     createEvent(content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const event = new EventModel_1.default(content);
                 yield event.save();
-                return { success: true };
+                return true;
             }
             catch (error) {
-                return { success: false, error };
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${CustomError_1.MONGODB_ERROR_MSG}:${error.message || error}`);
             }
         });
     }
     updateEvent(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const updatedData = yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
+                return yield EventModel_1.default.findOneAndUpdate({ _id: id }, {
                     title: content.title,
                     description: content.description,
                     isFoodAllowed: content.isFoodAllowed,
@@ -49,24 +51,19 @@ class EventRepository {
                 }, { new: true })
                     .lean()
                     .exec(); // 使用 lean() 來提高查詢效能，並將結果轉為純 JavaScript 對象
-                if (!updatedData) {
-                    return { success: false, error: 'Event not found', data: null };
-                }
-                return { success: true, data: updatedData };
             }
             catch (error) {
-                return { success: false, error };
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${CustomError_1.MONGODB_ERROR_MSG}:${error.message || error}`);
             }
         });
     }
     getEventById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const event = yield EventModel_1.default.findById(id);
-                return { success: true, data: event };
+                return yield EventModel_1.default.findById(id);
             }
             catch (error) {
-                return { success: false, error };
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${CustomError_1.MONGODB_ERROR_MSG}:${error.message || error}`);
             }
         });
     }
@@ -80,10 +77,10 @@ class EventRepository {
                 });
                 const query = eventQuery.buildEventQuery();
                 const events = yield this._getEventsData(query, skip, limit, sortBy, sortOrder);
-                return { success: true, data: events };
+                return events;
             }
             catch (error) {
-                return { success: false, error };
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${CustomError_1.MONGODB_ERROR_MSG}:${error.message || error}`);
             }
         });
     }
@@ -97,10 +94,10 @@ class EventRepository {
                 });
                 const query = eventQuery.buildEventQuery();
                 const events = yield this._getEventsData(query, skip, limit, sortBy, sortOrder);
-                return { success: true, data: events };
+                return events;
             }
             catch (error) {
-                return { success: false, error };
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${CustomError_1.MONGODB_ERROR_MSG}:${error.message || error}`);
             }
         });
     }
@@ -116,7 +113,7 @@ class EventRepository {
                 return eventData || [];
             }
             catch (error) {
-                return [];
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${CustomError_1.MONGODB_ERROR_MSG}:${error.message || error}`);
             }
         });
     }

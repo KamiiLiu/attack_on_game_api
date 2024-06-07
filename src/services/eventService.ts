@@ -6,19 +6,20 @@ import { IEvent } from '@/interfaces/EventInterface';
 import { EventDTO } from '@/dto/event/eventDTO';
 import { EventRepository } from '@/repositories/eventRepository';
 import { QueryParamsParser } from '@/services/eventQueryParams';
-
+import { IHTTPSMessage } from '@/interfaces/HTTPSMessageInterface';
+import { CustomResponseType } from '@/enums/CustomResponseType';
+import { CustomError } from '@/errors/CustomError';
 export class EventService {
   private eventRepository: EventRepository;
   private queryParams: QueryParamsParser;
-
-  constructor() {
+  private msg: IHTTPSMessage;
+  constructor(v: IHTTPSMessage) {
     this.eventRepository = new EventRepository();
     this.queryParams = new QueryParamsParser();
+    this.msg = v;
   }
 
-  public async createEvent(
-    content: IEvent,
-  ): Promise<{ success: boolean; error?: any }> {
+  public async createNewEvent(content: IEvent): Promise<boolean> {
     const _content = new EventDTO(content).toDetailDTO();
     return await this.eventRepository.createEvent(_content);
   }
@@ -26,80 +27,81 @@ export class EventService {
   public async updateEvent(
     id: string,
     content: IEvent,
-  ): Promise<{ success: boolean; error?: any; data?: Partial<IEvent> | null }> {
+  ): Promise<Partial<IEvent>> {
     const _content = new EventDTO(content);
     const _event = await this.eventRepository.updateEvent(id, _content);
-    if (!_.isEmpty(_event.data)) {
-      const _eventDTO = new EventDTO(_event.data);
-      return { success: true, data: _eventDTO.toDetailDTO() };
+    if (!_.isEmpty(_event)) {
+      const _eventDTO = new EventDTO(_event);
+      return _eventDTO.toDetailDTO();
     }
-    return { success: false, error: _event.error };
+    throw new CustomError(CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
   }
 
-  public async getDetailEvent(
+  public async getEventDetails(
     id: string,
     isPublish = true,
-  ): Promise<{ success: boolean; error?: any; data?: Partial<IEvent> | null }> {
-    const _event = await this.eventRepository.getEventById(id);
-    if (!_.isEmpty(_event.data)) {
-      const _eventDTO = new EventDTO(_event.data);
-      if (isPublish && !_eventDTO.isPublish) {
-        return { success: false };
-      }
-      return { success: _event.success, data: _eventDTO.toDetailDTO() };
+  ): Promise<Partial<IEvent> | null> {
+    const event = await this.eventRepository.getEventById(id);
+    if (_.isEmpty(event)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        this.msg.FAILED_FOUND,
+      );
     }
-    return { success: false, error: _event.error };
-  }
-
-  public async getSummaryEvent(
-    id: string,
-  ): Promise<{ success: boolean; error?: any; data?: Partial<IEvent> | null }> {
-    const _event = await this.eventRepository.getEventById(id);
-    if (!_.isEmpty(_event.data)) {
-      const _eventDTO = new EventDTO(_event.data);
-      if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
-        return { success: true, data: _eventDTO.toSummaryDTO() };
-      }
-      return { success: false };
+    const eventDTO = new EventDTO(event);
+    if (isPublish && !eventDTO.isPublish) {
+      throw new CustomError(
+        CustomResponseType.UNAUTHORIZED,
+        this.msg.BAD_REQUEST,
+      );
     }
-    return { success: false, error: _event.error };
+    return eventDTO.toDetailDTO();
   }
-
-  public async getEventsByStore(
+  public async getEventSummary(id: string): Promise<Partial<IEvent> | null> {
+    const event = await this.eventRepository.getEventById(id);
+    if (_.isEmpty(event)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        this.msg.FAILED_FOUND,
+      );
+    }
+    const _eventDTO = new EventDTO(event);
+    if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
+      return _eventDTO.toSummaryDTO();
+    }
+    throw new CustomError(
+      CustomResponseType.UNAUTHORIZED,
+      this.msg.BAD_REQUEST,
+    );
+  }
+  public async getEventsForStore(
     storeId: string,
     optionsReq: Request,
-  ): Promise<{
-    success: boolean;
-    error?: any;
-    data?: Partial<IEvent>[] | null;
-  }> {
+  ): Promise<Partial<IEvent>[]> {
     const queryParams = this.queryParams.parse(optionsReq);
     const eventData = await this.eventRepository.getEventsByStoreId(
       storeId,
       queryParams,
     );
-    if (eventData.success) {
-      const eventDTOs = _.map(eventData.data, (event) =>
+    console.log(eventData);
+    if (!_.isEmpty(eventData)) {
+      const eventDTOs = _.map(eventData, (event) =>
         new EventDTO(event).toDetailDTO(),
       );
-      return { success: eventData.success, data: eventDTOs };
+      return eventDTOs;
     }
-    return { success: eventData.success, error: eventData.error };
+    throw new CustomError(CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
   }
 
-  public async getEvents(optionsReq: Request): Promise<{
-    success: boolean;
-    error?: any;
-    data?: Partial<IEvent>[] | null;
-  }> {
+  public async getAllEvents(optionsReq: Request): Promise<Partial<IEvent>[]> {
     const queryParams = this.queryParams.parse(optionsReq);
     const eventData = await this.eventRepository.getAllEvents(queryParams);
-    if (eventData.success) {
-      const eventDTOs = _.map(eventData.data, (event) =>
-        new EventDTO(event).toDetailDTO(),
+    if (_.isEmpty(eventData)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        this.msg.FAILED_FOUND,
       );
-      return { success: eventData.success, data: eventDTOs };
     }
-    return { success: eventData.success, error: eventData.error };
+    return _.map(eventData, (event) => new EventDTO(event).toDetailDTO());
   }
 }

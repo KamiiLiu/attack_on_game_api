@@ -15,10 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseController = void 0;
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const responseDTO_1 = require("@/dto/responseDTO");
+const CustomError_1 = require("@/errors/CustomError");
 const lodash_1 = __importDefault(require("lodash"));
 class BaseController {
-    constructor(server_error_msg) {
-        this.server_error_msg = server_error_msg;
+    constructor(msg) {
+        this.msg = msg;
     }
     formatResponse(status = CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, message, data) {
         const options = {
@@ -28,22 +29,32 @@ class BaseController {
         };
         return new responseDTO_1.ResponseDTO(options);
     }
-    handleServiceResponse(serviceMethod, successMessage, failureMessage) {
+    handleServiceResponse(serviceMethod, successMessage) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield serviceMethod();
-                if (result.success) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, lodash_1.default.get(result, 'data', null));
+                if (lodash_1.default.isBoolean(result)) {
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage);
+                }
+                else if (!lodash_1.default.isEmpty(result)) {
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
                 }
                 else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, lodash_1.default.get(result, 'error.message', failureMessage));
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.OTHER, CustomError_1.SPECIAL_ERROR_MSG);
                 }
             }
             catch (error) {
-                const errorMessage = lodash_1.default.get(error, 'message', this.server_error_msg);
-                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, errorMessage);
+                console.log(error);
+                if (this.isErrorCode(error)) {
+                    return this.formatResponse(error.code, error.msg);
+                }
+                return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, this.msg.SERVER_ERROR);
             }
         });
+    }
+    isErrorCode(error) {
+        return (error.code !== undefined &&
+            error.msg !== undefined);
     }
 }
 exports.BaseController = BaseController;

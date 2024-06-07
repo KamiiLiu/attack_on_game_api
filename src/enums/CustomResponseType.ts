@@ -11,4 +11,5 @@ export enum CustomResponseType {
   UPDATED = '已更新',
   DELETED = '已刪除',
   DATABASE_OPERATION_FAILED = '資料庫操作失敗',
+  OTHER = '不明錯誤',
 }

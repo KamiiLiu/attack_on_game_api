@@ -15,5 +15,6 @@ var CustomResponseType;
     CustomResponseType["UPDATED"] = "\u5DF2\u66F4\u65B0";
     CustomResponseType["DELETED"] = "\u5DF2\u522A\u9664";
     CustomResponseType["DATABASE_OPERATION_FAILED"] = "\u8CC7\u6599\u5EAB\u64CD\u4F5C\u5931\u6557";
+    CustomResponseType["OTHER"] = "\u4E0D\u660E\u932F\u8AA4";
 })(CustomResponseType || (exports.CustomResponseType = CustomResponseType = {}));
 //# sourceMappingURL=CustomResponseType.js.map

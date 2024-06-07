@@ -4,25 +4,28 @@ import { IEvent } from '@/interfaces/EventInterface';
 import { EventQuery } from '@/queries/EventQuery';
 import { QueryParams } from '@/services/eventQueryParams';
 import { SortOrder } from 'mongoose';
+import { CustomResponseType } from '@/enums/CustomResponseType';
+import { CustomError, MONGODB_ERROR_MSG } from '@/errors/CustomError';
 export class EventRepository {
-  public async createEvent(
-    content: Partial<EventDTO>,
-  ): Promise<{ success: boolean; error?: any }> {
+  public async createEvent(content: Partial<EventDTO>): Promise<boolean> {
     try {
       const event = new EventModel(content);
       await event.save();
-      return { success: true };
-    } catch (error) {
-      return { success: false, error };
+      return true;
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
     }
   }
 
   public async updateEvent(
     id: string,
     content: EventDTO,
-  ): Promise<{ success: boolean; data?: IEvent | null; error?: any }> {
+  ): Promise<IEvent | null> {
     try {
-      const updatedData = await EventModel.findOneAndUpdate(
+      return await EventModel.findOneAndUpdate(
         { _id: id },
         {
           title: content.title,
@@ -44,31 +47,28 @@ export class EventRepository {
       )
         .lean()
         .exec(); // 使用 lean() 來提高查詢效能，並將結果轉為純 JavaScript 對象
-
-      if (!updatedData) {
-        return { success: false, error: 'Event not found', data: null };
-      }
-
-      return { success: true, data: updatedData as IEvent };
-    } catch (error) {
-      return { success: false, error };
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
     }
   }
 
-  public async getEventById(
-    id: string,
-  ): Promise<{ success: boolean; error?: any; data?: IEvent | null }> {
+  public async getEventById(id: string): Promise<IEvent | null> {
     try {
-      const event = await EventModel.findById(id);
-      return { success: true, data: event };
-    } catch (error) {
-      return { success: false, error };
+      return await EventModel.findById(id);
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
     }
   }
 
   public async getAllEvents(
     queryParams: QueryParams,
-  ): Promise<{ success: boolean; error?: any; data?: IEvent[] | null }> {
+  ): Promise<IEvent[] | null> {
     try {
       const {
         limit,
@@ -93,16 +93,19 @@ export class EventRepository {
         sortBy,
         sortOrder,
       );
-      return { success: true, data: events };
-    } catch (error) {
-      return { success: false, error };
+      return events;
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
     }
   }
 
   public async getEventsByStoreId(
     storeId: string,
     queryParams: QueryParams,
-  ): Promise<{ success: boolean; error?: any; data?: IEvent[] | null }> {
+  ): Promise<IEvent[] | null> {
     try {
       const {
         limit,
@@ -127,9 +130,12 @@ export class EventRepository {
         sortBy,
         sortOrder,
       );
-      return { success: true, data: events };
-    } catch (error) {
-      return { success: false, error };
+      return events;
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
     }
   }
 
@@ -148,8 +154,11 @@ export class EventRepository {
         .sort(sortOptions)
         .exec();
       return eventData || [];
-    } catch (error) {
-      return [];
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
     }
   }
 }

@@ -19,12 +19,15 @@ const lodash_1 = __importDefault(require("lodash"));
 const eventDTO_1 = require("@/dto/event/eventDTO");
 const eventRepository_1 = require("@/repositories/eventRepository");
 const eventQueryParams_1 = require("@/services/eventQueryParams");
+const CustomResponseType_1 = require("@/enums/CustomResponseType");
+const CustomError_1 = require("@/errors/CustomError");
 class EventService {
-    constructor() {
+    constructor(v) {
         this.eventRepository = new eventRepository_1.EventRepository();
         this.queryParams = new eventQueryParams_1.QueryParamsParser();
+        this.msg = v;
     }
-    createEvent(content) {
+    createNewEvent(content) {
         return __awaiter(this, void 0, void 0, function* () {
             const _content = new eventDTO_1.EventDTO(content).toDetailDTO();
             return yield this.eventRepository.createEvent(_content);
@@ -34,59 +37,59 @@ class EventService {
         return __awaiter(this, void 0, void 0, function* () {
             const _content = new eventDTO_1.EventDTO(content);
             const _event = yield this.eventRepository.updateEvent(id, _content);
-            if (!lodash_1.default.isEmpty(_event.data)) {
-                const _eventDTO = new eventDTO_1.EventDTO(_event.data);
-                return { success: true, data: _eventDTO.toDetailDTO() };
+            if (!lodash_1.default.isEmpty(_event)) {
+                const _eventDTO = new eventDTO_1.EventDTO(_event);
+                return _eventDTO.toDetailDTO();
             }
-            return { success: false, error: _event.error };
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
         });
     }
-    getDetailEvent(id_1) {
+    getEventDetails(id_1) {
         return __awaiter(this, arguments, void 0, function* (id, isPublish = true) {
-            const _event = yield this.eventRepository.getEventById(id);
-            if (!lodash_1.default.isEmpty(_event.data)) {
-                const _eventDTO = new eventDTO_1.EventDTO(_event.data);
-                if (isPublish && !_eventDTO.isPublish) {
-                    return { success: false };
-                }
-                return { success: _event.success, data: _eventDTO.toDetailDTO() };
+            const event = yield this.eventRepository.getEventById(id);
+            if (lodash_1.default.isEmpty(event)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
             }
-            return { success: false, error: _event.error };
+            const eventDTO = new eventDTO_1.EventDTO(event);
+            if (isPublish && !eventDTO.isPublish) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, this.msg.BAD_REQUEST);
+            }
+            return eventDTO.toDetailDTO();
         });
     }
-    getSummaryEvent(id) {
+    getEventSummary(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const _event = yield this.eventRepository.getEventById(id);
-            if (!lodash_1.default.isEmpty(_event.data)) {
-                const _eventDTO = new eventDTO_1.EventDTO(_event.data);
-                if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
-                    return { success: true, data: _eventDTO.toSummaryDTO() };
-                }
-                return { success: false };
+            const event = yield this.eventRepository.getEventById(id);
+            if (lodash_1.default.isEmpty(event)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
             }
-            return { success: false, error: _event.error };
+            const _eventDTO = new eventDTO_1.EventDTO(event);
+            if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
+                return _eventDTO.toSummaryDTO();
+            }
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, this.msg.BAD_REQUEST);
         });
     }
-    getEventsByStore(storeId, optionsReq) {
+    getEventsForStore(storeId, optionsReq) {
         return __awaiter(this, void 0, void 0, function* () {
             const queryParams = this.queryParams.parse(optionsReq);
             const eventData = yield this.eventRepository.getEventsByStoreId(storeId, queryParams);
-            if (eventData.success) {
-                const eventDTOs = lodash_1.default.map(eventData.data, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
-                return { success: eventData.success, data: eventDTOs };
+            console.log(eventData);
+            if (!lodash_1.default.isEmpty(eventData)) {
+                const eventDTOs = lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+                return eventDTOs;
             }
-            return { success: eventData.success, error: eventData.error };
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
         });
     }
-    getEvents(optionsReq) {
+    getAllEvents(optionsReq) {
         return __awaiter(this, void 0, void 0, function* () {
             const queryParams = this.queryParams.parse(optionsReq);
             const eventData = yield this.eventRepository.getAllEvents(queryParams);
-            if (eventData.success) {
-                const eventDTOs = lodash_1.default.map(eventData.data, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
-                return { success: eventData.success, data: eventDTOs };
+            if (lodash_1.default.isEmpty(eventData)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
             }
-            return { success: eventData.success, error: eventData.error };
+            return lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
         });
     }
 }

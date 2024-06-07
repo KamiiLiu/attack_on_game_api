@@ -8,6 +8,7 @@ import { IHTTPSMessage } from '@/interfaces/HTTPSMessageInterface';
 export const EventMessages: IHTTPSMessage = {
   SUCCESS_CREATED: '建立活動成功，你真棒！',
   FAILED_CREATED: '建立活動失敗，幫你哭。',
+  FAILED_FOUND: '沒有找到相關活動。可能原因包括：ID不正確。',
   BAD_REQUEST: '無法找到相關活動。可能原因包括：活動已下架或報名尚未開放。',
   SUCCESS_REQUEST: '成功獲取桌遊活動信息！',
   SERVER_ERROR: '伺服器錯誤，請問問卡咪吧。',
@@ -19,15 +20,14 @@ export class EventController extends BaseController {
   private eventService: EventService;
 
   constructor() {
-    super(EventMessages.SERVER_ERROR);
-    this.eventService = new EventService();
+    super(EventMessages);
+    this.eventService = new EventService(EventMessages);
   }
 
   public createEvent = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.createEvent(req.body),
+      () => this.eventService.createNewEvent(req.body),
       EventMessages.SUCCESS_CREATED,
-      EventMessages.FAILED_CREATED,
     );
   };
 
@@ -35,55 +35,49 @@ export class EventController extends BaseController {
     return this.handleServiceResponse(
       () => this.eventService.updateEvent(req.params.id, req.body),
       EventMessages.SUCCESS_UPDATE,
-      EventMessages.FAILED_UPDATE,
     );
   };
 
   public getEventSummary = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.getSummaryEvent(req.params.id),
+      () => this.eventService.getEventSummary(req.params.id),
       EventMessages.SUCCESS_REQUEST,
-      EventMessages.BAD_REQUEST,
     );
   };
 
   public getOwnEvent = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
       () =>
-        this.eventService.getDetailEvent(
+        this.eventService.getEventDetails(
           req.body.storeId,
           Boolean(req.query.isPublish),
         ),
       EventMessages.SUCCESS_REQUEST,
-      EventMessages.BAD_REQUEST,
     );
   };
 
   public getEventDetail = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
       () =>
-        this.eventService.getDetailEvent(
+        this.eventService.getEventDetails(
           req.params.id,
           Boolean(req.query.isPublish),
         ),
       EventMessages.SUCCESS_REQUEST,
-      EventMessages.BAD_REQUEST,
     );
   };
 
   public getEvents = async (req: Request): Promise<ResponseDTO> => {
     return await this.handleServiceResponse(
-      () => this.eventService.getEvents(req),
+      () => this.eventService.getAllEvents(req),
       EventMessages.SUCCESS_REQUEST,
-      EventMessages.BAD_REQUEST,
     );
   };
 
   public getEventsByStore = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.getEventsByStore(req.params.storeId, req),
+      () => this.eventService.getEventsForStore(req.params.storeId, req),
       EventMessages.SUCCESS_REQUEST,
-      EventMessages.BAD_REQUEST,
     );
   };
 }

@@ -1,11 +1,17 @@
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { ResponseDTO } from '@/dto/responseDTO';
+import { IHTTPSMessage } from '@/interfaces/HTTPSMessageInterface';
+import { SPECIAL_ERROR_MSG } from '@/errors/CustomError';
 import _ from 'lodash';
+interface ErrorCode {
+  code: CustomResponseType;
+  msg: keyof IHTTPSMessage;
+}
 export class BaseController {
-  private server_error_msg: string;
+  private msg: IHTTPSMessage;
 
-  constructor(server_error_msg: string) {
-    this.server_error_msg = server_error_msg;
+  constructor(msg: IHTTPSMessage) {
+    this.msg = msg;
   }
   public formatResponse<T>(
     status = CustomResponseType.SYSTEM_ERROR,
@@ -22,25 +28,36 @@ export class BaseController {
   public async handleServiceResponse(
     serviceMethod: () => Promise<any>,
     successMessage: string,
-    failureMessage: string,
   ): Promise<ResponseDTO> {
     try {
       const result = await serviceMethod();
-      if (result.success) {
+      if (_.isBoolean(result)) {
+        return this.formatResponse(CustomResponseType.SUCCESS, successMessage);
+      } else if (!_.isEmpty(result)) {
         return this.formatResponse(
           CustomResponseType.SUCCESS,
           successMessage,
-          _.get(result, 'data', null),
+          result,
         );
       } else {
-        return this.formatResponse(
-          CustomResponseType.DATABASE_OPERATION_FAILED,
-          _.get(result, 'error.message', failureMessage),
-        );
+        return this.formatResponse(CustomResponseType.OTHER, SPECIAL_ERROR_MSG);
       }
-    } catch (error) {
-      const errorMessage = _.get(error, 'message', this.server_error_msg);
-      return this.formatResponse(CustomResponseType.SYSTEM_ERROR, errorMessage);
+    } catch (error: unknown) {
+      console.log(error);
+      if (this.isErrorCode(error)) {
+        return this.formatResponse(error.code, error.msg);
+      }
+      return this.formatResponse(
+        CustomResponseType.SYSTEM_ERROR,
+        this.msg.SERVER_ERROR,
+      );
     }
+  }
+
+  private isErrorCode(error: unknown): error is ErrorCode {
+    return (
+      (error as ErrorCode).code !== undefined &&
+      (error as ErrorCode).msg !== undefined
+    );
   }
 }
