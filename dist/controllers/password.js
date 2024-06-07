@@ -15,37 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendResetPasswordEmail = void 0;
 const googleapis_1 = require("googleapis");
 const nodemailer_1 = __importDefault(require("nodemailer"));
+const User_1 = __importDefault(require("../models/User"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const sendResetPasswordEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { to } = req.body;
-        const OAuth2 = googleapis_1.google.auth.OAuth2;
-        const oauth2Client = new OAuth2({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            redirectUri: "https://developers.google.com/oauthplayground"
-        });
-        oauth2Client.setCredentials({
-            refresh_token: process.env.GOOGLE_REFRESH_TOKEN
-        });
-        const { token } = yield oauth2Client.getAccessToken();
-        const transporter = nodemailer_1.default.createTransport({
-            service: 'gmail',
-            auth: {
-                type: "OAuth2",
-                user: process.env.EMAIL_ADDRESS,
-                clientId: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-                accessToken: token
-            }
-        });
-        const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
-            to,
-            subject: "Reset your password",
-            text: "Click the link to reset your password"
-        };
-        yield transporter.sendMail(mailOptions);
+        const user = yield User_1.default.findOne({ email: to });
+        if (!user) {
+            res.status(404).json({ status: false, message: "User not found" });
+            return;
+        }
+        const validateCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const validationToken = jsonwebtoken_1.default.sign({ email: user.email, emailCode: validateCode }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        user.emailCode = validateCode;
+        yield user.save();
+        yield sendEamilValidationCode(to, validationToken);
         res.status(200).json({ status: true, message: "Email sent" });
     }
     catch (err) {
@@ -54,3 +38,33 @@ const sendResetPasswordEmail = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.sendResetPasswordEmail = sendResetPasswordEmail;
+const sendEamilValidationCode = (to, validationToken) => __awaiter(void 0, void 0, void 0, function* () {
+    const OAuth2 = googleapis_1.google.auth.OAuth2;
+    const oauth2Client = new OAuth2({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        redirectUri: "https://developers.google.com/oauthplayground"
+    });
+    oauth2Client.setCredentials({
+        refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+    });
+    const { token } = yield oauth2Client.getAccessToken();
+    const transporter = nodemailer_1.default.createTransport({
+        service: 'gmail',
+        auth: {
+            type: "OAuth2",
+            user: process.env.EMAIL_ADDRESS,
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+            accessToken: token
+        }
+    });
+    const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to,
+        subject: "Reset your password",
+        text: `Click the link to reset your password: http://localhost:5173/#/password/getEmailCode/${validationToken}`
+    };
+    yield transporter.sendMail(mailOptions);
+});
