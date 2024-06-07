@@ -11,7 +11,9 @@
     "maxParticipants": 8,
     "minParticipants": 3,
     "participationFee": 250,
-    "eventImageUrl": ["https://i.ibb.co/gtmkKhQ/yudai-9s50005-TP-V.jpg"],
+    "eventImageUrl": [
+      "https://i.ibb.co/gtmkKhQ/yudai-9s50005-TP-V.jpg"
+    ],
     "isPublish": true,
     "currentParticipantsCount": 0,
     "createdAt": "2024-05-24T00:00:00Z",

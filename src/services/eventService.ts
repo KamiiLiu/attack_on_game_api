@@ -31,9 +31,9 @@ export class EventService {
     const _event = await this.eventRepository.updateEvent(id, _content);
     if (!_.isEmpty(_event.data)) {
       const _eventDTO = new EventDTO(_event.data);
-      return { success: _event.success, data: _eventDTO.toDetailDTO() };
+      return { success: true, data: _eventDTO.toDetailDTO() };
     }
-    return { success: _event.success, error: _event.error };
+    return { success: false, error: _event.error };
   }
 
   public async getDetailEvent(
@@ -44,11 +44,11 @@ export class EventService {
     if (!_.isEmpty(_event.data)) {
       const _eventDTO = new EventDTO(_event.data);
       if (isPublish && !_eventDTO.isPublish) {
-        return { success: _event.success };
+        return { success: false };
       }
       return { success: _event.success, data: _eventDTO.toDetailDTO() };
     }
-    return { success: _event.success, error: _event.error };
+    return { success: false, error: _event.error };
   }
 
   public async getSummaryEvent(
@@ -58,11 +58,11 @@ export class EventService {
     if (!_.isEmpty(_event.data)) {
       const _eventDTO = new EventDTO(_event.data);
       if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
-        return { success: _event.success, data: _eventDTO.toSummaryDTO() };
+        return { success: true, data: _eventDTO.toSummaryDTO() };
       }
-      return { success: _event.success };
+      return { success: false };
     }
-    return { success: _event.success, error: _event.error };
+    return { success: false, error: _event.error };
   }
 
   public async getEventsByStore(

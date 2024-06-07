@@ -26,11 +26,11 @@ export class BaseController {
   ): Promise<ResponseDTO> {
     try {
       const result = await serviceMethod();
-      if (!_.isEmpty(result.data)) {
+      if (result.success) {
         return this.formatResponse(
           CustomResponseType.SUCCESS,
           successMessage,
-          result,
+          _.get(result, 'data', null),
         );
       } else {
         return this.formatResponse(

@@ -36,9 +36,9 @@ class EventService {
             const _event = yield this.eventRepository.updateEvent(id, _content);
             if (!lodash_1.default.isEmpty(_event.data)) {
                 const _eventDTO = new eventDTO_1.EventDTO(_event.data);
-                return { success: _event.success, data: _eventDTO.toDetailDTO() };
+                return { success: true, data: _eventDTO.toDetailDTO() };
             }
-            return { success: _event.success, error: _event.error };
+            return { success: false, error: _event.error };
         });
     }
     getDetailEvent(id_1) {
@@ -47,11 +47,11 @@ class EventService {
             if (!lodash_1.default.isEmpty(_event.data)) {
                 const _eventDTO = new eventDTO_1.EventDTO(_event.data);
                 if (isPublish && !_eventDTO.isPublish) {
-                    return { success: _event.success };
+                    return { success: false };
                 }
                 return { success: _event.success, data: _eventDTO.toDetailDTO() };
             }
-            return { success: _event.success, error: _event.error };
+            return { success: false, error: _event.error };
         });
     }
     getSummaryEvent(id) {
@@ -60,11 +60,11 @@ class EventService {
             if (!lodash_1.default.isEmpty(_event.data)) {
                 const _eventDTO = new eventDTO_1.EventDTO(_event.data);
                 if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
-                    return { success: _event.success, data: _eventDTO.toSummaryDTO() };
+                    return { success: true, data: _eventDTO.toSummaryDTO() };
                 }
-                return { success: _event.success };
+                return { success: false };
             }
-            return { success: _event.success, error: _event.error };
+            return { success: false, error: _event.error };
         });
     }
     getEventsByStore(storeId, optionsReq) {
