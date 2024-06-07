@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendResetPasswordEmail = void 0;
+exports.resetPassword = exports.sendResetPasswordEmail = void 0;
 const googleapis_1 = require("googleapis");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const User_1 = __importDefault(require("../models/User"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const bcrypt_1 = require("bcrypt");
 const sendResetPasswordEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { to } = req.body;
@@ -38,6 +39,31 @@ const sendResetPasswordEmail = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.sendResetPasswordEmail = sendResetPasswordEmail;
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { validationToken, newPassword } = req.body;
+        const decoded = jsonwebtoken_1.default.verify(validationToken, process.env.JWT_SECRET);
+        const user = yield User_1.default.findOne({ email: decoded.email });
+        if (!user) {
+            res.status(404).json({ status: false, message: "User not found" });
+            return;
+        }
+        if (user.emailCode !== decoded.emailCode) {
+            res.status(400).json({ status: false, message: "Invalid code" });
+            return;
+        }
+        console.log(newPassword);
+        user.password = yield (0, bcrypt_1.hash)(newPassword, 10);
+        user.emailCode = "";
+        yield user.save();
+        res.status(200).json({ status: true, message: "Code is valid" });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ status: false, message: err.message });
+    }
+});
+exports.resetPassword = resetPassword;
 const sendEamilValidationCode = (to, validationToken) => __awaiter(void 0, void 0, void 0, function* () {
     const OAuth2 = googleapis_1.google.auth.OAuth2;
     const oauth2Client = new OAuth2({

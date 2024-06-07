@@ -4,6 +4,7 @@ import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
+import { hash } from 'bcrypt';
 
 
 export const sendResetPasswordEmail = async (req: Request, res: Response) => {
@@ -31,6 +32,43 @@ export const sendResetPasswordEmail = async (req: Request, res: Response) => {
         res.status(500).json({ status: false, message: err.message });
     }
 }
+
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { validationToken, newPassword } = req.body;
+
+        type Decoded = {
+            email: string,
+            emailCode: string
+        }
+
+        const decoded = jwt.verify(validationToken, process.env.JWT_SECRET!) as Decoded;
+        const user = await User.findOne({ email: decoded.email });
+
+        if (!user) {
+            res.status(404).json({ status: false, message: "User not found" });
+            return;
+        }
+
+        if (user.emailCode !== decoded.emailCode) {
+            res.status(400).json({ status: false, message: "Invalid code" });
+            return;
+        }
+
+        console.log(newPassword);
+        user.password = await hash(newPassword, 10);
+        user.emailCode = "";
+        await user.save();
+
+        res.status(200).json({ status: true, message: "Code is valid" });
+    }
+    catch (err: any) {
+        console.error(err);
+        res.status(500).json({ status: false, message: err.message });
+    }
+
+}
+
 
 const sendEamilValidationCode = async (to: string, validationToken: string) => {
     const OAuth2 = google.auth.OAuth2;
