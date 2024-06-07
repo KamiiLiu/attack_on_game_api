@@ -4,7 +4,8 @@ import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+import { getUser } from '@/utils/help';
 
 
 export const sendResetPasswordEmail = async (req: Request, res: Response) => {
@@ -68,6 +69,36 @@ export const resetPassword = async (req: Request, res: Response) => {
     }
 
 }
+
+export const changePassword = async (req: Request, res: Response) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        const user = await User.findById(getUser(req)._id);
+
+        if (!user) {
+            res.status(404).json({ status: false, message: "User not found" });
+            return;
+        }
+
+        const isPasswordValid = compare(oldPassword, user.password);
+
+        if (!isPasswordValid) {
+            res.status(400).json({ status: false, message: "Invalid password" });
+            return;
+        }
+
+        user.password = await hash(newPassword, 10);
+        await user.save();
+
+        res.status(200).json({ status: true, message: "Password changed" });
+    }
+    catch (err: any) {
+        console.error(err);
+        res.status(500).json({ status: false, message: err.message });
+    }
+}
+
 
 
 const sendEamilValidationCode = async (to: string, validationToken: string) => {
