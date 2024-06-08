@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = __importDefault(require("../models/User"));
-const bcrypt_1 = require("bcrypt");
 const express_validator_1 = require("express-validator");
 const userController = {
     create(req, res, next) {
@@ -32,7 +31,7 @@ const userController = {
                     res.status(409).json({ status: false, message: 'User already exists' });
                     return;
                 }
-                const hashedPassword = yield (0, bcrypt_1.hash)(password, 10);
+                const hashedPassword = password;
                 yield User_1.default.create({ role, email, password: hashedPassword });
                 res.status(200).json({ status: true, menubar: 'User created' });
             }
