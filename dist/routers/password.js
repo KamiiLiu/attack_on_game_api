@@ -8,3 +8,4 @@ router.post("/sendResetEmail", password_1.sendResetPasswordEmail);
 router.post("/reset-password", password_1.resetPassword);
 router.post("/change-password", auth_1.jwtAuthenticator, password_1.changePassword);
 exports.default = router;
+//# sourceMappingURL=password.js.map

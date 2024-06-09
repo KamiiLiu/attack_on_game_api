@@ -86,3 +86,4 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.changePassword = changePassword;
+//# sourceMappingURL=password.js.map
