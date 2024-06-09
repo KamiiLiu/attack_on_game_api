@@ -29,3 +29,4 @@ function connectDB() {
     });
 }
 exports.default = connectDB;
+//# sourceMappingURL=connectDB.js.map

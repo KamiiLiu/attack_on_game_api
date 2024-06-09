@@ -1,0 +1,97 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventService = void 0;
+//TODO:上傳照片的方式可能也要研究一下
+//TODO:寫一個fs模塊，批量上傳假資料
+const lodash_1 = __importDefault(require("lodash"));
+const eventDTO_1 = require("@/dto/event/eventDTO");
+const eventRepository_1 = require("@/repositories/eventRepository");
+const eventQueryParams_1 = require("@/services/eventQueryParams");
+const CustomResponseType_1 = require("@/enums/CustomResponseType");
+const CustomError_1 = require("@/errors/CustomError");
+class EventService {
+    constructor(v) {
+        this.eventRepository = new eventRepository_1.EventRepository();
+        this.queryParams = new eventQueryParams_1.QueryParamsParser();
+        this.msg = v;
+    }
+    createNewEvent(content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const _content = new eventDTO_1.EventDTO(content).toDetailDTO();
+            return yield this.eventRepository.createEvent(_content);
+        });
+    }
+    updateEvent(id, content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const _content = new eventDTO_1.EventDTO(content);
+            const _event = yield this.eventRepository.updateEvent(id, _content);
+            if (!lodash_1.default.isEmpty(_event)) {
+                const _eventDTO = new eventDTO_1.EventDTO(_event);
+                return _eventDTO.toDetailDTO();
+            }
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
+        });
+    }
+    getEventDetails(id_1) {
+        return __awaiter(this, arguments, void 0, function* (id, isPublish = true) {
+            const event = yield this.eventRepository.getEventById(id);
+            if (lodash_1.default.isEmpty(event)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
+            }
+            const eventDTO = new eventDTO_1.EventDTO(event);
+            if (isPublish && !eventDTO.isPublish) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, this.msg.BAD_REQUEST);
+            }
+            return eventDTO.toDetailDTO();
+        });
+    }
+    getEventSummary(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const event = yield this.eventRepository.getEventById(id);
+            if (lodash_1.default.isEmpty(event)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
+            }
+            const _eventDTO = new eventDTO_1.EventDTO(event);
+            if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
+                return _eventDTO.toSummaryDTO();
+            }
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, this.msg.BAD_REQUEST);
+        });
+    }
+    getEventsForStore(storeId, optionsReq) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryParams = this.queryParams.parse(optionsReq);
+            const eventData = yield this.eventRepository.getEventsByStoreId(storeId, queryParams);
+            console.log(eventData);
+            if (!lodash_1.default.isEmpty(eventData)) {
+                const eventDTOs = lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+                return eventDTOs;
+            }
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
+        });
+    }
+    getAllEvents(optionsReq) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryParams = this.queryParams.parse(optionsReq);
+            const eventData = yield this.eventRepository.getAllEvents(queryParams);
+            if (lodash_1.default.isEmpty(eventData)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
+            }
+            return lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
+        });
+    }
+}
+exports.EventService = EventService;
+//# sourceMappingURL=eventService.js.map

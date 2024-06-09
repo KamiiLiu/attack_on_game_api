@@ -25,3 +25,4 @@ const generateJWT = (req, res, next) => {
     next();
 };
 exports.default = generateJWT;
+//# sourceMappingURL=generateJWT.js.map

@@ -8,3 +8,4 @@ router.post('/', playerValidator_1.createPlayerValidator, player_1.createPlayer)
 router.get('/:id', player_1.getPlayer);
 router.patch('/:id', playerValidator_1.updatePlayerValidator, player_1.updatePlayer);
 exports.default = router;
+//# sourceMappingURL=player.js.map

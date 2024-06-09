@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import connectDB from '../utils/connectDB';
 import Router from '../routers';
 import passport from 'passport';
+import 'module-alias/register';
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {

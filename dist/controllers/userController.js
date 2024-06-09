@@ -80,3 +80,4 @@ const userController = {
     },
 };
 exports.default = userController;
+//# sourceMappingURL=userController.js.map

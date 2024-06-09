@@ -57,3 +57,4 @@ const sendEamilValidationCode = (to, validationToken, frontEndUrl) => __awaiter(
     yield transporter.sendMail(mailOptions);
 });
 exports.sendEamilValidationCode = sendEamilValidationCode;
+//# sourceMappingURL=help.js.map

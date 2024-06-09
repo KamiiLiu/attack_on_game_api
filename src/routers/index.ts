@@ -2,7 +2,7 @@ import { Router } from 'express';
 import generateJWT from '../middlewares/generateJWT';
 import { jwtAuthenticator, localAuthenticator } from '../middlewares/auth';
 import UserRouter from '@/routers/user';
-import EventRouter from '@/routers/event';
+import EventRouter from '@/routers/eventRouter';
 import PlayerRouter from '@/routers/player';
 import PasswordRouter from '@/routers/password';
 const router = Router();

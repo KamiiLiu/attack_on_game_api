@@ -66,3 +66,4 @@ UserSchema.pre('save', function (next) {
 });
 const User = mongoose_1.default.model('User', UserSchema);
 exports.default = User;
+//# sourceMappingURL=User.js.map

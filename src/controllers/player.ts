@@ -11,7 +11,6 @@ export const createPlayer = async (req: Request, res: Response) => {
     // check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log(errors.array());
       return res
         .status(400)
         .json({ status: false, message: errors.array()[0].msg });
@@ -47,8 +46,11 @@ export const createPlayer = async (req: Request, res: Response) => {
     });
     res.status(201).json({ status: true, message: 'Player created' });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ status: false, message: "It's has some error when created player data ", error: error });
+    res.status(500).json({
+      status: false,
+      message: "It's has some error when created player data ",
+      error: error,
+    });
   }
 };
 
@@ -58,7 +60,6 @@ export const getPlayer = async (req: Request, res: Response) => {
     //check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log(errors.array());
       return res
         .status(400)
         .json({ status: false, message: errors.array()[0].msg });
@@ -83,7 +84,6 @@ export const updatePlayer = async (req: Request, res: Response) => {
     // check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log(errors.array());
       return res
         .status(400)
         .json({ status: false, message: errors.array()[0].msg });
