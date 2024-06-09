@@ -16,7 +16,7 @@ export const getUser = (req: Request) => {
   return user;
 };
 
-export const sendEamilValidationCode = async (to: string, validationToken: string) => {
+export const sendEamilValidationCode = async (to: string, validationToken: string, frontEndUrl: string) => {
   const OAuth2 = google.auth.OAuth2;
 
   const oauth2Client = new OAuth2({
@@ -47,7 +47,7 @@ export const sendEamilValidationCode = async (to: string, validationToken: strin
     from: process.env.EMAIL_ADDRESS as string,
     to,
     subject: "Reset your password",
-    text: `Click the link to reset your password: http://localhost:5173/#/password/getEmailCode/${validationToken}`
+    text: `Click the link to reset your password: ${frontEndUrl}/${validationToken}`
   };
 
   await transporter.sendMail(mailOptions);

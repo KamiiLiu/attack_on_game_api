@@ -4,11 +4,12 @@ import User from '../models/User';
 import jwt from 'jsonwebtoken';
 import { compare } from 'bcrypt';
 import { getUser } from '@/utils/help';
+import { sendEamilValidationCode } from '@/utils/help';
 
 
 export const sendResetPasswordEmail = async (req: Request, res: Response) => {
     try {
-        const { to } = req.body;
+        const { to, fronEndUrl } = req.body;
 
         const user = await User.findOne({ email: to });
 
@@ -24,7 +25,7 @@ export const sendResetPasswordEmail = async (req: Request, res: Response) => {
         await user.save();
 
 
-        await sendEamilValidationCode(to, validationToken);
+        await sendEamilValidationCode(to, validationToken, fronEndUrl);
         res.status(200).json({ status: true, message: "Email sent" });
     } catch (err: any) {
         console.error(err);
@@ -57,7 +58,7 @@ export const resetPassword = async (req: Request, res: Response) => {
         user.emailCode = "";
         await user.save();
 
-        res.status(200).json({ status: true, message: "Code is valid" });
+        res.status(200).json({ status: true, message: "Password has be reseted" });
     }
     catch (err: any) {
         console.error(err);

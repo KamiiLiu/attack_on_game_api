@@ -26,7 +26,7 @@ const getUser = (req) => {
     return user;
 };
 exports.getUser = getUser;
-const sendEamilValidationCode = (to, validationToken) => __awaiter(void 0, void 0, void 0, function* () {
+const sendEamilValidationCode = (to, validationToken, frontEndUrl) => __awaiter(void 0, void 0, void 0, function* () {
     const OAuth2 = googleapis_1.google.auth.OAuth2;
     const oauth2Client = new OAuth2({
         clientId: process.env.GOOGLE_CLIENT_ID,
@@ -52,7 +52,7 @@ const sendEamilValidationCode = (to, validationToken) => __awaiter(void 0, void 
         from: process.env.EMAIL_ADDRESS,
         to,
         subject: "Reset your password",
-        text: `Click the link to reset your password: http://localhost:5173/#/password/getEmailCode/${validationToken}`
+        text: `Click the link to reset your password: ${frontEndUrl}/${validationToken}`
     };
     yield transporter.sendMail(mailOptions);
 });

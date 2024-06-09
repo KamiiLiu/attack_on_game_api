@@ -17,9 +17,10 @@ const User_1 = __importDefault(require("../models/User"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = require("bcrypt");
 const help_1 = require("@/utils/help");
+const help_2 = require("@/utils/help");
 const sendResetPasswordEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { to } = req.body;
+        const { to, fronEndUrl } = req.body;
         const user = yield User_1.default.findOne({ email: to });
         if (!user) {
             res.status(404).json({ status: false, message: "User not found" });
@@ -29,7 +30,7 @@ const sendResetPasswordEmail = (req, res) => __awaiter(void 0, void 0, void 0, f
         const validationToken = jsonwebtoken_1.default.sign({ email: user.email, emailCode: validateCode }, process.env.JWT_SECRET, { expiresIn: "1h" });
         user.emailCode = validateCode;
         yield user.save();
-        yield sendEamilValidationCode(to, validationToken);
+        yield (0, help_2.sendEamilValidationCode)(to, validationToken, fronEndUrl);
         res.status(200).json({ status: true, message: "Email sent" });
     }
     catch (err) {
@@ -54,7 +55,7 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         user.password = newPassword;
         user.emailCode = "";
         yield user.save();
-        res.status(200).json({ status: true, message: "Code is valid" });
+        res.status(200).json({ status: true, message: "Password has be reseted" });
     }
     catch (err) {
         console.error(err);

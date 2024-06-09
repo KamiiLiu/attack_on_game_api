@@ -4,7 +4,7 @@ import { sendResetPasswordEmail, resetPassword, changePassword } from "../contro
 import { jwtAuthenticator } from '../middlewares/auth';
 const router = Router();
 
-router.post("/forgot-password", sendResetPasswordEmail);
+router.post("/sendResetEmail", sendResetPasswordEmail);
 router.post("/reset-password", resetPassword);
 router.post("/change-password", jwtAuthenticator, changePassword);
 
