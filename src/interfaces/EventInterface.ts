@@ -1,7 +1,8 @@
 import mongoose, { Document, Types } from 'mongoose';
 
-export interface IEvent extends Document {
+export interface EventDocument extends Document {
   _id: Types.ObjectId;
+  idNumber: string;
   storeId: mongoose.Types.ObjectId;
   title: string;
   description: string;

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { ResponseDTO } from '@/dto/responseDTO';
 import { CustomResponseType } from '@/enums/CustomResponseType';
+import { SERVER_ERROR_MSG } from '@/types/OtherResponseType';
 import _ from 'lodash';
 export abstract class BaseRouter {
   public router: Router;
@@ -27,7 +28,7 @@ export abstract class BaseRouter {
       } catch (error) {
         res.status(500).json({
           status: CustomResponseType.SYSTEM_ERROR,
-          message: '服務器錯誤',
+          message: `${SERVER_ERROR_MSG}:${error}`,
           data: error,
         });
       }

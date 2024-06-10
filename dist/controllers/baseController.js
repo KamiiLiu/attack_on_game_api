@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseController = void 0;
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const responseDTO_1 = require("@/dto/responseDTO");
-const CustomError_1 = require("@/errors/CustomError");
+const OtherResponseType_1 = require("@/types/OtherResponseType");
 const lodash_1 = __importDefault(require("lodash"));
 class BaseController {
     constructor(msg) {
@@ -40,7 +40,7 @@ class BaseController {
                     return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
                 }
                 else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.OTHER, CustomError_1.SPECIAL_ERROR_MSG);
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.OTHER, OtherResponseType_1.SPECIAL_ERROR_MSG);
                 }
             }
             catch (error) {

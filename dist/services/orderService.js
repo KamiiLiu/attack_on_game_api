@@ -8,52 +8,51 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Order_1 = __importDefault(require("@/models/Order"));
-//import oose from 'mongoose';
-const OrderService = {
-    createOrder(OrderData) {
+exports.OrderService = void 0;
+const orderDTO_1 = require("@/dto/orderDTO");
+const eventDTO_1 = require("@/dto/eventDTO");
+const orderRepository_1 = require("@/repositories/orderRepository");
+const eventRepository_1 = require("@/repositories/eventRepository");
+const CustomResponseType_1 = require("@/enums/CustomResponseType");
+const CustomError_1 = require("@/errors/CustomError");
+const OrderResponseType_1 = require("@/types/OrderResponseType");
+const mongoose_1 = require("mongoose");
+class OrderService {
+    constructor() {
+        this.orderRepository = new orderRepository_1.OrderRepository();
+        this.eventRepository = new eventRepository_1.EventRepository();
+    }
+    getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const existingOrder = yield Order_1.default.findOne({
-                    playerId: OrderData.playerId,
-                    createdAt: OrderData.createdAt,
-                });
-                if (existingOrder) {
-                    //return handleClientError('同一時間重複下訂單', 409);
-                }
-                const newOrder = new Order_1.default(OrderData);
-                yield newOrder.save();
-                //return handleSuccess(201);
-            }
-            catch (error) {
-                //return handleServerError(error, '創建訂單時發生錯誤');
-            }
+            const event = yield this.eventRepository.findById(id);
+            return eventDTO.toDetailDTO();
         });
-    },
-};
-exports.default = OrderService;
-/*
-const OrderSchema: Schema = new Schema({
-  storeId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'stores',
-    required: true,
-  },
-  playerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'players',
-    required: true,
-  },
-  quantity: { type: Number, required: true },
-  payment: { type: Number, required: true },
-  discount: { type: Number, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
-
-*/
+    }
+    getAll(queryParams) {
+        throw new Error('Method not implemented.');
+    }
+    create(content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const targetEvent = yield this.eventRepository.findById(new mongoose_1.Types.ObjectId(content.eventId));
+            const targetEventDTO = new eventDTO_1.EventDTO(targetEvent);
+            const targetOrderDTO = new orderDTO_1.OrderDTO(content);
+            if (!targetEventDTO.isRegisterable) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.CREATED, OrderResponseType_1.OrderResponseType.BAD_REQUEST);
+            }
+            if (targetEventDTO.availableSeat < targetOrderDTO.registrationCount) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.CREATED, OrderResponseType_1.OrderResponseType.BAD_REQUEST);
+            }
+            yield this.orderRepository.create(targetOrderDTO.toDetailDTO());
+            yield this.eventRepository.updateParticipantsCount();
+        });
+    }
+    update(id, content) {
+        throw new Error('Method not implemented.');
+    }
+    delete(id) {
+        throw new Error('Method not implemented.');
+    }
+}
+exports.OrderService = OrderService;
 //# sourceMappingURL=orderService.js.map

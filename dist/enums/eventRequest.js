@@ -11,4 +11,4 @@ var DefaultQuery;
     DefaultQuery["SORT_BY"] = "eventStartTime";
     DefaultQuery["SORT_ORDER"] = "asc";
 })(DefaultQuery || (exports.DefaultQuery = DefaultQuery = {}));
-//# sourceMappingURL=eventRequest.js.map
+//# sourceMappingURL=EventRequest.js.map

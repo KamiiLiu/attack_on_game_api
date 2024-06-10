@@ -1,7 +1,7 @@
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { ResponseDTO } from '@/dto/responseDTO';
 import { IHTTPSMessage } from '@/interfaces/HTTPSMessageInterface';
-import { SPECIAL_ERROR_MSG } from '@/errors/CustomError';
+import { SPECIAL_ERROR_MSG } from '@/types/OtherResponseType';
 import _ from 'lodash';
 interface ErrorCode {
   code: CustomResponseType;

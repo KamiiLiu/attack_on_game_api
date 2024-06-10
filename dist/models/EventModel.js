@@ -35,6 +35,7 @@ const EventSchema = new mongoose_1.Schema({
         ref: 'store',
         required: true,
     },
+    idNumber: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
     address: { type: String, required: true },

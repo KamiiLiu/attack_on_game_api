@@ -4,7 +4,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 import { BaseDTO } from '@/dto/baseDTO';
-import { IEvent } from '@/interfaces/EventInterface';
+import { EventDocument } from '@/interfaces/EventInterface';
 import { Types } from 'mongoose';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 export class EventDTO extends BaseDTO {
@@ -23,7 +23,7 @@ export class EventDTO extends BaseDTO {
   private readonly _participationFee!: number;
   private readonly _eventImageUrl!: string[];
   private readonly _isPublish!: boolean;
-  constructor(dto: IEvent) {
+  constructor(dto: EventDocument) {
     super(dto);
     this._storeId = dto.storeId;
     this._title = dto.title;
@@ -57,9 +57,6 @@ export class EventDTO extends BaseDTO {
   }
   public get isPublish() {
     return this._isPublish;
-  }
-  public get id() {
-    return this._id;
   }
   public get title() {
     return this._title;
@@ -115,7 +112,7 @@ export class EventDTO extends BaseDTO {
   }
   public toDetailDTO(): Partial<EventDTO> {
     return {
-      _id: this.id,
+      idNumber: this.idNumber,
       storeId: this._storeId,
       isFoodAllowed: this._isFoodAllowed,
       description: this._description,

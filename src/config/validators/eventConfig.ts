@@ -15,7 +15,7 @@ import {
   SortBy,
   SortOrder,
 } from '@/enums/EventStatus';
-import { DefaultQuery } from '@/enums/eventRequest';
+import { DefaultQuery } from '@/enums/EventRequest';
 type ValidationConfig = {
   [key: string]: ValidationChain[];
 };
