@@ -95,10 +95,10 @@ export class EventRepository implements IBaseRepository<EventDocument> {
       );
     }
   }
-  async update(content: Partial<EventDocument>): Promise<EventDocument | null> {
+  async update(content: Partial<EventDTO>): Promise<EventDocument | null> {
     try {
       return await EventModel.findOneAndUpdate(
-        { _id: content.id },
+        { idNumber: content.idNumber },
         {
           title: content.title,
           description: content.description,

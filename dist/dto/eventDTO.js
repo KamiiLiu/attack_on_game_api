@@ -10,30 +10,52 @@ const isSameOrAfter_1 = __importDefault(require("dayjs/plugin/isSameOrAfter"));
 dayjs_1.default.extend(isSameOrBefore_1.default);
 dayjs_1.default.extend(isSameOrAfter_1.default);
 const baseDTO_1 = require("@/dto/baseDTO");
+const mongoose_1 = require("mongoose");
 const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
+const nanoid_1 = require("nanoid");
 class EventDTO extends baseDTO_1.BaseDTO {
     constructor(dto) {
-        super(dto);
-        this._storeId = dto.storeId;
-        this._title = dto.title;
-        this._address = dto.address;
-        this._isFoodAllowed = dto.isFoodAllowed;
-        this._description = dto.description;
-        this._eventStartTime = (0, dayjs_1.default)(dto.eventStartTime).format(TIME_FORMATTER_1.default);
-        this._eventEndTime = (0, dayjs_1.default)(dto.eventEndTime).format(TIME_FORMATTER_1.default);
-        this._registrationStartTime = (0, dayjs_1.default)(dto.registrationStartTime).format(TIME_FORMATTER_1.default);
-        this._registrationEndTime = (0, dayjs_1.default)(dto.registrationEndTime).format(TIME_FORMATTER_1.default);
-        this._maxParticipants = dto.maxParticipants;
-        this._minParticipants = dto.minParticipants;
-        this._currentParticipantsCount = dto.currentParticipantsCount;
-        this._participationFee = dto.participationFee;
-        this._eventImageUrl = dto.eventImageUrl;
-        this._isPublish = dto.isPublish || true;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        const dtoWithId = {
+            _id: dto._id || new mongoose_1.Types.ObjectId(),
+            idNumber: dto.idNumber || (0, nanoid_1.nanoid)(),
+            createdAt: (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
+                (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
+            updatedAt: (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
+                (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
+        };
+        super(dtoWithId);
+        this._storeId = (_a = dto.storeId) !== null && _a !== void 0 ? _a : null;
+        this._title = (_b = dto.title) !== null && _b !== void 0 ? _b : '';
+        this._address = (_c = dto.address) !== null && _c !== void 0 ? _c : '';
+        this._isFoodAllowed = (_d = dto.isFoodAllowed) !== null && _d !== void 0 ? _d : false;
+        this._description = (_e = dto.description) !== null && _e !== void 0 ? _e : '';
+        this._eventStartTime = dto.eventStartTime
+            ? (0, dayjs_1.default)(dto.eventStartTime).format(TIME_FORMATTER_1.default)
+            : '';
+        this._eventEndTime = dto.eventEndTime
+            ? (0, dayjs_1.default)(dto.eventEndTime).format(TIME_FORMATTER_1.default)
+            : '';
+        this._registrationStartTime = dto.registrationStartTime
+            ? (0, dayjs_1.default)(dto.registrationStartTime).format(TIME_FORMATTER_1.default)
+            : '';
+        this._registrationEndTime = dto.registrationEndTime
+            ? (0, dayjs_1.default)(dto.registrationEndTime).format(TIME_FORMATTER_1.default)
+            : '';
+        this._maxParticipants = (_f = dto.maxParticipants) !== null && _f !== void 0 ? _f : 0;
+        this._minParticipants = (_g = dto.minParticipants) !== null && _g !== void 0 ? _g : 0;
+        this._currentParticipantsCount = (_h = dto.currentParticipantsCount) !== null && _h !== void 0 ? _h : 0;
+        this._participationFee = (_j = dto.participationFee) !== null && _j !== void 0 ? _j : 0;
+        this._eventImageUrl = (_k = dto.eventImageUrl) !== null && _k !== void 0 ? _k : [''];
+        this._isPublish = (_l = dto.isPublish) !== null && _l !== void 0 ? _l : true;
     }
     get isRegisterable() {
         const now = (0, dayjs_1.default)();
         return (now.isSameOrBefore(this._registrationEndTime) &&
             now.isSameOrAfter(this._registrationStartTime));
+    }
+    get availableSeat() {
+        return this._maxParticipants - this._currentParticipantsCount;
     }
     get storeId() {
         return this._storeId;

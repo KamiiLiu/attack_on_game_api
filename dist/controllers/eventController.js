@@ -18,7 +18,7 @@ class EventController extends baseController_1.BaseController {
     constructor() {
         super(EventResponseType_1.EventResponseType);
         this.getEventSummary = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.getSummaryEvents(new mongoose_1.Types.ObjectId(req.params.id)), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
+            return this.handleServiceResponse(() => this.eventService.getSummaryEvents(req.params.id), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
         this.getOwnEvent = (req) => __awaiter(this, void 0, void 0, function* () {
             return this.handleServiceResponse(() => this.eventService.getById(req.body.storeId), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
@@ -29,7 +29,7 @@ class EventController extends baseController_1.BaseController {
         this.eventService = new eventService_1.EventService();
     }
     getById(req) {
-        return this.handleServiceResponse(() => this.eventService.getById(new mongoose_1.Types.ObjectId(req.params.id)), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
+        return this.handleServiceResponse(() => this.eventService.getById(req.params.id), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
     }
     getAll(req) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,7 +40,7 @@ class EventController extends baseController_1.BaseController {
         return this.handleServiceResponse(() => this.eventService.create(req.body), EventResponseType_1.EventResponseType.SUCCESS_CREATED);
     }
     update(req) {
-        return this.handleServiceResponse(() => this.eventService.update(new mongoose_1.Types.ObjectId(req.params.id), req.body), EventResponseType_1.EventResponseType.SUCCESS_UPDATE);
+        return this.handleServiceResponse(() => this.eventService.update(req.params.id, req.body), EventResponseType_1.EventResponseType.SUCCESS_UPDATE);
     }
     delete(req) {
         console.log(req);

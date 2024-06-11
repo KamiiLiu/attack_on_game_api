@@ -1,8 +1,7 @@
-import { Types } from 'mongoose';
 export interface IBaseService<D> {
-  getById(id: Types.ObjectId): Promise<Partial<D>>;
+  getById(id: string): Promise<Partial<D>>;
   getAll(queryParams: any): Promise<Partial<D>[]>;
   create(content: any): Promise<boolean>;
-  update(id: Types.ObjectId, content: any): Promise<Partial<D> | null>;
-  delete(id: Types.ObjectId): Promise<Partial<D> | null>;
+  update(id: string, content: any): Promise<Partial<D> | null>;
+  delete(id: string): Promise<Partial<D> | null>;
 }

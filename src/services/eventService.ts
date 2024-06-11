@@ -7,10 +7,10 @@ import { EventRepository } from '@/repositories/eventRepository';
 import { QueryParamsParser } from '@/services/eventQueryParams';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { CustomError } from '@/errors/CustomError';
-import { Types } from 'mongoose';
 import { IBaseService } from '@/services/IBaseService';
 import { EventResponseType } from '@/types/EventResponseType';
 import { EventDocument } from '@/interfaces/EventInterface';
+import { Types } from 'mongoose';
 export class EventService implements IBaseService<EventDTO> {
   private eventRepository: EventRepository;
   private queryParams: QueryParamsParser;
@@ -18,7 +18,7 @@ export class EventService implements IBaseService<EventDTO> {
     this.eventRepository = new EventRepository();
     this.queryParams = new QueryParamsParser();
   }
-  async getById(id: Types.ObjectId): Promise<Partial<EventDTO>> {
+  async getById(id: string): Promise<Partial<EventDTO>> {
     const event = await this.eventRepository.findById(id);
     const eventDTO = new EventDTO(event);
     if (!eventDTO.isPublish) {
@@ -45,10 +45,11 @@ export class EventService implements IBaseService<EventDTO> {
     return await this.eventRepository.create(_content);
   }
   async update(
-    id: Types.ObjectId,
+    id: string,
     content: EventDocument,
   ): Promise<Partial<EventDTO> | null> {
-    const _content = new EventDTO(content);
+    const updateContent = { ...content, idNumber: id };
+    const _content = new EventDTO(updateContent).toDetailDTO();
     const _event = await this.eventRepository.update(_content);
     if (!_.isEmpty(_event)) {
       const _eventDTO = new EventDTO(_event);
@@ -59,7 +60,7 @@ export class EventService implements IBaseService<EventDTO> {
       EventResponseType.FAILED_FOUND,
     );
   }
-  delete(id: Types.ObjectId): Promise<EventDTO | null> {
+  delete(id: string): Promise<EventDTO | null> {
     console.log(id);
     throw new Error('Method not implemented.');
   }
@@ -85,9 +86,7 @@ export class EventService implements IBaseService<EventDTO> {
     );
   }
 
-  public async getSummaryEvents(
-    id: Types.ObjectId,
-  ): Promise<Partial<EventDTO>> {
+  public async getSummaryEvents(id: string): Promise<Partial<EventDTO>> {
     const event = await this.eventRepository.findById(id);
     if (_.isEmpty(event)) {
       throw new CustomError(

@@ -44,9 +44,8 @@ class BaseController {
                 }
             }
             catch (error) {
-                console.log(error);
                 if (this.isErrorCode(error)) {
-                    return this.formatResponse(error.code, error.msg);
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, error.msg);
                 }
                 return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, this.msg.SERVER_ERROR);
             }

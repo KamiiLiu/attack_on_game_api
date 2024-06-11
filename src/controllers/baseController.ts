@@ -5,7 +5,7 @@ import { SPECIAL_ERROR_MSG } from '@/types/OtherResponseType';
 import _ from 'lodash';
 interface ErrorCode {
   code: CustomResponseType;
-  msg: keyof IHTTPSMessage;
+  msg: string;
 }
 export class BaseController {
   private msg: IHTTPSMessage;
@@ -43,9 +43,8 @@ export class BaseController {
         return this.formatResponse(CustomResponseType.OTHER, SPECIAL_ERROR_MSG);
       }
     } catch (error: unknown) {
-      console.log(error);
       if (this.isErrorCode(error)) {
-        return this.formatResponse(error.code, error.msg);
+        return this.formatResponse(CustomResponseType.SYSTEM_ERROR, error.msg);
       }
       return this.formatResponse(
         CustomResponseType.SYSTEM_ERROR,

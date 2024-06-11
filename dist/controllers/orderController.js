@@ -1,25 +1,33 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderController = void 0;
-const orderService_1 = __importDefault(require("@/services/orderService"));
+const orderService_1 = require("@/services/orderService");
 const baseController_1 = require("@/controllers/baseController");
 const OrderResponseType_1 = require("@/types/OrderResponseType");
 class OrderController extends baseController_1.BaseController {
     constructor() {
         super(OrderResponseType_1.OrderResponseType);
-        this.orderService = new orderService_1.default();
+        this.orderService = new orderService_1.OrderService();
     }
     getById(req) {
-        throw new Error('Method not implemented.');
+        return this.handleServiceResponse(() => this.orderService.getById(req.params.id), OrderResponseType_1.OrderResponseType.SUCCESS_REQUEST);
     }
     getAll(req) {
-        throw new Error('Method not implemented.');
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.handleServiceResponse(() => this.orderService.getAll(req), OrderResponseType_1.OrderResponseType.SUCCESS_REQUEST);
+        });
     }
     create(req) {
-        return this.handleServiceResponse(() => this.orderService.createNewOrder(req.body), OrderResponseType_1.OrderResponseType.SUCCESS_CREATED);
+        return this.handleServiceResponse(() => this.orderService.create(req.body), OrderResponseType_1.OrderResponseType.SUCCESS_CREATED);
     }
     update(req) {
         throw new Error('Method not implemented.');

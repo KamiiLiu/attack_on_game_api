@@ -1,8 +1,7 @@
-import OrderService from '@/services/orderService';
+import { OrderService } from '@/services/orderService';
 import { BaseController } from '@/controllers/baseController';
 import { ResponseDTO } from '@/dto/responseDTO';
 import { Request } from 'express';
-import { Types } from 'mongoose';
 import { IBaseController } from '@/controllers/IBaseController';
 import { OrderResponseType } from '@/types/OrderResponseType';
 export class OrderController extends BaseController implements IBaseController {
@@ -13,14 +12,20 @@ export class OrderController extends BaseController implements IBaseController {
     this.orderService = new OrderService();
   }
   getById(req: Request): Promise<ResponseDTO> {
-    throw new Error('Method not implemented.');
+    return this.handleServiceResponse(
+      () => this.orderService.getById(req.params.id),
+      OrderResponseType.SUCCESS_REQUEST,
+    );
   }
-  getAll(req: Request): Promise<ResponseDTO> {
-    throw new Error('Method not implemented.');
+  async getAll(req: Request): Promise<ResponseDTO> {
+    return await this.handleServiceResponse(
+      () => this.orderService.getAll(req),
+      OrderResponseType.SUCCESS_REQUEST,
+    );
   }
   create(req: Request): Promise<ResponseDTO> {
     return this.handleServiceResponse(
-      () => this.orderService.createNewOrder(req.body),
+      () => this.orderService.create(req.body),
       OrderResponseType.SUCCESS_CREATED,
     );
   }

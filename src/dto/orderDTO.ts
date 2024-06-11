@@ -10,7 +10,7 @@ export class OrderDTO extends BaseDTO {
   readonly discount: number;
   readonly name: string;
   readonly phone: string;
-  readonly registrationCount: string;
+  readonly registrationCount: number;
   readonly notes: string;
   readonly paymentStatus: PaymentStatus;
   readonly paymentMethod: PaymentMethod;

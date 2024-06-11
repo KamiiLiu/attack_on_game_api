@@ -14,7 +14,7 @@ const OrderSchema: Schema = new Schema({
     ref: 'players',
     required: true,
   },
-  idNumber: { type: String, required: true },
+  idNumber: { type: String, required: true, unique: true },
   registrationCount: { type: Number, required: true },
   payment: { type: Number, required: true },
   discount: { type: Number, required: true },

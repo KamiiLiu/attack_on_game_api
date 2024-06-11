@@ -55,7 +55,8 @@ class EventService {
     }
     update(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
-            const _content = new eventDTO_1.EventDTO(content);
+            const updateContent = Object.assign(Object.assign({}, content), { idNumber: id });
+            const _content = new eventDTO_1.EventDTO(updateContent).toDetailDTO();
             const _event = yield this.eventRepository.update(_content);
             if (!lodash_1.default.isEmpty(_event)) {
                 const _eventDTO = new eventDTO_1.EventDTO(_event);

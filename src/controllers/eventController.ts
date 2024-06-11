@@ -3,8 +3,8 @@ import { BaseController } from '@/controllers/baseController';
 import { ResponseDTO } from '@/dto/responseDTO';
 import { EventResponseType } from '@/types/EventResponseType';
 import { Request } from 'express';
-import { Types } from 'mongoose';
 import { IBaseController } from '@/controllers/IBaseController';
+import { Types } from 'mongoose';
 export class EventController extends BaseController implements IBaseController {
   private eventService: EventService;
 
@@ -14,7 +14,7 @@ export class EventController extends BaseController implements IBaseController {
   }
   getById(req: Request): Promise<ResponseDTO> {
     return this.handleServiceResponse(
-      () => this.eventService.getById(new Types.ObjectId(req.params.id)),
+      () => this.eventService.getById(req.params.id),
       EventResponseType.SUCCESS_REQUEST,
     );
   }
@@ -32,8 +32,7 @@ export class EventController extends BaseController implements IBaseController {
   }
   update(req: Request): Promise<ResponseDTO> {
     return this.handleServiceResponse(
-      () =>
-        this.eventService.update(new Types.ObjectId(req.params.id), req.body),
+      () => this.eventService.update(req.params.id, req.body),
       EventResponseType.SUCCESS_UPDATE,
     );
   }
@@ -43,8 +42,7 @@ export class EventController extends BaseController implements IBaseController {
   }
   public getEventSummary = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () =>
-        this.eventService.getSummaryEvents(new Types.ObjectId(req.params.id)),
+      () => this.eventService.getSummaryEvents(req.params.id),
       EventResponseType.SUCCESS_REQUEST,
     );
   };
