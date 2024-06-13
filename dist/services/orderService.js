@@ -36,29 +36,47 @@ class OrderService {
     }
     getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const player = yield Player_1.default.findOne({ user: req.params.id });
+            const player = yield Player_1.default.findOne({ user: queryParams.user });
+            if (!player) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_REGISTRATION_PERIOD);
+            }
             throw new Error('Method not implemented.');
         });
     }
     create(content) {
         return __awaiter(this, void 0, void 0, function* () {
-            const targetEvent = yield this.eventRepository.findById(content.eventId);
-            const targetEventDTO = new eventDTO_1.EventDTO(targetEvent);
-            const targetOrderDTO = new orderDTO_1.OrderDTO(content);
-            if (!targetEventDTO.isRegisterable) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.CREATED, OrderResponseType_1.OrderResponseType.ERROR_REGISTRATION_PERIOD);
+            try {
+                const player = yield Player_1.default.findOne({ user: content.user._id }).exec();
+                if (!player) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
+                }
+                const targetEvent = yield this.eventRepository.findById(content.body.eventId);
+                const targetEventDTO = new eventDTO_1.EventDTO(targetEvent);
+                const targetOrderDTO = new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, content.body), { eventId: targetEvent._id, playerId: content.user._id }));
+                if (!targetEventDTO.isRegisterable) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD);
+                }
+                if (targetEventDTO.availableSeat < targetOrderDTO.registrationCount) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_EXCEEDS_CAPACITY);
+                }
+                if (targetEventDTO.participationFee * targetOrderDTO.registrationCount !==
+                    targetOrderDTO.getTotalAmount) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_MONEY);
+                }
+                const addedSeat = targetEventDTO.currentParticipantsCount +
+                    targetOrderDTO.registrationCount;
+                yield this.orderRepository.create(targetOrderDTO.toDetailDTO());
+                yield this.eventRepository.updateParticipantsCount(targetEventDTO, addedSeat);
+                const ticketPromises = [];
+                for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
+                    ticketPromises.push(this.ticketRepository.create(targetOrderDTO.getIdNumber));
+                }
+                yield Promise.all(ticketPromises);
+                return true;
             }
-            if (targetEventDTO.availableSeat < targetOrderDTO.registrationCount) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.CREATED, OrderResponseType_1.OrderResponseType.ERROR_EXCEEDS_CAPACITY);
+            catch (error) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, (error === null || error === void 0 ? void 0 : error.message) || error);
             }
-            yield this.orderRepository.create(targetOrderDTO.toDetailDTO());
-            yield this.eventRepository.updateParticipantsCount(targetEventDTO);
-            const ticketPromises = [];
-            for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
-                ticketPromises.push(this.ticketRepository.create(targetOrderDTO.idNumber));
-            }
-            yield Promise.all(ticketPromises);
-            return true;
         });
     }
     update(id, content) {

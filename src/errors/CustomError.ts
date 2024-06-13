@@ -5,6 +5,7 @@ export class CustomError extends Error {
 
   constructor(code: CustomResponseType, msg: string) {
     super(msg);
+    console.log(code);
     this.code = code || CustomResponseType.OTHER;
     this.msg = msg;
   }

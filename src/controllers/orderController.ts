@@ -23,12 +23,12 @@ export class OrderController extends BaseController implements IBaseController {
       OrderResponseType.SUCCESS_REQUEST,
     );
   }
-  create(req: Request): Promise<ResponseDTO> {
+  public create = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.orderService.create(req.body),
+      () => this.orderService.create(req),
       OrderResponseType.SUCCESS_CREATED,
     );
-  }
+  };
   update(req: Request): Promise<ResponseDTO> {
     throw new Error('Method not implemented.');
   }

@@ -23,7 +23,7 @@ class OrderRepository {
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const event = yield OrderModel_1.default.findById(id);
+                const event = yield OrderModel_1.default.findOne({ idNumber: id });
                 if (lodash_1.default.isEmpty(event)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
                 }
@@ -35,7 +35,18 @@ class OrderRepository {
         });
     }
     findAll(queryParams) {
-        throw new Error('Method not implemented.');
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const tickets = yield OrderModel_1.default.find(Object.assign({}, queryParams));
+                if (lodash_1.default.isEmpty(tickets)) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
+                }
+                return tickets;
+            }
+            catch (error) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);
+            }
+        });
     }
     create(content) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -45,7 +56,7 @@ class OrderRepository {
                 return true;
             }
             catch (error) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:::::::::::::${error.message || error}`);
             }
         });
     }
@@ -70,6 +81,7 @@ class OrderRepository {
         });
     }
     delete(id) {
+        console.log(id);
         throw new Error('Method not implemented.');
     }
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const orderController_1 = require("@/controllers/orderController");
-// import { jwtAuthenticator } from '../middlewares/auth';
+const auth_1 = require("@/middlewares/auth");
 const handleValidationErrors_1 = require("@/middlewares/handleValidationErrors");
 const orderValidator_1 = require("@/validators/orderValidator");
 const baseRouter_1 = require("@/routers/baseRouter");
@@ -15,7 +15,7 @@ class OrderRouter extends baseRouter_1.BaseRouter {
         this.setRouters();
     }
     setRouters() {
-        this.router.post('/', orderValidator_1.OrderValidator.validateOrder(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.create));
+        this.router.post('/', auth_1.jwtAuthenticator, orderValidator_1.OrderValidator.validateOrder(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.create));
     }
 }
 exports.default = new OrderRouter().router;

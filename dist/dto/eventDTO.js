@@ -25,7 +25,7 @@ class EventDTO extends baseDTO_1.BaseDTO {
                 (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
         };
         super(dtoWithId);
-        this._storeId = (_a = dto.storeId) !== null && _a !== void 0 ? _a : null;
+        this._storeId = (_a = dto.storeId) !== null && _a !== void 0 ? _a : new mongoose_1.Types.ObjectId();
         this._title = (_b = dto.title) !== null && _b !== void 0 ? _b : '';
         this._address = (_c = dto.address) !== null && _c !== void 0 ? _c : '';
         this._isFoodAllowed = (_d = dto.isFoodAllowed) !== null && _d !== void 0 ? _d : false;

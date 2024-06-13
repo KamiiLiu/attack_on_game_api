@@ -25,10 +25,10 @@ export class BaseController {
     };
     return new ResponseDTO(options);
   }
-  public async handleServiceResponse(
+  protected handleServiceResponse = async (
     serviceMethod: () => Promise<any>,
     successMessage: string,
-  ): Promise<ResponseDTO> {
+  ): Promise<ResponseDTO> => {
     try {
       const result = await serviceMethod();
       if (_.isBoolean(result)) {
@@ -44,14 +44,17 @@ export class BaseController {
       }
     } catch (error: unknown) {
       if (this.isErrorCode(error)) {
-        return this.formatResponse(CustomResponseType.SYSTEM_ERROR, error.msg);
+        return this.formatResponse(
+          error.code || CustomResponseType.SYSTEM_ERROR,
+          error.msg,
+        );
       }
       return this.formatResponse(
         CustomResponseType.SYSTEM_ERROR,
         this.msg.SERVER_ERROR,
       );
     }
-  }
+  };
 
   private isErrorCode(error: unknown): error is ErrorCode {
     return (

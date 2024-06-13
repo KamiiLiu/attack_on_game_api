@@ -9,8 +9,8 @@ interface DTO {
   updatedAt: string;
 }
 export class BaseDTO {
-  private readonly _id!: Types.ObjectId;
-  public readonly idNumber!: string;
+  public readonly _id!: Types.ObjectId;
+  public idNumber!: string;
   public readonly createdAt?: string;
   public readonly updatedAt?: string;
   constructor(dto: DTO) {

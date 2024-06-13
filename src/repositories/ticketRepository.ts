@@ -81,6 +81,7 @@ export class TicketRepository {
   async generateQRCode(orderId: string, idNumber: string): Promise<string> {
     try {
       const baseUrl = process.env.BASE_URL;
+      console.log(baseUrl);
       if (!baseUrl) {
         throw new CustomError(
           CustomResponseType.DATABASE_OPERATION_FAILED,

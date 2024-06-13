@@ -1,10 +1,10 @@
-import { body, ValidationChain, CustomValidator } from 'express-validator';
-import { Types } from 'mongoose';
+import { body, ValidationChain } from 'express-validator';
+import {
+  validateNanoidIds,
+  validateObjectIds,
+} from '@/config/validators/commonConfig';
 type ValidationConfig = {
   [key: string]: ValidationChain[];
-};
-const validateObjectIds: CustomValidator = (value: string) => {
-  return Types.ObjectId.isValid(value);
 };
 export const validationConfig: {
   body: ValidationConfig;
@@ -14,7 +14,7 @@ export const validationConfig: {
   body: {
     eventId: [
       body('eventId')
-        .custom(validateObjectIds)
+        .custom(validateNanoidIds)
         .withMessage('eventId 必須符合資料庫結構')
         .notEmpty()
         .withMessage('eventId 不能為空'),

@@ -75,16 +75,18 @@ export class EventRepository implements IBaseRepository<EventDocument> {
     }
   }
   async updateParticipantsCount(
-    content: Partial<EventDTO>,
+    content: Partial<EventDocument>,
+    addedSeat: number,
   ): Promise<EventDocument | null> {
     try {
+      console.log(addedSeat);
+      console.log(content);
       return await EventModel.findOneAndUpdate(
-        { idNumber: content.idNumber },
+        { _id: content._id },
         {
-          currentParticipantsCount: content.currentParticipantsCount,
+          currentParticipantsCount: addedSeat,
           updatedAt: content.updatedAt,
         },
-        { new: true },
       )
         .lean()
         .exec();
@@ -95,7 +97,8 @@ export class EventRepository implements IBaseRepository<EventDocument> {
       );
     }
   }
-  async update(content: Partial<EventDTO>): Promise<EventDocument | null> {
+
+  async update(content: Partial<EventDocument>): Promise<EventDocument | null> {
     try {
       return await EventModel.findOneAndUpdate(
         { idNumber: content.idNumber },

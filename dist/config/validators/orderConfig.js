@@ -2,22 +2,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validationConfig = void 0;
 const express_validator_1 = require("express-validator");
-const mongoose_1 = require("mongoose");
-const validateObjectIds = (value) => {
-    return mongoose_1.Types.ObjectId.isValid(value);
-};
+const commonConfig_1 = require("@/config/validators/commonConfig");
 exports.validationConfig = {
     body: {
         eventId: [
             (0, express_validator_1.body)('eventId')
-                .custom(validateObjectIds)
+                .custom(commonConfig_1.validateNanoidIds)
                 .withMessage('eventId 必須符合資料庫結構')
                 .notEmpty()
                 .withMessage('eventId 不能為空'),
         ],
         playerId: [
             (0, express_validator_1.body)('playerId')
-                .custom(validateObjectIds)
+                .custom(commonConfig_1.validateObjectIds)
                 .withMessage('playerId 必須符合資料庫結構')
                 .notEmpty()
                 .withMessage('playerId 不能為空'),

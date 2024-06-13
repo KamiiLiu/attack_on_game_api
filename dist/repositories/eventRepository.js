@@ -64,13 +64,15 @@ class EventRepository {
             }
         });
     }
-    updateParticipantsCount(content) {
+    updateParticipantsCount(content, addedSeat) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield EventModel_1.default.findOneAndUpdate({ idNumber: content.idNumber }, {
-                    currentParticipantsCount: content.currentParticipantsCount,
+                console.log(addedSeat);
+                console.log(content);
+                return yield EventModel_1.default.findOneAndUpdate({ _id: content._id }, {
+                    currentParticipantsCount: addedSeat,
                     updatedAt: content.updatedAt,
-                }, { new: true })
+                })
                     .lean()
                     .exec();
             }

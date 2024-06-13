@@ -17,6 +17,22 @@ const mongoose_1 = require("mongoose");
 class EventController extends baseController_1.BaseController {
     constructor() {
         super(EventResponseType_1.EventResponseType);
+        this.getById = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.getById(req.params.id), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
+        });
+        this.getAll = (req) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.handleServiceResponse(() => this.eventService.getAll(req), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
+        });
+        this.create = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.create(req.body), EventResponseType_1.EventResponseType.SUCCESS_CREATED);
+        });
+        this.update = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.update(req.params.id, req.body), EventResponseType_1.EventResponseType.SUCCESS_UPDATE);
+        });
+        this.delete = (req) => __awaiter(this, void 0, void 0, function* () {
+            console.log(req);
+            throw new Error('Method not implemented.');
+        });
         this.getEventSummary = (req) => __awaiter(this, void 0, void 0, function* () {
             return this.handleServiceResponse(() => this.eventService.getSummaryEvents(req.params.id), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
@@ -27,24 +43,6 @@ class EventController extends baseController_1.BaseController {
             return this.handleServiceResponse(() => this.eventService.getEventsForStore(new mongoose_1.Types.ObjectId(req.params.storeId), req), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
         this.eventService = new eventService_1.EventService();
-    }
-    getById(req) {
-        return this.handleServiceResponse(() => this.eventService.getById(req.params.id), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
-    }
-    getAll(req) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.handleServiceResponse(() => this.eventService.getAll(req), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
-        });
-    }
-    create(req) {
-        return this.handleServiceResponse(() => this.eventService.create(req.body), EventResponseType_1.EventResponseType.SUCCESS_CREATED);
-    }
-    update(req) {
-        return this.handleServiceResponse(() => this.eventService.update(req.params.id, req.body), EventResponseType_1.EventResponseType.SUCCESS_UPDATE);
-    }
-    delete(req) {
-        console.log(req);
-        throw new Error('Method not implemented.');
     }
 }
 exports.EventController = EventController;

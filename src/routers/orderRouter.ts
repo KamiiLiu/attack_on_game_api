@@ -1,9 +1,8 @@
 import { OrderController } from '@/controllers/orderController';
-// import { jwtAuthenticator } from '../middlewares/auth';
+import { jwtAuthenticator } from '@/middlewares/auth';
 import { handleValidationErrors } from '@/middlewares/handleValidationErrors';
 import { OrderValidator } from '@/validators/orderValidator';
 import { BaseRouter } from '@/routers/baseRouter';
-
 class OrderRouter extends BaseRouter {
   protected controller!: OrderController;
   constructor() {
@@ -17,6 +16,7 @@ class OrderRouter extends BaseRouter {
   protected setRouters(): void {
     this.router.post(
       '/',
+      jwtAuthenticator,
       OrderValidator.validateOrder(),
       handleValidationErrors,
       this.handleRequest(this.controller.create),

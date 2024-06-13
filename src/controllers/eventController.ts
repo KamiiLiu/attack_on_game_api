@@ -12,34 +12,34 @@ export class EventController extends BaseController implements IBaseController {
     super(EventResponseType);
     this.eventService = new EventService();
   }
-  getById(req: Request): Promise<ResponseDTO> {
+  public getById = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
       () => this.eventService.getById(req.params.id),
       EventResponseType.SUCCESS_REQUEST,
     );
-  }
-  async getAll(req: Request): Promise<ResponseDTO> {
+  };
+  public getAll = async (req: Request): Promise<ResponseDTO> => {
     return await this.handleServiceResponse(
       () => this.eventService.getAll(req),
       EventResponseType.SUCCESS_REQUEST,
     );
-  }
-  create(req: Request): Promise<ResponseDTO> {
+  };
+  public create = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
       () => this.eventService.create(req.body),
       EventResponseType.SUCCESS_CREATED,
     );
-  }
-  update(req: Request): Promise<ResponseDTO> {
+  };
+  public update = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
       () => this.eventService.update(req.params.id, req.body),
       EventResponseType.SUCCESS_UPDATE,
     );
-  }
-  delete(req: Request): Promise<ResponseDTO> {
+  };
+  public delete = async (req: Request): Promise<ResponseDTO> => {
     console.log(req);
     throw new Error('Method not implemented.');
-  }
+  };
   public getEventSummary = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
       () => this.eventService.getSummaryEvents(req.params.id),

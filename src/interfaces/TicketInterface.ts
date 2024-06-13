@@ -5,6 +5,7 @@ export interface TicketDocument extends Document {
   idNumber: string;
   orderIdNumber: string;
   isQrCodeUsed: boolean;
+
   qrCodeUrl: string;
   createdAt: string;
   updatedAt: string;

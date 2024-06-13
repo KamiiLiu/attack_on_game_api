@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validationConfig = void 0;
 const express_validator_1 = require("express-validator");
-const mongoose_1 = require("mongoose");
+const commonConfig_1 = require("@/config/validators/commonConfig");
 const dayjs_1 = __importDefault(require("dayjs"));
 const isSameOrBefore_1 = __importDefault(require("dayjs/plugin/isSameOrBefore"));
 dayjs_1.default.extend(isSameOrBefore_1.default);
@@ -37,15 +37,12 @@ const validateFutureDate = (value, { path }) => {
     }
     throw new Error(`${path}時間格式不對哦！必須是未來的日期`);
 };
-const validateObjectIds = (value) => {
-    return mongoose_1.Types.ObjectId.isValid(value);
-};
 exports.validationConfig = {
     body: {
         storeId: [
             (0, express_validator_1.body)('storeId')
                 .optional()
-                .custom(validateObjectIds)
+                .custom(commonConfig_1.validateObjectIds)
                 .withMessage('商店ID格式不對哦！'),
         ],
         title: [
@@ -192,12 +189,12 @@ exports.validationConfig = {
     param: {
         id: [
             (0, express_validator_1.param)('id')
-                .custom(validateObjectIds)
+                .custom(commonConfig_1.validateNanoidIds)
                 .withMessage('請提供有效的 ObjectId 格式'),
         ],
         storeId: [
             (0, express_validator_1.param)('storeId')
-                .custom(validateObjectIds)
+                .custom(commonConfig_1.validateObjectIds)
                 .withMessage('請提供有效的 ObjectId 格式'),
         ],
     },

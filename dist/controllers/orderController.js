@@ -16,6 +16,9 @@ const OrderResponseType_1 = require("@/types/OrderResponseType");
 class OrderController extends baseController_1.BaseController {
     constructor() {
         super(OrderResponseType_1.OrderResponseType);
+        this.create = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.orderService.create(req), OrderResponseType_1.OrderResponseType.SUCCESS_CREATED);
+        });
         this.orderService = new orderService_1.OrderService();
     }
     getById(req) {
@@ -25,9 +28,6 @@ class OrderController extends baseController_1.BaseController {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.handleServiceResponse(() => this.orderService.getAll(req), OrderResponseType_1.OrderResponseType.SUCCESS_REQUEST);
         });
-    }
-    create(req) {
-        return this.handleServiceResponse(() => this.orderService.create(req.body), OrderResponseType_1.OrderResponseType.SUCCESS_CREATED);
     }
     update(req) {
         throw new Error('Method not implemented.');

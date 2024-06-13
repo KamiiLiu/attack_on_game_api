@@ -1,5 +1,5 @@
 import OrderModel from '@/models/OrderModel';
-// import { OrderDTO } from '@/dto/eventDTO';
+import mongoose from 'mongoose';
 import { OrderDocument } from '@/interfaces/OrderInterface';
 import { Types } from 'mongoose';
 import { CustomResponseType } from '@/enums/CustomResponseType';
@@ -9,9 +9,9 @@ import { OrderResponseType } from '@/types/OrderResponseType';
 import { MONGODB_ERROR_MSG } from '@/types/OtherResponseType';
 import _ from 'lodash';
 export class OrderRepository implements IBaseRepository<OrderDocument> {
-  async findById(id: Types.ObjectId): Promise<OrderDocument | null> {
+  async findById(id: string): Promise<OrderDocument | null> {
     try {
-      const event = await OrderModel.findById(id);
+      const event = await OrderModel.findOne({ idNumber: id });
       if (_.isEmpty(event)) {
         throw new CustomError(
           CustomResponseType.NOT_FOUND,
@@ -26,8 +26,22 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
       );
     }
   }
-  findAll(queryParams: any): Promise<OrderDocument[]> {
-    throw new Error('Method not implemented.');
+  async findAll(queryParams: any): Promise<OrderDocument[]> {
+    try {
+      const tickets = await OrderModel.find({ ...queryParams });
+      if (_.isEmpty(tickets)) {
+        throw new CustomError(
+          CustomResponseType.NOT_FOUND,
+          OrderResponseType.FAILED_FOUND,
+        );
+      }
+      return tickets;
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
+    }
   }
   async create(content: Partial<OrderDocument>): Promise<boolean> {
     try {
@@ -37,7 +51,7 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
     } catch (error: any) {
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,
-        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+        `${MONGODB_ERROR_MSG}:::::::::::::${error.message || error}`,
       );
     }
   }
@@ -66,6 +80,7 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
     }
   }
   delete(id: Types.ObjectId): Promise<OrderDocument | null> {
+    console.log(id);
     throw new Error('Method not implemented.');
   }
 }

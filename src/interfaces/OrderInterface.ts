@@ -13,6 +13,8 @@ export interface OrderDocument extends Document {
   notes: string;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
+  isCommented: boolean;
+  isDone: boolean;
   createdAt: string;
   updatedAt: string;
 }

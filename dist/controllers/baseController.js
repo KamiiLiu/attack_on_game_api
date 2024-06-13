@@ -19,18 +19,7 @@ const OtherResponseType_1 = require("@/types/OtherResponseType");
 const lodash_1 = __importDefault(require("lodash"));
 class BaseController {
     constructor(msg) {
-        this.msg = msg;
-    }
-    formatResponse(status = CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, message, data) {
-        const options = {
-            status,
-            message,
-            data,
-        };
-        return new responseDTO_1.ResponseDTO(options);
-    }
-    handleServiceResponse(serviceMethod, successMessage) {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.handleServiceResponse = (serviceMethod, successMessage) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield serviceMethod();
                 if (lodash_1.default.isBoolean(result)) {
@@ -45,11 +34,20 @@ class BaseController {
             }
             catch (error) {
                 if (this.isErrorCode(error)) {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, error.msg);
+                    return this.formatResponse(error.code || CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, error.msg);
                 }
                 return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, this.msg.SERVER_ERROR);
             }
         });
+        this.msg = msg;
+    }
+    formatResponse(status = CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, message, data) {
+        const options = {
+            status,
+            message,
+            data,
+        };
+        return new responseDTO_1.ResponseDTO(options);
     }
     isErrorCode(error) {
         return (error.code !== undefined &&

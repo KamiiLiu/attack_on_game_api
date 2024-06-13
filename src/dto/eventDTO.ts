@@ -9,7 +9,7 @@ import { Types } from 'mongoose';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 import { nanoid } from 'nanoid';
 export class EventDTO extends BaseDTO {
-  private readonly _storeId!: Types.ObjectId | null;
+  private readonly _storeId!: Types.ObjectId;
   private readonly _title!: string;
   private readonly _address!: string;
   private readonly _isFoodAllowed: boolean;
@@ -36,7 +36,7 @@ export class EventDTO extends BaseDTO {
         dayjs().format(TIME_FORMATTER),
     };
     super(dtoWithId);
-    this._storeId = dto.storeId ?? null;
+    this._storeId = dto.storeId ?? new Types.ObjectId();
     this._title = dto.title ?? '';
     this._address = dto.address ?? '';
     this._isFoodAllowed = dto.isFoodAllowed ?? false;
@@ -116,7 +116,7 @@ export class EventDTO extends BaseDTO {
     return this._eventImageUrl;
   }
 
-  public toSummaryDTO(): Partial<EventDTO> {
+  public toSummaryDTO(): Partial<EventDocument> {
     return {
       title: this.title,
       address: this.address,
@@ -128,7 +128,7 @@ export class EventDTO extends BaseDTO {
       participationFee: this.participationFee,
     };
   }
-  public toDetailDTO(): Partial<EventDTO> {
+  public toDetailDTO(): Partial<EventDocument> {
     return {
       idNumber: this.idNumber,
       storeId: this._storeId,

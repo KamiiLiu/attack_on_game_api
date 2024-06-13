@@ -84,6 +84,7 @@ class TicketRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const baseUrl = process.env.BASE_URL;
+                console.log(baseUrl);
                 if (!baseUrl) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `BASE_URL is not defined in environment variables.:${baseUrl}`);
                 }

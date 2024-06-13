@@ -45,12 +45,22 @@ const OrderSchema = new mongoose_1.Schema({
     registrationCount: { type: Number, required: true },
     payment: { type: Number, required: true },
     discount: { type: Number, required: true },
-    createdAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
     name: { type: String, required: true },
     phone: { type: String, required: true },
     notes: { type: String, default: '' },
-    paymentStatus: { type: OrderStatus_1.PaymentStatus, default: OrderStatus_1.PaymentStatus.PENDING },
-    paymentMethod: { type: OrderStatus_1.PaymentMethod, default: OrderStatus_1.PaymentMethod.CREDIT_CARD },
+    isCommented: { type: Boolean, default: false },
+    isDone: { type: Boolean, default: false },
+    paymentStatus: {
+        type: String,
+        enum: Object.values(OrderStatus_1.PaymentStatus),
+        default: OrderStatus_1.DefaultQuery.Payment_Status,
+    },
+    paymentMethod: {
+        type: String,
+        enum: Object.values(OrderStatus_1.PaymentMethod),
+        default: OrderStatus_1.DefaultQuery.Payment_Method,
+    },
+    createdAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
     updatedAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
 });
 OrderSchema.index({ eventId: 1, playerId: 1 }, { unique: true });
