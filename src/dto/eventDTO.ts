@@ -7,7 +7,7 @@ import { BaseDTO } from '@/dto/baseDTO';
 import { EventDocument } from '@/interfaces/EventInterface';
 import { Types } from 'mongoose';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
-import { nanoid } from 'nanoid';
+import { generateCustomNanoId } from '@/utils/generateCustomNanoId';
 export class EventDTO extends BaseDTO {
   private readonly _storeId!: Types.ObjectId;
   private readonly _title!: string;
@@ -27,7 +27,7 @@ export class EventDTO extends BaseDTO {
   constructor(dto: Partial<EventDocument>) {
     const dtoWithId = {
       _id: dto._id || new Types.ObjectId(),
-      idNumber: dto.idNumber || nanoid(),
+      idNumber: dto.idNumber || generateCustomNanoId(),
       createdAt:
         dayjs(dto.createdAt).format(TIME_FORMATTER) ||
         dayjs().format(TIME_FORMATTER),

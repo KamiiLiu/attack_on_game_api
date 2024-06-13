@@ -18,7 +18,7 @@ const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const CustomError_1 = require("@/errors/CustomError");
 const TicketResponseType_1 = require("@/types/TicketResponseType");
 const qrcode_1 = __importDefault(require("qrcode"));
-const nanoid_1 = require("nanoid");
+const generateCustomNanoId_1 = require("@/utils/generateCustomNanoId");
 const lodash_1 = __importDefault(require("lodash"));
 const ticketDTO_1 = require("@/dto/ticketDTO");
 function handleDatabaseError(error, message) {
@@ -28,7 +28,7 @@ class TicketRepository {
     create(orderIdNumber) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const idNumber = (0, nanoid_1.nanoid)();
+                const idNumber = (0, generateCustomNanoId_1.generateCustomNanoId)();
                 const qrCodeUrl = yield this.generateQRCode(orderIdNumber, idNumber);
                 const ticketDTO = new ticketDTO_1.TicketDTO({ qrCodeUrl, orderIdNumber, idNumber });
                 yield TicketModel_1.default.create(ticketDTO);

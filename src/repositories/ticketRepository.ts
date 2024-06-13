@@ -4,7 +4,7 @@ import { CustomResponseType } from '@/enums/CustomResponseType';
 import { CustomError } from '@/errors/CustomError';
 import { TicketResponseType } from '@/types/TicketResponseType';
 import QRCode from 'qrcode';
-import { nanoid } from 'nanoid';
+import { generateCustomNanoId } from '@/utils/generateCustomNanoId';
 import _ from 'lodash';
 import { TicketDTO } from '@/dto/ticketDTO';
 import { Types } from 'mongoose';
@@ -18,7 +18,7 @@ function handleDatabaseError(error: any, message: string): never {
 export class TicketRepository {
   async create(orderIdNumber: string): Promise<boolean> {
     try {
-      const idNumber = nanoid();
+      const idNumber = generateCustomNanoId();
       const qrCodeUrl = await this.generateQRCode(orderIdNumber, idNumber);
       const ticketDTO = new TicketDTO({ qrCodeUrl, orderIdNumber, idNumber });
       await TicketModel.create(ticketDTO);

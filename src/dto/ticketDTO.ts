@@ -3,7 +3,7 @@ import { BaseDTO } from '@/dto/baseDTO';
 import { Types } from 'mongoose';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 import dayjs from '@/utils/dayjs';
-import { nanoid } from 'nanoid';
+import { generateCustomNanoId } from '@/utils/generateCustomNanoId';
 export class TicketDTO extends BaseDTO {
   readonly orderIdNumber: string;
   readonly isQrCodeUsed: boolean;
@@ -12,7 +12,7 @@ export class TicketDTO extends BaseDTO {
   constructor(dto: Partial<TicketDocument>) {
     const dtoWithId = {
       _id: dto._id || new Types.ObjectId(),
-      idNumber: dto.idNumber || nanoid(),
+      idNumber: dto.idNumber || generateCustomNanoId(),
       createdAt:
         dayjs(dto.createdAt).format(TIME_FORMATTER) ||
         dayjs().format(TIME_FORMATTER),

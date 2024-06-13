@@ -8,12 +8,12 @@ const baseDTO_1 = require("@/dto/baseDTO");
 const mongoose_1 = require("mongoose");
 const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
 const dayjs_1 = __importDefault(require("@/utils/dayjs"));
-const nanoid_1 = require("nanoid");
+const generateCustomNanoId_1 = require("@/utils/generateCustomNanoId");
 class TicketDTO extends baseDTO_1.BaseDTO {
     constructor(dto) {
         const dtoWithId = {
             _id: dto._id || new mongoose_1.Types.ObjectId(),
-            idNumber: dto.idNumber || (0, nanoid_1.nanoid)(),
+            idNumber: dto.idNumber || (0, generateCustomNanoId_1.generateCustomNanoId)(),
             createdAt: (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
                 (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
             updatedAt: (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
