@@ -16,11 +16,11 @@ function handleDatabaseError(error: any, message: string): never {
 }
 
 export class TicketRepository {
-  async create(orderIdNumber: string): Promise<boolean> {
+  async create(orderId: Types.ObjectId): Promise<boolean> {
     try {
       const idNumber = generateCustomNanoId();
-      const qrCodeUrl = await this.generateQRCode(orderIdNumber, idNumber);
-      const ticketDTO = new TicketDTO({ qrCodeUrl, orderIdNumber, idNumber });
+      const qrCodeUrl = await this.generateQRCode(idNumber);
+      const ticketDTO = new TicketDTO({ qrCodeUrl, orderId, idNumber });
       await TicketModel.create(ticketDTO);
       return true;
     } catch (error: any) {
@@ -61,11 +61,11 @@ export class TicketRepository {
   }
 
   async findAll(
-    orderIdNumber: string,
+    orderId: Types.ObjectId,
     playerId: Types.ObjectId,
   ): Promise<TicketDocument[]> {
     try {
-      const tickets = await TicketModel.find({ orderIdNumber, playerId });
+      const tickets = await TicketModel.find({ orderId, playerId });
       if (_.isEmpty(tickets)) {
         throw new CustomError(
           CustomResponseType.NOT_FOUND,
@@ -78,17 +78,16 @@ export class TicketRepository {
     }
   }
 
-  async generateQRCode(orderId: string, idNumber: string): Promise<string> {
+  async generateQRCode(idNumber: string): Promise<string> {
     try {
-      const baseUrl = process.env.BASE_URL;
-      console.log(baseUrl);
+      const baseUrl = process.env.OrderURL_Web;
       if (!baseUrl) {
         throw new CustomError(
           CustomResponseType.DATABASE_OPERATION_FAILED,
           `BASE_URL is not defined in environment variables.:${baseUrl}`,
         );
       }
-      const url = `${baseUrl}/order/${orderId}?qrCodeId=${idNumber}`;
+      const url = `${baseUrl}/order/my-ticket?qrCodeId=${idNumber}`;
       return await QRCode.toDataURL(url);
     } catch (error: any) {
       throw new CustomError(

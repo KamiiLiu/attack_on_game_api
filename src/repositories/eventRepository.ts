@@ -28,6 +28,23 @@ export class EventRepository implements IBaseRepository<EventDocument> {
       );
     }
   }
+  async findByDBId(id: Types.ObjectId): Promise<EventDocument> {
+    try {
+      const event = await EventModel.findById(id);
+      if (_.isEmpty(event)) {
+        throw new CustomError(
+          CustomResponseType.NOT_FOUND,
+          EventResponseType.FAILED_FOUND,
+        );
+      }
+      return event;
+    } catch (error: any) {
+      throw new CustomError(
+        CustomResponseType.DATABASE_OPERATION_FAILED,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
+      );
+    }
+  }
   async findAll(queryParams: QueryParams): Promise<EventDocument[]> {
     try {
       const {

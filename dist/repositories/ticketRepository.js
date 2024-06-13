@@ -83,8 +83,7 @@ class TicketRepository {
     generateQRCode(orderId, idNumber) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const baseUrl = process.env.BASE_URL;
-                console.log(baseUrl);
+                const baseUrl = process.env.OrderURL_Web;
                 if (!baseUrl) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `BASE_URL is not defined in environment variables.:${baseUrl}`);
                 }

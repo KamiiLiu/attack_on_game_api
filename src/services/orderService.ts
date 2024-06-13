@@ -1,18 +1,26 @@
 import _ from 'lodash';
-import mongoose from 'mongoose';
 import { OrderDocument } from '@/interfaces/OrderInterface';
+import { EventDocument } from '@/interfaces/EventInterface';
+import { TicketDocument } from '@/interfaces/TicketInterface';
 import { OrderDTO } from '@/dto/orderDTO';
 import { EventDTO } from '@/dto/eventDTO';
+import { TicketDTO } from '@/dto/ticketDTO';
 import { OrderRepository } from '@/repositories/orderRepository';
 import { EventRepository } from '@/repositories/eventRepository';
 import { TicketRepository } from '@/repositories/ticketRepository';
 import { CustomResponseType } from '@/enums/CustomResponseType';
-import { CustomError } from '@/errors/CustomError';
-import { IBaseService } from '@/services/IBaseService';
 import { OrderResponseType } from '@/types/OrderResponseType';
-import { Types } from 'mongoose';
+import { EventResponseType } from '@/types/EventResponseType';
+import { CustomError } from '@/errors/CustomError';
+import { Request } from 'express';
 import Player from '@/models/Player';
-export class OrderService implements IBaseService<OrderDTO> {
+interface IGetByIdResult {
+  event: Partial<EventDocument>;
+  order: Partial<OrderDocument>;
+  tickets: Partial<TicketDocument>[];
+}
+
+export class OrderService {
   private orderRepository: OrderRepository;
   private eventRepository: EventRepository;
   private ticketRepository: TicketRepository;
@@ -21,11 +29,46 @@ export class OrderService implements IBaseService<OrderDTO> {
     this.eventRepository = new EventRepository();
     this.ticketRepository = new TicketRepository();
   }
-  async getById(id: string): Promise<OrderDTO> {
-    const event = await this.eventRepository.findById(id);
-    return eventDTO.toDetailDTO();
+  async getById(queryParams: Request): Promise<IGetByIdResult> {
+    const player = await Player.findOne({ user: queryParams.user });
+    if (!player) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+
+    const order = await this.orderRepository.findById(
+      queryParams.params.orderId,
+    );
+    if (!order) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.FAILED_FOUND,
+      );
+    }
+
+    const ticketList = await this.ticketRepository.findAll(order.id, player.id);
+    const event = await this.eventRepository.findByDBId(order.eventId);
+    if (!event) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        EventResponseType.FAILED_FOUND,
+      );
+    }
+    const targetEventDTO = new EventDTO(event);
+    const targetOrderDTO = new OrderDTO(order);
+    const targetTicketsDTO = ticketList.map((x) =>
+      new TicketDTO(x).toDetailDTO(),
+    );
+
+    return {
+      event: targetEventDTO.toSummaryDTO(),
+      order: targetOrderDTO.toDetailDTO(),
+      tickets: targetTicketsDTO,
+    };
   }
-  async getAll(queryParams: any): Promise<OrderDTO[]> {
+  async getAll(queryParams: Request): Promise<OrderDTO[]> {
     const player = await Player.findOne({ user: queryParams.user });
     if (!player) {
       throw new CustomError(
@@ -61,13 +104,6 @@ export class OrderService implements IBaseService<OrderDTO> {
         );
       }
 
-      if (targetEventDTO.availableSeat < targetOrderDTO.registrationCount) {
-        throw new CustomError(
-          CustomResponseType.VALIDATION_ERROR,
-          OrderResponseType.CREATED_ERROR_EXCEEDS_CAPACITY,
-        );
-      }
-
       if (
         targetEventDTO.participationFee * targetOrderDTO.registrationCount !==
         targetOrderDTO.getTotalAmount
@@ -100,17 +136,5 @@ export class OrderService implements IBaseService<OrderDTO> {
         error?.message || error,
       );
     }
-  }
-
-  async update(id: string, content: any): Promise<Partial<EventDTO> | null> {
-    throw new Error(
-      'Method not implemented. This method is intentionally left unimplemented.',
-    );
-  }
-
-  async delete(id: string): Promise<Partial<EventDTO> | null> {
-    throw new Error(
-      'Method not implemented. This method is intentionally left unimplemented.',
-    );
   }
 }
