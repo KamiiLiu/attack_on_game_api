@@ -35,6 +35,20 @@ class EventRepository {
             }
         });
     }
+    findByDBId(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const event = yield EventModel_1.default.findById(id);
+                if (lodash_1.default.isEmpty(event)) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
+                }
+                return event;
+            }
+            catch (error) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);
+            }
+        });
+    }
     findAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

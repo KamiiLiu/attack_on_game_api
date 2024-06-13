@@ -20,14 +20,14 @@ class TicketDTO extends baseDTO_1.BaseDTO {
                 (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
         };
         super(dtoWithId);
-        this.orderIdNumber = dto.orderIdNumber || '';
+        this.orderId = dto.orderId || new mongoose_1.Types.ObjectId();
         this.playerId = dto.playerId || new mongoose_1.Types.ObjectId();
         this.isQrCodeUsed = dto.isQrCodeUsed || false;
         this.qrCodeUrl = dto.qrCodeUrl || '';
     }
     toDetailDTO() {
         return {
-            orderIdNumber: this.orderIdNumber,
+            orderId: this.orderId,
             isQrCodeUsed: this.isQrCodeUsed,
             qrCodeUrl: this.qrCodeUrl,
         };

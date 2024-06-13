@@ -190,7 +190,7 @@ exports.validationConfig = {
         id: [
             (0, express_validator_1.param)('id')
                 .custom(commonConfig_1.validateNanoidIds)
-                .withMessage('請提供有效的 ObjectId 格式'),
+                .withMessage('請提供有效的 6位數Id 格式'),
         ],
         storeId: [
             (0, express_validator_1.param)('storeId')

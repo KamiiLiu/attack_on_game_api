@@ -25,12 +25,13 @@ function handleDatabaseError(error, message) {
     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${message}:${error.message || error}`);
 }
 class TicketRepository {
-    create(orderIdNumber) {
+    create(orderId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const idNumber = (0, generateCustomNanoId_1.generateCustomNanoId)();
-                const qrCodeUrl = yield this.generateQRCode(orderIdNumber, idNumber);
-                const ticketDTO = new ticketDTO_1.TicketDTO({ qrCodeUrl, orderIdNumber, idNumber });
+                const qrCodeUrl = yield this.generateQRCode(idNumber);
+                const ticketDTO = new ticketDTO_1.TicketDTO({ qrCodeUrl, orderId, idNumber });
+                console.log(ticketDTO);
                 yield TicketModel_1.default.create(ticketDTO);
                 return true;
             }
@@ -66,10 +67,10 @@ class TicketRepository {
             }
         });
     }
-    findAll(orderIdNumber, playerId) {
+    findAll(orderId, playerId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const tickets = yield TicketModel_1.default.find({ orderIdNumber, playerId });
+                const tickets = yield TicketModel_1.default.find({ orderId, playerId });
                 if (lodash_1.default.isEmpty(tickets)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
                 }
@@ -80,17 +81,18 @@ class TicketRepository {
             }
         });
     }
-    generateQRCode(orderId, idNumber) {
+    generateQRCode(idNumber) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const baseUrl = process.env.OrderURL_Web;
+                const baseUrl = process.env.QRCODE_BASE_URL;
                 if (!baseUrl) {
-                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `BASE_URL is not defined in environment variables.:${baseUrl}`);
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `QRCODE_BASE_URL 並不存在於.env環境內，請快點加上吧:${baseUrl}`);
                 }
-                const url = `${baseUrl}/order/${orderId}?qrCodeId=${idNumber}`;
+                const url = `${baseUrl}/order/my-ticket?qrCodeId=${idNumber}`;
                 return yield qrcode_1.default.toDataURL(url);
             }
             catch (error) {
+                console.log('xxx');
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${TicketResponseType_1.TicketResponseType.FAILED_CREATED}:${error.message || error}`);
             }
         });

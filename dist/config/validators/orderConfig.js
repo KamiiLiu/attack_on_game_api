@@ -12,13 +12,6 @@ exports.validationConfig = {
                 .notEmpty()
                 .withMessage('eventId 不能為空'),
         ],
-        playerId: [
-            (0, express_validator_1.body)('playerId')
-                .custom(commonConfig_1.validateObjectIds)
-                .withMessage('playerId 必須符合資料庫結構')
-                .notEmpty()
-                .withMessage('playerId 不能為空'),
-        ],
         payment: [
             (0, express_validator_1.body)('payment')
                 .isInt({ min: 0 })

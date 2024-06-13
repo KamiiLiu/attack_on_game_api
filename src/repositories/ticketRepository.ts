@@ -21,6 +21,7 @@ export class TicketRepository {
       const idNumber = generateCustomNanoId();
       const qrCodeUrl = await this.generateQRCode(idNumber);
       const ticketDTO = new TicketDTO({ qrCodeUrl, orderId, idNumber });
+      console.log(ticketDTO);
       await TicketModel.create(ticketDTO);
       return true;
     } catch (error: any) {
@@ -80,16 +81,17 @@ export class TicketRepository {
 
   async generateQRCode(idNumber: string): Promise<string> {
     try {
-      const baseUrl = process.env.OrderURL_Web;
+      const baseUrl = process.env.QRCODE_BASE_URL;
       if (!baseUrl) {
         throw new CustomError(
           CustomResponseType.DATABASE_OPERATION_FAILED,
-          `BASE_URL is not defined in environment variables.:${baseUrl}`,
+          `QRCODE_BASE_URL 並不存在於.env環境內，請快點加上吧:${baseUrl}`,
         );
       }
       const url = `${baseUrl}/order/my-ticket?qrCodeId=${idNumber}`;
       return await QRCode.toDataURL(url);
     } catch (error: any) {
+      console.log('xxx');
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,
         `${TicketResponseType.FAILED_CREATED}:${error.message || error}`,

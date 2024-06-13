@@ -1,20 +1,12 @@
 import mongoose, { Schema } from 'mongoose';
 import { TicketDocument } from '@/interfaces/TicketInterface';
-import Order from '@/models/OrderModel';
 import dayjs from '@/utils/dayjs';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 const TicketSchema: Schema = new Schema({
-  orderIdNumber: {
-    type: String,
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'orders',
     required: true,
-    validate: {
-      validator: async function (value: string) {
-        const order = await Order.findOne({ idNumber: value });
-        return !!order;
-      },
-      message: (props: any) =>
-        `Order with idNumber ${props.value} does not exist!`,
-    },
   },
   playerId: {
     type: mongoose.Schema.Types.ObjectId,

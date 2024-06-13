@@ -31,7 +31,7 @@ export class OrderService {
   }
   async getById(queryParams: Request): Promise<IGetByIdResult> {
     const player = await Player.findOne({ user: queryParams.user });
-    if (!player) {
+    if (_.isEmpty(player)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         OrderResponseType.ERROR_PLAYER_FOUND,
@@ -79,62 +79,66 @@ export class OrderService {
     throw new Error('Method not implemented.');
   }
   async create(content: any): Promise<boolean> {
-    try {
-      const player = await Player.findOne({ user: content.user._id }).exec();
-      if (!player) {
-        throw new CustomError(
-          CustomResponseType.NOT_FOUND,
-          OrderResponseType.ERROR_PLAYER_FOUND,
-        );
-      }
-      const targetEvent = await this.eventRepository.findById(
-        content.body.eventId,
+    const player = await Player.findOne({ user: content.user._id }).exec();
+    console.log('player', player);
+    console.log('content', content.user._id);
+    if (_.isEmpty(player)) {
+      console.log(
+        'OrderResponseType.ERROR_PLAYER_FOUND',
+        OrderResponseType.CREATED_ERROR_PLAYER_FOUND,
       );
-      const targetEventDTO = new EventDTO(targetEvent);
-      const targetOrderDTO = new OrderDTO({
-        ...content.body,
-        eventId: targetEvent._id,
-        playerId: content.user._id,
-      });
-
-      if (!targetEventDTO.isRegisterable) {
-        throw new CustomError(
-          CustomResponseType.VALIDATION_ERROR,
-          OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD,
-        );
-      }
-
-      if (
-        targetEventDTO.participationFee * targetOrderDTO.registrationCount !==
-        targetOrderDTO.getTotalAmount
-      ) {
-        throw new CustomError(
-          CustomResponseType.VALIDATION_ERROR,
-          OrderResponseType.CREATED_ERROR_MONEY,
-        );
-      }
-
-      const addedSeat =
-        targetEventDTO.currentParticipantsCount +
-        targetOrderDTO.registrationCount;
-      await this.orderRepository.create(targetOrderDTO.toDetailDTO());
-      await this.eventRepository.updateParticipantsCount(
-        targetEventDTO,
-        addedSeat,
-      );
-      const ticketPromises = [];
-      for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
-        ticketPromises.push(
-          this.ticketRepository.create(targetOrderDTO.getIdNumber),
-        );
-      }
-      await Promise.all(ticketPromises);
-      return true;
-    } catch (error: any) {
       throw new CustomError(
-        CustomResponseType.DATABASE_OPERATION_FAILED,
-        error?.message || error,
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.CREATED_ERROR_PLAYER_FOUND,
       );
     }
+    const targetEvent = await this.eventRepository.findById(
+      content.body.eventId,
+    );
+    if (_.isEmpty(targetEvent)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        EventResponseType.FAILED_FOUND,
+      );
+    }
+    console.log('targetEvent', targetEvent);
+    const targetEventDTO = new EventDTO(targetEvent);
+    const targetOrderDTO = new OrderDTO({
+      ...content.body,
+      eventId: targetEvent._id,
+      playerId: content.user._id,
+    });
+
+    if (!targetEventDTO.isRegisterable) {
+      throw new CustomError(
+        CustomResponseType.VALIDATION_ERROR,
+        OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD,
+      );
+    }
+
+    if (
+      targetEventDTO.participationFee * targetOrderDTO.registrationCount !==
+      targetOrderDTO.getTotalAmount
+    ) {
+      throw new CustomError(
+        CustomResponseType.VALIDATION_ERROR,
+        OrderResponseType.CREATED_ERROR_MONEY,
+      );
+    }
+
+    const addedSeat =
+      targetEventDTO.currentParticipantsCount +
+      targetOrderDTO.registrationCount;
+    await this.orderRepository.create(targetOrderDTO.toDetailDTO());
+    await this.eventRepository.updateParticipantsCount(
+      targetEventDTO,
+      addedSeat,
+    );
+    const ticketPromises = [];
+    for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
+      ticketPromises.push(this.ticketRepository.create(targetOrderDTO._id));
+    }
+    await Promise.all(ticketPromises);
+    return true;
   }
 }

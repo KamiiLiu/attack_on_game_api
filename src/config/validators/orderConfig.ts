@@ -1,8 +1,5 @@
 import { body, ValidationChain } from 'express-validator';
-import {
-  validateNanoidIds,
-  validateObjectIds,
-} from '@/config/validators/commonConfig';
+import { validateNanoidIds } from '@/config/validators/commonConfig';
 type ValidationConfig = {
   [key: string]: ValidationChain[];
 };
@@ -18,13 +15,6 @@ export const validationConfig: {
         .withMessage('eventId 必須符合資料庫結構')
         .notEmpty()
         .withMessage('eventId 不能為空'),
-    ],
-    playerId: [
-      body('playerId')
-        .custom(validateObjectIds)
-        .withMessage('playerId 必須符合資料庫結構')
-        .notEmpty()
-        .withMessage('playerId 不能為空'),
     ],
     payment: [
       body('payment')

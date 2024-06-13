@@ -43,6 +43,7 @@ export class BaseController {
         return this.formatResponse(CustomResponseType.OTHER, SPECIAL_ERROR_MSG);
       }
     } catch (error: unknown) {
+      console.log('error', error);
       if (this.isErrorCode(error)) {
         return this.formatResponse(
           error.code || CustomResponseType.SYSTEM_ERROR,
