@@ -45,11 +45,11 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
       );
     }
   }
-  async create(content: Partial<OrderDocument>): Promise<boolean> {
+  async create(content: Partial<OrderDocument>): Promise<OrderDocument> {
     try {
       const event = new OrderModel(content);
       await event.save();
-      return true;
+      return event;
     } catch (error: any) {
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,

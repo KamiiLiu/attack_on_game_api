@@ -75,33 +75,36 @@ class OrderService {
     create(content) {
         return __awaiter(this, void 0, void 0, function* () {
             const player = yield Player_1.default.findOne({ user: content.user._id }).exec();
-            console.log('player', player);
-            console.log('content', content.user._id);
             if (lodash_1.default.isEmpty(player)) {
-                console.log('OrderResponseType.ERROR_PLAYER_FOUND', OrderResponseType_1.OrderResponseType.CREATED_ERROR_PLAYER_FOUND);
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.CREATED_ERROR_PLAYER_FOUND);
             }
             const targetEvent = yield this.eventRepository.findById(content.body.eventId);
             if (lodash_1.default.isEmpty(targetEvent)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }
-            console.log('targetEvent', targetEvent);
             const targetEventDTO = new eventDTO_1.EventDTO(targetEvent);
             const targetOrderDTO = new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, content.body), { eventId: targetEvent._id, playerId: player.user }));
             if (!targetEventDTO.isRegisterable) {
+                console.log('xxx');
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD);
             }
             if (targetEventDTO.participationFee * targetOrderDTO.registrationCount !==
                 targetOrderDTO.getTotalAmount) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_MONEY);
             }
+            if (targetEventDTO.availableSeat < targetOrderDTO.registrationCount) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_EXCEEDS_CAPACITY);
+            }
+            console.log(targetEventDTO.availableSeat);
+            console.log(targetOrderDTO.registrationCount);
             const addedSeat = targetEventDTO.currentParticipantsCount +
                 targetOrderDTO.registrationCount;
-            yield this.orderRepository.create(targetOrderDTO.toDetailDTO());
+            const OrderDocument = yield this.orderRepository.create(targetOrderDTO.toDetailDTO());
             yield this.eventRepository.updateParticipantsCount(targetEventDTO, addedSeat);
             const ticketPromises = [];
+            console.log(OrderDocument.id, player.id);
             for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
-                ticketPromises.push(this.ticketRepository.create(targetOrderDTO));
+                ticketPromises.push(this.ticketRepository.create(OrderDocument.id, player.user));
             }
             yield Promise.all(ticketPromises);
             return true;

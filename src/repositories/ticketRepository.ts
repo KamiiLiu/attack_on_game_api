@@ -7,7 +7,6 @@ import QRCode from 'qrcode';
 import { generateCustomNanoId } from '@/utils/generateCustomNanoId';
 import _ from 'lodash';
 import { TicketDTO } from '@/dto/ticketDTO';
-import { OrderDTO } from '@/dto/orderDTO';
 import { Types } from 'mongoose';
 function handleDatabaseError(error: any, message: string): never {
   throw new CustomError(
@@ -17,14 +16,17 @@ function handleDatabaseError(error: any, message: string): never {
 }
 
 export class TicketRepository {
-  async create(orderDTO: OrderDTO): Promise<boolean> {
+  async create(
+    orderId: Types.ObjectId,
+    playerId: Types.ObjectId,
+  ): Promise<boolean> {
     try {
       const idNumber = generateCustomNanoId();
       const qrCodeUrl = await this.generateQRCode(idNumber);
       const ticketDTO = new TicketDTO({
-        orderId: orderDTO._id,
+        orderId,
         qrCodeUrl: qrCodeUrl,
-        playerId: orderDTO.playerId,
+        playerId,
       });
       console.log(ticketDTO);
       await TicketModel.create(ticketDTO);

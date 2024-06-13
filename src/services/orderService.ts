@@ -91,13 +91,7 @@ export class OrderService {
   }
   async create(content: any): Promise<boolean> {
     const player = await Player.findOne({ user: content.user._id }).exec();
-    console.log('player', player);
-    console.log('content', content.user._id);
     if (_.isEmpty(player)) {
-      console.log(
-        'OrderResponseType.ERROR_PLAYER_FOUND',
-        OrderResponseType.CREATED_ERROR_PLAYER_FOUND,
-      );
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         OrderResponseType.CREATED_ERROR_PLAYER_FOUND,
@@ -112,21 +106,19 @@ export class OrderService {
         EventResponseType.FAILED_FOUND,
       );
     }
-    console.log('targetEvent', targetEvent);
     const targetEventDTO = new EventDTO(targetEvent);
     const targetOrderDTO = new OrderDTO({
       ...content.body,
       eventId: targetEvent._id,
       playerId: player.user,
     });
-
     if (!targetEventDTO.isRegisterable) {
+      console.log('xxx');
       throw new CustomError(
         CustomResponseType.VALIDATION_ERROR,
         OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD,
       );
     }
-
     if (
       targetEventDTO.participationFee * targetOrderDTO.registrationCount !==
       targetOrderDTO.getTotalAmount
@@ -136,18 +128,30 @@ export class OrderService {
         OrderResponseType.CREATED_ERROR_MONEY,
       );
     }
-
+    if (targetEventDTO.availableSeat < targetOrderDTO.registrationCount) {
+      throw new CustomError(
+        CustomResponseType.VALIDATION_ERROR,
+        OrderResponseType.CREATED_ERROR_EXCEEDS_CAPACITY,
+      );
+    }
+    console.log(targetEventDTO.availableSeat);
+    console.log(targetOrderDTO.registrationCount);
     const addedSeat =
       targetEventDTO.currentParticipantsCount +
       targetOrderDTO.registrationCount;
-    await this.orderRepository.create(targetOrderDTO.toDetailDTO());
+    const OrderDocument = await this.orderRepository.create(
+      targetOrderDTO.toDetailDTO(),
+    );
     await this.eventRepository.updateParticipantsCount(
       targetEventDTO,
       addedSeat,
     );
     const ticketPromises = [];
+    console.log(OrderDocument.id, player.id);
     for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
-      ticketPromises.push(this.ticketRepository.create(targetOrderDTO));
+      ticketPromises.push(
+        this.ticketRepository.create(OrderDocument.id, player.user),
+      );
     }
     await Promise.all(ticketPromises);
     return true;

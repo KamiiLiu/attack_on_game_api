@@ -25,15 +25,15 @@ function handleDatabaseError(error, message) {
     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${message}:${error.message || error}`);
 }
 class TicketRepository {
-    create(orderDTO) {
+    create(orderId, playerId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const idNumber = (0, generateCustomNanoId_1.generateCustomNanoId)();
                 const qrCodeUrl = yield this.generateQRCode(idNumber);
                 const ticketDTO = new ticketDTO_1.TicketDTO({
-                    orderId: orderDTO._id,
+                    orderId,
                     qrCodeUrl: qrCodeUrl,
-                    playerId: orderDTO.playerId,
+                    playerId,
                 });
                 console.log(ticketDTO);
                 yield TicketModel_1.default.create(ticketDTO);

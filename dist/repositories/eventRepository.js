@@ -109,7 +109,6 @@ class EventRepository {
                     registrationEndTime: content.registrationEndTime,
                     maxParticipants: content.maxParticipants,
                     minParticipants: content.minParticipants,
-                    currentParticipantsCount: content.currentParticipantsCount,
                     participationFee: content.participationFee,
                     eventImageUrl: content.eventImageUrl,
                     updatedAt: content.updatedAt,

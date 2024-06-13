@@ -55,7 +55,7 @@ class OrderRepository {
             try {
                 const event = new OrderModel_1.default(content);
                 yield event.save();
-                return true;
+                return event;
             }
             catch (error) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:::::::::::::${error.message || error}`);
