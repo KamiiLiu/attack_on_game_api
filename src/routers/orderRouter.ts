@@ -21,6 +21,11 @@ class OrderRouter extends BaseRouter {
       handleValidationErrors,
       this.handleRequest(this.controller.create),
     );
+    this.router.get(
+      '/:orderId',
+      jwtAuthenticator,
+      this.handleRequest(this.controller.getById),
+    );
   }
 }
 export default new OrderRouter().router;

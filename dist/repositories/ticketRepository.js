@@ -25,12 +25,16 @@ function handleDatabaseError(error, message) {
     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${message}:${error.message || error}`);
 }
 class TicketRepository {
-    create(orderId) {
+    create(orderDTO) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const idNumber = (0, generateCustomNanoId_1.generateCustomNanoId)();
                 const qrCodeUrl = yield this.generateQRCode(idNumber);
-                const ticketDTO = new ticketDTO_1.TicketDTO({ qrCodeUrl, orderId, idNumber });
+                const ticketDTO = new ticketDTO_1.TicketDTO({
+                    orderId: orderDTO._id,
+                    qrCodeUrl: qrCodeUrl,
+                    playerId: orderDTO.playerId,
+                });
                 console.log(ticketDTO);
                 yield TicketModel_1.default.create(ticketDTO);
                 return true;
@@ -70,6 +74,7 @@ class TicketRepository {
     findAll(orderId, playerId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log(orderId, playerId);
                 const tickets = yield TicketModel_1.default.find({ orderId, playerId });
                 if (lodash_1.default.isEmpty(tickets)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);

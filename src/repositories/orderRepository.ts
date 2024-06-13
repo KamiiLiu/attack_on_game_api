@@ -11,14 +11,16 @@ import _ from 'lodash';
 export class OrderRepository implements IBaseRepository<OrderDocument> {
   async findById(id: string): Promise<OrderDocument | null> {
     try {
-      const event = await OrderModel.findOne({ idNumber: id });
-      if (_.isEmpty(event)) {
+      const order = await OrderModel.findOne({ idNumber: id });
+      console.log(order);
+      console.log(id);
+      if (_.isEmpty(order)) {
         throw new CustomError(
           CustomResponseType.NOT_FOUND,
           OrderResponseType.FAILED_FOUND,
         );
       }
-      return event;
+      return order;
     } catch (error: any) {
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,

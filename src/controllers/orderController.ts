@@ -11,18 +11,18 @@ export class OrderController extends BaseController implements IBaseController {
     super(OrderResponseType);
     this.orderService = new OrderService();
   }
-  getById(req: Request): Promise<ResponseDTO> {
-    return this.handleServiceResponse(
-      () => this.orderService.getById(req.params.id),
+  public getById = async (req: Request): Promise<ResponseDTO> => {
+    return await this.handleServiceResponse(
+      () => this.orderService.getById(req),
       OrderResponseType.SUCCESS_REQUEST,
     );
-  }
-  async getAll(req: Request): Promise<ResponseDTO> {
+  };
+  public getAll = async (req: Request): Promise<ResponseDTO> => {
     return await this.handleServiceResponse(
       () => this.orderService.getAll(req),
       OrderResponseType.SUCCESS_REQUEST,
     );
-  }
+  };
   public create = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
       () => this.orderService.create(req),

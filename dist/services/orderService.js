@@ -23,6 +23,7 @@ const ticketRepository_1 = require("@/repositories/ticketRepository");
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const OrderResponseType_1 = require("@/types/OrderResponseType");
 const EventResponseType_1 = require("@/types/EventResponseType");
+const TicketResponseType_1 = require("@/types/TicketResponseType");
 const CustomError_1 = require("@/errors/CustomError");
 const Player_1 = __importDefault(require("@/models/Player"));
 class OrderService {
@@ -37,14 +38,20 @@ class OrderService {
             if (lodash_1.default.isEmpty(player)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
+            console.log('player', player);
+            console.log('queryParams.params.orderId', queryParams.params.orderId);
             const order = yield this.orderRepository.findById(queryParams.params.orderId);
-            if (!order) {
+            console.log('order', order);
+            if (lodash_1.default.isEmpty(order)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
             }
-            const ticketList = yield this.ticketRepository.findAll(order.id, player.id);
+            const ticketList = yield this.ticketRepository.findAll(order.id, player.user);
             const event = yield this.eventRepository.findByDBId(order.eventId);
-            if (!event) {
+            if (lodash_1.default.isEmpty(event)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
+            }
+            if (lodash_1.default.isEmpty(ticketList)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
             }
             const targetEventDTO = new eventDTO_1.EventDTO(event);
             const targetOrderDTO = new orderDTO_1.OrderDTO(order);
@@ -80,7 +87,7 @@ class OrderService {
             }
             console.log('targetEvent', targetEvent);
             const targetEventDTO = new eventDTO_1.EventDTO(targetEvent);
-            const targetOrderDTO = new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, content.body), { eventId: targetEvent._id, playerId: content.user._id }));
+            const targetOrderDTO = new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, content.body), { eventId: targetEvent._id, playerId: player.user }));
             if (!targetEventDTO.isRegisterable) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD);
             }
@@ -94,7 +101,7 @@ class OrderService {
             yield this.eventRepository.updateParticipantsCount(targetEventDTO, addedSeat);
             const ticketPromises = [];
             for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
-                ticketPromises.push(this.ticketRepository.create(targetOrderDTO._id));
+                ticketPromises.push(this.ticketRepository.create(targetOrderDTO));
             }
             yield Promise.all(ticketPromises);
             return true;

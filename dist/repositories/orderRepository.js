@@ -23,11 +23,13 @@ class OrderRepository {
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const event = yield OrderModel_1.default.findOne({ idNumber: id });
-                if (lodash_1.default.isEmpty(event)) {
+                const order = yield OrderModel_1.default.findOne({ idNumber: id });
+                console.log(order);
+                console.log(id);
+                if (lodash_1.default.isEmpty(order)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
                 }
-                return event;
+                return order;
             }
             catch (error) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);

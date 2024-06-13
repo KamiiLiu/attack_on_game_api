@@ -11,6 +11,7 @@ import { TicketRepository } from '@/repositories/ticketRepository';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { OrderResponseType } from '@/types/OrderResponseType';
 import { EventResponseType } from '@/types/EventResponseType';
+import { TicketResponseType } from '@/types/TicketResponseType';
 import { CustomError } from '@/errors/CustomError';
 import { Request } from 'express';
 import Player from '@/models/Player';
@@ -37,23 +38,33 @@ export class OrderService {
         OrderResponseType.ERROR_PLAYER_FOUND,
       );
     }
-
+    console.log('player', player);
+    console.log('queryParams.params.orderId', queryParams.params.orderId);
     const order = await this.orderRepository.findById(
       queryParams.params.orderId,
     );
-    if (!order) {
+    console.log('order', order);
+    if (_.isEmpty(order)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         OrderResponseType.FAILED_FOUND,
       );
     }
-
-    const ticketList = await this.ticketRepository.findAll(order.id, player.id);
+    const ticketList = await this.ticketRepository.findAll(
+      order.id,
+      player.user,
+    );
     const event = await this.eventRepository.findByDBId(order.eventId);
-    if (!event) {
+    if (_.isEmpty(event)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         EventResponseType.FAILED_FOUND,
+      );
+    }
+    if (_.isEmpty(ticketList)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        TicketResponseType.FAILED_FOUND,
       );
     }
     const targetEventDTO = new EventDTO(event);
@@ -106,7 +117,7 @@ export class OrderService {
     const targetOrderDTO = new OrderDTO({
       ...content.body,
       eventId: targetEvent._id,
-      playerId: content.user._id,
+      playerId: player.user,
     });
 
     if (!targetEventDTO.isRegisterable) {
@@ -136,7 +147,7 @@ export class OrderService {
     );
     const ticketPromises = [];
     for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
-      ticketPromises.push(this.ticketRepository.create(targetOrderDTO._id));
+      ticketPromises.push(this.ticketRepository.create(targetOrderDTO));
     }
     await Promise.all(ticketPromises);
     return true;
