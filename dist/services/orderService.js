@@ -69,7 +69,7 @@ class OrderService {
                 status,
                 skip,
             });
-            return orderList.map((x) => new orderDTO_1.OrderDTO(x).toDetailDTO());
+            return orderList.map((x) => x.toDetailDTO());
         });
     }
     create(queryParams) {

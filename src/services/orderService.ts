@@ -68,7 +68,7 @@ export class OrderService {
       tickets: targetTicketsDTO,
     };
   }
-  async getAll(queryParams: Request): Promise<Partial<OrderDocument>[]> {
+  async getAll(queryParams: Request): Promise<Partial<OrderDTO>[]> {
     const player = await this.findPlayer(queryParams);
     const { limit, status, skip } = queryParams.query as IQuery;
     const orderList = await this.findOrderList(player.user, {
@@ -76,7 +76,7 @@ export class OrderService {
       status,
       skip,
     });
-    return orderList.map((x) => new OrderDTO(x).toDetailDTO());
+    return orderList.map((x) => x.toDetailDTO());
   }
   async create(queryParams: Request): Promise<boolean> {
     const player = await this.findPlayer(queryParams);
