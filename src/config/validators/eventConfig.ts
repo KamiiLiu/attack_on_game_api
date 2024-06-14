@@ -185,7 +185,7 @@ export const validationConfig: {
     limit: [
       query('limit')
         .optional()
-        .isInt({ min: 1, max: Number(DefaultQuery.MAX_LIMIT) })
+        .isInt({ min: 1, max: Number(DefaultQuery.LIMIT) })
         .toInt()
         .withMessage('請輸入有效的最小參與人數！'),
     ],
