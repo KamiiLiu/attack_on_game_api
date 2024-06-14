@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { PaymentStatus, PaymentMethod } from '@/enums/OrderStatus';
+import { PaymentStatus, PaymentMethod, Status } from '@/enums/OrderStatus';
 export interface OrderDocument extends Document {
   _id: Types.ObjectId;
   idNumber: string;
@@ -14,7 +14,7 @@ export interface OrderDocument extends Document {
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
   isCommented: boolean;
-  isDone: boolean;
+  status: Status;
   createdAt: string;
   updatedAt: string;
 }

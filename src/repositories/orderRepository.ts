@@ -1,7 +1,7 @@
 import OrderModel from '@/models/OrderModel';
-import mongoose from 'mongoose';
+import { IQuery, DefaultQuery } from '@/enums/OrderRequest';
+import { Status } from '@/enums/OrderStatus';
 import { OrderDocument } from '@/interfaces/OrderInterface';
-import { Types } from 'mongoose';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { CustomError } from '@/errors/CustomError';
 import { IBaseRepository } from '@/repositories/IBaseRepository';
@@ -28,16 +28,26 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
       );
     }
   }
-  async findAll(queryParams: any): Promise<OrderDocument[]> {
+  async findAll(
+    queryParams: any,
+    optionParams: IQuery,
+  ): Promise<OrderDocument[]> {
     try {
-      const tickets = await OrderModel.find({ ...queryParams });
-      if (_.isEmpty(tickets)) {
+      const parsedLimit = Math.min(
+        Number(optionParams.limit ?? DefaultQuery.LIMIT),
+        DefaultQuery.MAX_LIMIT,
+      );
+      const parsedSkip = Number(optionParams.skip ?? DefaultQuery.SKIP);
+      const orders = await OrderModel.find({ ...queryParams })
+        .skip(parsedSkip)
+        .limit(parsedLimit);
+      if (_.isEmpty(orders)) {
         throw new CustomError(
           CustomResponseType.NOT_FOUND,
           OrderResponseType.FAILED_FOUND,
         );
       }
-      return tickets;
+      return orders;
     } catch (error: any) {
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,
@@ -81,8 +91,16 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
       );
     }
   }
-  delete(id: Types.ObjectId): Promise<OrderDocument | null> {
-    console.log(id);
-    throw new Error('Method not implemented.');
+  async delete(id: string): Promise<OrderDocument | null> {
+    const order = await this.findById(id);
+    if (!order) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.FAILED_FOUND,
+      );
+    }
+    order.status = Status.CANCEL;
+    const updatedOrder = await order.save();
+    return updatedOrder;
   }
 }

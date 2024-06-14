@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const lodash_1 = __importDefault(require("lodash"));
+const OrderStatus_1 = require("@/enums/OrderStatus");
 const orderDTO_1 = require("@/dto/orderDTO");
 const eventDTO_1 = require("@/dto/eventDTO");
 const ticketDTO_1 = require("@/dto/ticketDTO");
@@ -34,28 +35,24 @@ class OrderService {
     }
     getById(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const player = yield Player_1.default.findOne({ user: queryParams.user });
-            if (lodash_1.default.isEmpty(player)) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
+            const player = yield this.findPlayer(queryParams);
+            const order = yield this.findOrder(queryParams.params.orderId);
+            const eventId = order.eventId;
+            if (!eventId) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, 'Event ID is required in the order');
             }
-            console.log('player', player);
-            console.log('queryParams.params.orderId', queryParams.params.orderId);
-            const order = yield this.orderRepository.findById(queryParams.params.orderId);
-            console.log('order', order);
-            if (lodash_1.default.isEmpty(order)) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
-            }
-            const ticketList = yield this.ticketRepository.findAll(order.id, player.user);
-            const event = yield this.eventRepository.findByDBId(order.eventId);
-            if (lodash_1.default.isEmpty(event)) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
-            }
-            if (lodash_1.default.isEmpty(ticketList)) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
-            }
-            const targetEventDTO = new eventDTO_1.EventDTO(event);
+            const event = yield this.findEventByDbId(eventId);
             const targetOrderDTO = new orderDTO_1.OrderDTO(order);
-            const targetTicketsDTO = ticketList.map((x) => new ticketDTO_1.TicketDTO(x).toDetailDTO());
+            const targetEventDTO = new eventDTO_1.EventDTO(event);
+            if (targetOrderDTO.status === OrderStatus_1.Status.CANCEL) {
+                return {
+                    event: targetEventDTO.toSummaryDTO(),
+                    order: targetOrderDTO.toDetailDTO(),
+                    tickets: [],
+                };
+            }
+            const ticketList = yield this.findTickets(order.id, player.user);
+            const targetTicketsDTO = ticketList.map((ticket) => new ticketDTO_1.TicketDTO(ticket).toDetailDTO());
             return {
                 event: targetEventDTO.toSummaryDTO(),
                 order: targetOrderDTO.toDetailDTO(),
@@ -65,49 +62,126 @@ class OrderService {
     }
     getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const player = yield Player_1.default.findOne({ user: queryParams.user });
-            if (!player) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_REGISTRATION_PERIOD);
-            }
-            throw new Error('Method not implemented.');
+            const player = yield this.findPlayer(queryParams);
+            const { limit, status, skip } = queryParams.params;
+            const orderList = yield this.findOrderList(player.user, {
+                limit,
+                status,
+                skip,
+            });
+            return orderList;
         });
     }
-    create(content) {
+    create(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const player = yield Player_1.default.findOne({ user: content.user._id }).exec();
+            const player = yield this.findPlayer(queryParams);
+            const targetEvent = yield this.findEventById(queryParams.body.eventId);
+            const targetOrderDTO = this.createOrderDTO(queryParams.body, targetEvent, player);
+            this.validateOrder(targetEvent, targetOrderDTO);
+            const OrderDocument = yield this.createOrder(targetOrderDTO);
+            yield this.updateEventParticipants(targetEvent, targetOrderDTO);
+            yield this.createTickets(OrderDocument.id, player.user, targetOrderDTO.registrationCount);
+            return true;
+        });
+    }
+    findPlayer(queryParams) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const player = yield Player_1.default.findOne({ user: queryParams.user });
             if (lodash_1.default.isEmpty(player)) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.CREATED_ERROR_PLAYER_FOUND);
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
-            const targetEvent = yield this.eventRepository.findById(content.body.eventId);
-            if (lodash_1.default.isEmpty(targetEvent)) {
+            return player;
+        });
+    }
+    findOrder(orderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const order = yield this.orderRepository.findById(orderId);
+            if (lodash_1.default.isEmpty(order)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
+            }
+            return order;
+        });
+    }
+    findOrderList(playerId, query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryObject = {
+                playerId,
+            };
+            if (query.status) {
+                queryObject.status = query.status;
+            }
+            const order = yield this.orderRepository.findAll(queryObject, {
+                limit: query.limit,
+                skip: query.skip,
+            });
+            if (lodash_1.default.isEmpty(order)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
+            }
+            return order.map((order) => new orderDTO_1.OrderDTO(order));
+        });
+    }
+    findEventByDbId(eventId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const event = yield this.eventRepository.findByDBId(eventId);
+            if (lodash_1.default.isEmpty(event)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }
-            const targetEventDTO = new eventDTO_1.EventDTO(targetEvent);
-            const targetOrderDTO = new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, content.body), { eventId: targetEvent._id, playerId: player.user }));
-            if (!targetEventDTO.isRegisterable) {
-                console.log('xxx');
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD);
+            return event;
+        });
+    }
+    findEventById(eventId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const event = yield this.eventRepository.findById(eventId);
+            if (lodash_1.default.isEmpty(event)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }
-            if (targetEventDTO.participationFee * targetOrderDTO.registrationCount !==
-                targetOrderDTO.getTotalAmount) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_MONEY);
+            return event;
+        });
+    }
+    findTickets(orderId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ticketList = yield this.ticketRepository.findAll(orderId, userId);
+            if (lodash_1.default.isEmpty(ticketList)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
             }
-            if (targetEventDTO.availableSeat < targetOrderDTO.registrationCount) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_EXCEEDS_CAPACITY);
-            }
-            console.log(targetEventDTO.availableSeat);
-            console.log(targetOrderDTO.registrationCount);
-            const addedSeat = targetEventDTO.currentParticipantsCount +
-                targetOrderDTO.registrationCount;
-            const OrderDocument = yield this.orderRepository.create(targetOrderDTO.toDetailDTO());
+            return ticketList;
+        });
+    }
+    createOrderDTO(body, event, player) {
+        return new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, body), { eventId: event._id, playerId: player.user }));
+    }
+    validateOrder(event, orderDTO) {
+        const targetEventDTO = new eventDTO_1.EventDTO(event);
+        if (!targetEventDTO.isRegisterable) {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD);
+        }
+        if (targetEventDTO.participationFee * orderDTO.registrationCount !==
+            orderDTO.getTotalAmount) {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_MONEY);
+        }
+        if (targetEventDTO.availableSeat < orderDTO.registrationCount) {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_EXCEEDS_CAPACITY);
+        }
+    }
+    createOrder(orderDTO) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.orderRepository.create(orderDTO.toDetailDTO());
+        });
+    }
+    updateEventParticipants(event, orderDTO) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const targetEventDTO = new eventDTO_1.EventDTO(event);
+            const addedSeat = targetEventDTO.currentParticipantsCount + orderDTO.registrationCount;
             yield this.eventRepository.updateParticipantsCount(targetEventDTO, addedSeat);
+        });
+    }
+    createTickets(orderId, userId, registrationCount) {
+        return __awaiter(this, void 0, void 0, function* () {
             const ticketPromises = [];
-            console.log(OrderDocument.id, player.id);
-            for (let index = 0; index < targetOrderDTO.registrationCount; index++) {
-                ticketPromises.push(this.ticketRepository.create(OrderDocument.id, player.user));
+            for (let index = 0; index < registrationCount; index++) {
+                ticketPromises.push(this.ticketRepository.create(orderId, userId));
             }
             yield Promise.all(ticketPromises);
-            return true;
         });
     }
 }

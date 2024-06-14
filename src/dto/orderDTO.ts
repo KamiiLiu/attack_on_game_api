@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
-import { PaymentStatus, PaymentMethod } from '@/enums/OrderStatus';
+import { PaymentStatus, PaymentMethod, Status } from '@/enums/OrderStatus';
 import { OrderDocument } from '@/interfaces/OrderInterface';
 import { BaseDTO } from '@/dto/baseDTO';
-import { DefaultQuery } from '@/enums/OrderStatus';
+import { DefaultStatus } from '@/enums/OrderStatus';
 import dayjs from '@/utils/dayjs';
 
 export class OrderDTO extends BaseDTO {
@@ -17,7 +17,7 @@ export class OrderDTO extends BaseDTO {
   readonly paymentStatus: PaymentStatus;
   readonly paymentMethod: PaymentMethod;
   readonly isCommented: boolean;
-  readonly isDone: boolean;
+  readonly status: Status;
   constructor(order: OrderDocument) {
     super(order);
     this.idNumber = generateOrderNumber();
@@ -30,9 +30,9 @@ export class OrderDTO extends BaseDTO {
     this.registrationCount = order.registrationCount;
     this.notes = order.notes;
     this.isCommented = order.isCommented || false;
-    this.isDone = order.isDone || false;
-    this.paymentStatus = order.paymentStatus || DefaultQuery.Payment_Status;
-    this.paymentMethod = order.paymentMethod || DefaultQuery.Payment_Method;
+    this.status = order.status || false;
+    this.paymentStatus = order.paymentStatus || DefaultStatus.Payment_Status;
+    this.paymentMethod = order.paymentMethod || DefaultStatus.Payment_Method;
   }
   get getIdNumber() {
     return this.idNumber;
@@ -53,6 +53,7 @@ export class OrderDTO extends BaseDTO {
       notes: this.notes,
       paymentStatus: this.paymentStatus,
       paymentMethod: this.paymentMethod,
+      status: this.status,
     };
   }
 }

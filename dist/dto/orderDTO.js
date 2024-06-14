@@ -20,9 +20,9 @@ class OrderDTO extends baseDTO_1.BaseDTO {
         this.registrationCount = order.registrationCount;
         this.notes = order.notes;
         this.isCommented = order.isCommented || false;
-        this.isDone = order.isDone || false;
-        this.paymentStatus = order.paymentStatus || OrderStatus_1.DefaultQuery.Payment_Status;
-        this.paymentMethod = order.paymentMethod || OrderStatus_1.DefaultQuery.Payment_Method;
+        this.status = order.status || false;
+        this.paymentStatus = order.paymentStatus || OrderStatus_1.DefaultStatus.Payment_Status;
+        this.paymentMethod = order.paymentMethod || OrderStatus_1.DefaultStatus.Payment_Method;
     }
     get getIdNumber() {
         return this.idNumber;
@@ -43,6 +43,7 @@ class OrderDTO extends baseDTO_1.BaseDTO {
             notes: this.notes,
             paymentStatus: this.paymentStatus,
             paymentMethod: this.paymentMethod,
+            status: this.status,
         };
     }
 }

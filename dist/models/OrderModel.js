@@ -49,16 +49,20 @@ const OrderSchema = new mongoose_1.Schema({
     phone: { type: String, required: true },
     notes: { type: String, default: '' },
     isCommented: { type: Boolean, default: false },
-    isDone: { type: Boolean, default: false },
+    status: {
+        type: String,
+        enum: Object.values(OrderStatus_1.Status),
+        default: OrderStatus_1.DefaultStatus.STATUS,
+    },
     paymentStatus: {
         type: String,
         enum: Object.values(OrderStatus_1.PaymentStatus),
-        default: OrderStatus_1.DefaultQuery.Payment_Status,
+        default: OrderStatus_1.DefaultStatus.Payment_Status,
     },
     paymentMethod: {
         type: String,
         enum: Object.values(OrderStatus_1.PaymentMethod),
-        default: OrderStatus_1.DefaultQuery.Payment_Method,
+        default: OrderStatus_1.DefaultStatus.Payment_Method,
     },
     createdAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
     updatedAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },

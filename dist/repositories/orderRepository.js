@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderRepository = void 0;
 const OrderModel_1 = __importDefault(require("@/models/OrderModel"));
+const OrderRequest_1 = require("@/enums/OrderRequest");
+const OrderStatus_1 = require("@/enums/OrderStatus");
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const CustomError_1 = require("@/errors/CustomError");
 const OrderResponseType_1 = require("@/types/OrderResponseType");
@@ -36,14 +38,19 @@ class OrderRepository {
             }
         });
     }
-    findAll(queryParams) {
+    findAll(queryParams, optionParams) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             try {
-                const tickets = yield OrderModel_1.default.find(Object.assign({}, queryParams));
-                if (lodash_1.default.isEmpty(tickets)) {
+                const parsedLimit = Math.min(Number((_a = optionParams.limit) !== null && _a !== void 0 ? _a : OrderRequest_1.DefaultQuery.LIMIT), OrderRequest_1.DefaultQuery.MAX_LIMIT);
+                const parsedSkip = Number((_b = optionParams.skip) !== null && _b !== void 0 ? _b : OrderRequest_1.DefaultQuery.SKIP);
+                const orders = yield OrderModel_1.default.find(Object.assign({}, queryParams))
+                    .skip(parsedSkip)
+                    .limit(parsedLimit);
+                if (lodash_1.default.isEmpty(orders)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
                 }
-                return tickets;
+                return orders;
             }
             catch (error) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);
@@ -83,8 +90,15 @@ class OrderRepository {
         });
     }
     delete(id) {
-        console.log(id);
-        throw new Error('Method not implemented.');
+        return __awaiter(this, void 0, void 0, function* () {
+            const order = yield this.findById(id);
+            if (!order) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
+            }
+            order.status = OrderStatus_1.Status.CANCEL;
+            const updatedOrder = yield order.save();
+            return updatedOrder;
+        });
     }
 }
 exports.OrderRepository = OrderRepository;

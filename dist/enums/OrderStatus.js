@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DefaultQuery = exports.PaymentMethod = exports.PaymentStatus = void 0;
+exports.DefaultStatus = exports.Status = exports.PaymentMethod = exports.PaymentStatus = void 0;
 var PaymentStatus;
 (function (PaymentStatus) {
     PaymentStatus["PENDING"] = "pending";
@@ -13,9 +13,16 @@ var PaymentMethod;
     PaymentMethod["PAYPAL"] = "paypal";
     PaymentMethod["BANK_TRANSFER"] = "bank_transfer";
 })(PaymentMethod || (exports.PaymentMethod = PaymentMethod = {}));
-var DefaultQuery;
-(function (DefaultQuery) {
-    DefaultQuery["Payment_Status"] = "pending";
-    DefaultQuery["Payment_Method"] = "credit_card";
-})(DefaultQuery || (exports.DefaultQuery = DefaultQuery = {}));
+var Status;
+(function (Status) {
+    Status["USED"] = "\u5DF2\u4F7F\u7528";
+    Status["UNUSED"] = "\u5373\u5C07\u958B\u59CB";
+    Status["CANCEL"] = "\u5DF2\u53D6\u6D88";
+})(Status || (exports.Status = Status = {}));
+var DefaultStatus;
+(function (DefaultStatus) {
+    DefaultStatus["Payment_Status"] = "pending";
+    DefaultStatus["Payment_Method"] = "credit_card";
+    DefaultStatus["STATUS"] = "\u5373\u5C07\u958B\u59CB";
+})(DefaultStatus || (exports.DefaultStatus = DefaultStatus = {}));
 //# sourceMappingURL=OrderStatus.js.map

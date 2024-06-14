@@ -1,9 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
 import { OrderDocument } from '@/interfaces/OrderInterface';
 import {
+  Status,
   PaymentStatus,
   PaymentMethod,
-  DefaultQuery,
+  DefaultStatus,
 } from '@/enums/OrderStatus';
 import dayjs from '@/utils/dayjs';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
@@ -26,16 +27,20 @@ const OrderSchema: Schema = new Schema({
   phone: { type: String, required: true },
   notes: { type: String, default: '' },
   isCommented: { type: Boolean, default: false },
-  isDone: { type: Boolean, default: false },
+  status: {
+    type: String,
+    enum: Object.values(Status),
+    default: DefaultStatus.STATUS,
+  },
   paymentStatus: {
     type: String,
     enum: Object.values(PaymentStatus),
-    default: DefaultQuery.Payment_Status,
+    default: DefaultStatus.Payment_Status,
   },
   paymentMethod: {
     type: String,
     enum: Object.values(PaymentMethod),
-    default: DefaultQuery.Payment_Method,
+    default: DefaultStatus.Payment_Method,
   },
   createdAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
   updatedAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
