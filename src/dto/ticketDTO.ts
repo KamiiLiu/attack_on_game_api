@@ -21,7 +21,6 @@ export class TicketDTO extends BaseDTO {
         dayjs().format(TIME_FORMATTER),
     };
     super(dtoWithId);
-    console.log('dtodtodto', dto);
     this.orderId = dto.orderId || new Types.ObjectId();
     this.playerId = dto.playerId || new Types.ObjectId();
     this.isQrCodeUsed = dto.isQrCodeUsed || false;

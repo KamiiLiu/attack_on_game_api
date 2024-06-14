@@ -5,7 +5,6 @@ const CustomResponseType_1 = require("@/enums/CustomResponseType");
 class CustomError extends Error {
     constructor(code, msg) {
         super(msg);
-        console.log(code);
         this.code = code || CustomResponseType_1.CustomResponseType.OTHER;
         this.msg = msg;
     }

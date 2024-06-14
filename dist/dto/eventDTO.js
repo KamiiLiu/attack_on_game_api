@@ -51,16 +51,10 @@ class EventDTO extends baseDTO_1.BaseDTO {
     }
     get isRegisterable() {
         const now = (0, dayjs_1.default)();
-        console.log(this._registrationEndTime);
-        console.log(this._registrationStartTime);
-        console.log(now.isSameOrBefore(this._registrationEndTime) &&
-            now.isSameOrAfter(this._registrationStartTime));
         return (now.isSameOrBefore(this._registrationEndTime) &&
             now.isSameOrAfter(this._registrationStartTime));
     }
     get availableSeat() {
-        console.log(this._maxParticipants);
-        console.log(this._currentParticipantsCount);
         return this._maxParticipants - this._currentParticipantsCount;
     }
     get storeId() {

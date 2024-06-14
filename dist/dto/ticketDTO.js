@@ -20,7 +20,6 @@ class TicketDTO extends baseDTO_1.BaseDTO {
                 (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
         };
         super(dtoWithId);
-        console.log('dtodtodto', dto);
         this.orderId = dto.orderId || new mongoose_1.Types.ObjectId();
         this.playerId = dto.playerId || new mongoose_1.Types.ObjectId();
         this.isQrCodeUsed = dto.isQrCodeUsed || false;

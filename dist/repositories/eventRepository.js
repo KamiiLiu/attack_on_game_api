@@ -81,8 +81,6 @@ class EventRepository {
     updateParticipantsCount(content, addedSeat) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(addedSeat);
-                console.log(content);
                 return yield EventModel_1.default.findOneAndUpdate({ _id: content._id }, {
                     currentParticipantsCount: addedSeat,
                     updatedAt: content.updatedAt,

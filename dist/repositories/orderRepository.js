@@ -26,8 +26,6 @@ class OrderRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const order = yield OrderModel_1.default.findOne({ idNumber: id });
-                console.log(order);
-                console.log(id);
                 if (lodash_1.default.isEmpty(order)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
                 }
@@ -47,9 +45,6 @@ class OrderRepository {
                 const orders = yield OrderModel_1.default.find(Object.assign({}, queryParams))
                     .skip(parsedSkip)
                     .limit(parsedLimit);
-                if (lodash_1.default.isEmpty(orders)) {
-                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
-                }
                 return orders;
             }
             catch (error) {

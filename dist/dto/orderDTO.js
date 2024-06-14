@@ -20,7 +20,7 @@ class OrderDTO extends baseDTO_1.BaseDTO {
         this.registrationCount = order.registrationCount;
         this.notes = order.notes;
         this.isCommented = order.isCommented || false;
-        this.status = order.status || false;
+        this.status = order.status || OrderStatus_1.DefaultStatus.STATUS;
         this.paymentStatus = order.paymentStatus || OrderStatus_1.DefaultStatus.Payment_Status;
         this.paymentMethod = order.paymentMethod || OrderStatus_1.DefaultStatus.Payment_Method;
     }
@@ -50,8 +50,8 @@ class OrderDTO extends baseDTO_1.BaseDTO {
 exports.OrderDTO = OrderDTO;
 function generateOrderNumber() {
     const today = (0, dayjs_1.default)().format('YYMMDD');
-    const randomStr = Math.random().toString(36).slice(2, 6).toUpperCase();
-    const orderNumber = `O-${today}-${randomStr}`;
+    const randomStr = Math.random().toString(36).slice(2, 6).toLowerCase();
+    const orderNumber = `o-${today}-${randomStr}`;
     return orderNumber;
 }
 //# sourceMappingURL=orderDTO.js.map

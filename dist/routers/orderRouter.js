@@ -16,6 +16,7 @@ class OrderRouter extends baseRouter_1.BaseRouter {
     }
     setRouters() {
         this.router.post('/', auth_1.jwtAuthenticator, orderValidator_1.OrderValidator.validateOrder(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.create));
+        this.router.get('/list', auth_1.jwtAuthenticator, this.handleRequest(this.controller.getAll));
         this.router.get('/:orderId', auth_1.jwtAuthenticator, this.handleRequest(this.controller.getById));
     }
 }

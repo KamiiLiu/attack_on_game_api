@@ -12,8 +12,6 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
   async findById(id: string): Promise<OrderDocument | null> {
     try {
       const order = await OrderModel.findOne({ idNumber: id });
-      console.log(order);
-      console.log(id);
       if (_.isEmpty(order)) {
         throw new CustomError(
           CustomResponseType.NOT_FOUND,
@@ -41,12 +39,6 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
       const orders = await OrderModel.find({ ...queryParams })
         .skip(parsedSkip)
         .limit(parsedLimit);
-      if (_.isEmpty(orders)) {
-        throw new CustomError(
-          CustomResponseType.NOT_FOUND,
-          OrderResponseType.FAILED_FOUND,
-        );
-      }
       return orders;
     } catch (error: any) {
       throw new CustomError(
