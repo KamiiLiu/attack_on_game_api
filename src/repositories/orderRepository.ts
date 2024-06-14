@@ -55,7 +55,7 @@ export class OrderRepository implements IBaseRepository<OrderDocument> {
     } catch (error: any) {
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,
-        `${MONGODB_ERROR_MSG}:::::::::::::${error.message || error}`,
+        `${MONGODB_ERROR_MSG}:${error.message || error}`,
       );
     }
   }

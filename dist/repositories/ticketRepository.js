@@ -89,13 +89,13 @@ class TicketRepository {
             try {
                 const baseUrl = process.env.QRCODE_BASE_URL;
                 if (!baseUrl) {
-                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `QRCODE_BASE_URL 並不存在於.env環境內，請快點加上吧:${baseUrl}`);
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, `QRCODE_BASE_URL 並不存在於.env環境內，請快點加上吧:${baseUrl}`);
                 }
                 const url = `${baseUrl}/order/my-ticket?qrCodeId=${idNumber}`;
                 return yield qrcode_1.default.toDataURL(url);
             }
             catch (error) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${TicketResponseType_1.TicketResponseType.FAILED_CREATED}:${error.message || error}`);
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, `${TicketResponseType_1.TicketResponseType.FAILED_CREATED}:${error.message || error}`);
             }
         });
     }

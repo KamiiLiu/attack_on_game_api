@@ -39,7 +39,7 @@ class OrderService {
             const order = yield this.findOrder(queryParams.params.orderId);
             const eventId = order.eventId;
             if (!eventId) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, 'Event ID is required in the order');
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.FAILED_VALIDATION_EVENT_ID);
             }
             const event = yield this.findEventByDbId(eventId);
             const targetOrderDTO = new orderDTO_1.OrderDTO(order);

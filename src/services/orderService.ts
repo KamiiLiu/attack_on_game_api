@@ -41,7 +41,7 @@ export class OrderService {
     if (!eventId) {
       throw new CustomError(
         CustomResponseType.VALIDATION_ERROR,
-        'Event ID is required in the order',
+        OrderResponseType.FAILED_VALIDATION_EVENT_ID,
       );
     }
     const event = await this.findEventByDbId(eventId);

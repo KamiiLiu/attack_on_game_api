@@ -32,7 +32,7 @@ class EventService {
             const event = yield this.eventRepository.findById(id);
             const eventDTO = new eventDTO_1.EventDTO(event);
             if (!eventDTO.isPublish) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.BAD_REQUEST);
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.FAILED_AUTHORIZATION);
             }
             return eventDTO.toDetailDTO();
         });
@@ -89,7 +89,7 @@ class EventService {
             if (_eventDTO.isPublish && _eventDTO.isRegisterable) {
                 return _eventDTO.toSummaryDTO();
             }
-            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.BAD_REQUEST);
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.FAILED_AUTHORIZATION);
         });
     }
 }

@@ -90,7 +90,7 @@ export class TicketRepository {
       const baseUrl = process.env.QRCODE_BASE_URL;
       if (!baseUrl) {
         throw new CustomError(
-          CustomResponseType.DATABASE_OPERATION_FAILED,
+          CustomResponseType.VALIDATION_ERROR,
           `QRCODE_BASE_URL 並不存在於.env環境內，請快點加上吧:${baseUrl}`,
         );
       }
@@ -98,7 +98,7 @@ export class TicketRepository {
       return await QRCode.toDataURL(url);
     } catch (error: any) {
       throw new CustomError(
-        CustomResponseType.DATABASE_OPERATION_FAILED,
+        CustomResponseType.VALIDATION_ERROR,
         `${TicketResponseType.FAILED_CREATED}:${error.message || error}`,
       );
     }

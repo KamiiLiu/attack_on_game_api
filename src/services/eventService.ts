@@ -24,7 +24,7 @@ export class EventService implements IBaseService<EventDTO> {
     if (!eventDTO.isPublish) {
       throw new CustomError(
         CustomResponseType.UNAUTHORIZED,
-        EventResponseType.BAD_REQUEST,
+        EventResponseType.FAILED_AUTHORIZATION,
       );
     }
     return eventDTO.toDetailDTO();
@@ -98,7 +98,7 @@ export class EventService implements IBaseService<EventDTO> {
     }
     throw new CustomError(
       CustomResponseType.UNAUTHORIZED,
-      EventResponseType.BAD_REQUEST,
+      EventResponseType.FAILED_AUTHORIZATION,
     );
   }
 }
