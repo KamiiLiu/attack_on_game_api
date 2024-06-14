@@ -23,15 +23,15 @@ const sendResetPasswordEmail = (req, res) => __awaiter(void 0, void 0, void 0, f
         const { to, fronEndUrl } = req.body;
         const user = yield User_1.default.findOne({ email: to });
         if (!user) {
-            res.status(404).json({ status: false, message: "User not found" });
+            res.status(404).json({ status: false, message: 'User not found' });
             return;
         }
         const validateCode = Math.floor(100000 + Math.random() * 900000).toString();
-        const validationToken = jsonwebtoken_1.default.sign({ email: user.email, emailCode: validateCode }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const validationToken = jsonwebtoken_1.default.sign({ email: user.email, emailCode: validateCode }, process.env.JWT_SECRET, { expiresIn: '1h' });
         user.emailCode = validateCode;
         yield user.save();
         yield (0, help_2.sendEamilValidationCode)(to, validationToken, fronEndUrl);
-        res.status(200).json({ status: true, message: "Email sent" });
+        res.status(200).json({ status: true, message: 'Email sent' });
     }
     catch (err) {
         console.error(err);
@@ -45,17 +45,17 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const decoded = jsonwebtoken_1.default.verify(validationToken, process.env.JWT_SECRET);
         const user = yield User_1.default.findOne({ email: decoded.email });
         if (!user) {
-            res.status(404).json({ status: false, message: "User not found" });
+            res.status(404).json({ status: false, message: 'User not found' });
             return;
         }
         if (user.emailCode !== decoded.emailCode) {
-            res.status(400).json({ status: false, message: "Invalid code" });
+            res.status(400).json({ status: false, message: 'Invalid code' });
             return;
         }
         user.password = newPassword;
-        user.emailCode = "";
+        user.emailCode = '';
         yield user.save();
-        res.status(200).json({ status: true, message: "Password has be reseted" });
+        res.status(200).json({ status: true, message: 'Password has be reseted' });
     }
     catch (err) {
         console.error(err);
@@ -68,17 +68,17 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const { oldPassword, newPassword } = req.body;
         const user = yield User_1.default.findById((0, help_1.getUser)(req)._id);
         if (!user) {
-            res.status(404).json({ status: false, message: "User not found" });
+            res.status(404).json({ status: false, message: 'User not found' });
             return;
         }
         const isPasswordValid = (0, bcrypt_1.compare)(oldPassword, user.password);
         if (!isPasswordValid) {
-            res.status(400).json({ status: false, message: "Invalid password" });
+            res.status(400).json({ status: false, message: 'Invalid password' });
             return;
         }
         user.password = newPassword;
         yield user.save();
-        res.status(200).json({ status: true, message: "Password changed" });
+        res.status(200).json({ status: true, message: 'Password changed' });
     }
     catch (err) {
         console.error(err);

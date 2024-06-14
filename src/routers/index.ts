@@ -12,5 +12,5 @@ router.use('/player', jwtAuthenticator, PlayerRouter);
 router.post('/login', localAuthenticator, generateJWT);
 router.use('/event', EventRouter);
 router.use('/order', OrderRouter);
-router.use(PasswordRouter)
+router.use(PasswordRouter);
 export default router;
