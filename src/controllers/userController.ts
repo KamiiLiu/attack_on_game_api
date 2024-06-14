@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
-import { hash } from 'bcrypt';
 import { validationResult } from 'express-validator';
 
 const userController = {
@@ -19,7 +18,7 @@ const userController = {
         res.status(409).json({ status: false, message: 'User already exists' });
         return;
       }
-      const hashedPassword = await hash(password, 10);
+      const hashedPassword = password;
       await User.create({ role, email, password: hashedPassword });
       res.status(200).json({ status: true, menubar: 'User created' });
     } catch (error) {

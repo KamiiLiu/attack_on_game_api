@@ -5,11 +5,12 @@ import UserRouter from '@/routers/user';
 import EventRouter from '@/routers/eventRouter';
 import PlayerRouter from '@/routers/player';
 import OrderRouter from '@/routers/orderRouter';
+import PasswordRouter from '@/routers/password';
 const router = Router();
-
 router.use('/user', UserRouter);
 router.use('/player', jwtAuthenticator, PlayerRouter);
 router.post('/login', localAuthenticator, generateJWT);
 router.use('/event', EventRouter);
 router.use('/order', OrderRouter);
+router.use(PasswordRouter)
 export default router;

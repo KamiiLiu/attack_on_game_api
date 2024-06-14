@@ -1,3 +1,4 @@
+import { hash } from 'bcrypt';
 import mongoose, { Document, Schema } from 'mongoose';
 
 export enum UserRole {
@@ -26,6 +27,16 @@ const UserSchema: Schema = new Schema({
 // Add updatedAt field before saving
 UserSchema.pre('save', function (next) {
   this.updatedAt = new Date();
+  next();
+});
+
+// hash password before saving
+UserSchema.pre('save', async function (next) {
+  const user = this as IUser;
+  if (!user.isModified('password')) {
+    return next();
+  }
+  user.password = await hash(user.password, 10);
   next();
 });
 
