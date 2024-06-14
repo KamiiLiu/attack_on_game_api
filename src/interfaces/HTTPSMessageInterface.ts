@@ -7,4 +7,5 @@ export interface IHTTPSMessage {
   SUCCESS_UPDATE: string;
   FAILED_UPDATE: string;
   FAILED_FOUND: string;
+  [key: string]: string;
 }

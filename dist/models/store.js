@@ -15,4 +15,4 @@ const storeSchema = new mongoose_1.Schema({
     phone: String,
 });
 exports.Store = (0, mongoose_1.model)('stores', storeSchema);
-//# sourceMappingURL=Store.js.map
+//# sourceMappingURL=store.js.map

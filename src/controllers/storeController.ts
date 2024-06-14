@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import User from '@/models/User';
-import { Store } from '@/models/Store';
+import { Store } from '@/models/store';
 import { UserRole } from '@/models/User';
 import { getUser } from '@/utils/help';
 
@@ -14,16 +14,16 @@ export const createStore = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const { name, user, phone, avatar, address, introduce } = req.body
+    const { name, user, phone, avatar, address, introduce } = req.body;
     // check if user exist
-    const userExists = await User.findById(user)
+    const userExists = await User.findById(user);
     if (!userExists) {
-      return res.status(404).send({ message: 'User not found' })
+      return res.status(404).send({ message: 'User not found' });
     }
     // check if the store exist
-    const storeExist = await Store.findOne({ user: user })
+    const storeExist = await Store.findOne({ user: user });
     if (storeExist) {
-      return res.status(409).send({ message: 'Store already Exist!' })
+      return res.status(409).send({ message: 'Store already Exist!' });
     }
 
     const store = await Store.create({
@@ -32,19 +32,15 @@ export const createStore = async (req: Request, res: Response) => {
       avatar,
       introduce,
       address,
-      phone
-    })
+      phone,
+    });
     res.status(201).send({ message: 'Store created successfully!!', store });
-    console.log({ message: 'Store created successfully!!', store })
-
+    console.log({ message: 'Store created successfully!!', store });
   } catch (error) {
     console.error('Error creating store', error);
     res.status(500).send({ message: 'Error creating store', error });
   }
-
-
-}
-
+};
 
 // Read all stores
 export const getStores = async (req: Request, res: Response): Promise<void> => {

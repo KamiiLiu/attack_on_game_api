@@ -1,7 +1,7 @@
 // create plyer CRUD controllers
 import { Request, Response } from 'express';
 import Player from '../models/Player';
-import User from '../models/User'
+import User from '../models/User';
 import { validationResult } from 'express-validator';
 import { getUser } from '../utils/help';
 

@@ -1,7 +1,7 @@
-import { BaseRouter } from '@/routers/baseRouter';
 import { EventController } from '@/controllers/eventController';
 import { handleValidationErrors } from '@/middlewares/handleValidationErrors';
 import { EventValidator } from '@/validators/eventValidator';
+import { BaseRouter } from '@/routers/baseRouter';
 class EventRouter extends BaseRouter {
   protected controller!: EventController;
   constructor() {
@@ -17,13 +17,13 @@ class EventRouter extends BaseRouter {
       '/',
       EventValidator.validateEvent(),
       handleValidationErrors,
-      this.handleRequest(this.controller.createEvent),
+      this.handleRequest(this.controller.create),
     );
     this.router.get(
       '/',
       EventValidator.validateEventQuery(),
       handleValidationErrors,
-      this.handleRequest(this.controller.getEvents),
+      this.handleRequest(this.controller.getAll),
     );
     this.router.get(
       '/store/:storeId/',
@@ -36,7 +36,7 @@ class EventRouter extends BaseRouter {
       '/:id',
       EventValidator.validateObjectIds('id'),
       handleValidationErrors,
-      this.handleRequest(this.controller.getEventDetail),
+      this.handleRequest(this.controller.getById),
     );
     this.router.get(
       '/:id/summary',
@@ -50,7 +50,7 @@ class EventRouter extends BaseRouter {
       EventValidator.validateObjectIds('id'),
       EventValidator.validateEvent(),
       handleValidationErrors,
-      this.handleRequest(this.controller.updateEvent),
+      this.handleRequest(this.controller.update),
     );
     // this.router.put(
     //   '/:id/deactivate',

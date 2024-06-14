@@ -2,67 +2,94 @@
 //TODO:寫一個fs模塊，批量上傳假資料
 import _ from 'lodash';
 import { Request } from 'express';
-import { IEvent } from '@/interfaces/EventInterface';
-import { EventDTO } from '@/dto/event/eventDTO';
+import { EventDTO } from '@/dto/eventDTO';
 import { EventRepository } from '@/repositories/eventRepository';
 import { QueryParamsParser } from '@/services/eventQueryParams';
-import { IHTTPSMessage } from '@/interfaces/HTTPSMessageInterface';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { CustomError } from '@/errors/CustomError';
-export class EventService {
+import { IBaseService } from '@/services/IBaseService';
+import { EventResponseType } from '@/types/EventResponseType';
+import { EventDocument } from '@/interfaces/EventInterface';
+import { Types } from 'mongoose';
+export class EventService implements IBaseService<EventDTO> {
   private eventRepository: EventRepository;
   private queryParams: QueryParamsParser;
-  private msg: IHTTPSMessage;
-  constructor(v: IHTTPSMessage) {
+  constructor() {
     this.eventRepository = new EventRepository();
     this.queryParams = new QueryParamsParser();
-    this.msg = v;
   }
-
-  public async createNewEvent(content: IEvent): Promise<boolean> {
-    const _content = new EventDTO(content).toDetailDTO();
-    return await this.eventRepository.createEvent(_content);
-  }
-
-  public async updateEvent(
-    id: string,
-    content: IEvent,
-  ): Promise<Partial<IEvent>> {
-    const _content = new EventDTO(content);
-    const _event = await this.eventRepository.updateEvent(id, _content);
-    if (!_.isEmpty(_event)) {
-      const _eventDTO = new EventDTO(_event);
-      return _eventDTO.toDetailDTO();
-    }
-    throw new CustomError(CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
-  }
-
-  public async getEventDetails(
-    id: string,
-    isPublish = true,
-  ): Promise<Partial<IEvent> | null> {
-    const event = await this.eventRepository.getEventById(id);
-    if (_.isEmpty(event)) {
-      throw new CustomError(
-        CustomResponseType.NOT_FOUND,
-        this.msg.FAILED_FOUND,
-      );
-    }
+  async getById(id: string): Promise<Partial<EventDTO>> {
+    const event = await this.eventRepository.findById(id);
     const eventDTO = new EventDTO(event);
-    if (isPublish && !eventDTO.isPublish) {
+    if (!eventDTO.isPublish) {
       throw new CustomError(
         CustomResponseType.UNAUTHORIZED,
-        this.msg.BAD_REQUEST,
+        EventResponseType.BAD_REQUEST,
       );
     }
     return eventDTO.toDetailDTO();
   }
-  public async getEventSummary(id: string): Promise<Partial<IEvent> | null> {
-    const event = await this.eventRepository.getEventById(id);
+  async getAll(queryParams: any): Promise<Partial<EventDTO>[]> {
+    const _queryParams = this.queryParams.parse(queryParams);
+    const eventData = await this.eventRepository.findAll(_queryParams);
+    if (_.isEmpty(eventData)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        EventResponseType.FAILED_FOUND,
+      );
+    }
+    return _.map(eventData, (event) => new EventDTO(event).toDetailDTO());
+  }
+  async create(content: EventDocument): Promise<boolean> {
+    const _content = new EventDTO(content).toDetailDTO();
+    return await this.eventRepository.create(_content);
+  }
+  async update(
+    id: string,
+    content: EventDocument,
+  ): Promise<Partial<EventDTO> | null> {
+    const updateContent = { ...content, idNumber: id };
+    const _content = new EventDTO(updateContent);
+    const _event = await this.eventRepository.update(_content);
+    if (!_.isEmpty(_event)) {
+      const _eventDTO = new EventDTO(_event);
+      return _eventDTO.toDetailDTO();
+    }
+    throw new CustomError(
+      CustomResponseType.NOT_FOUND,
+      EventResponseType.FAILED_FOUND,
+    );
+  }
+  delete(id: string): Promise<EventDTO | null> {
+    throw new Error('Method not implemented.');
+  }
+  public async getEventsForStore(
+    storeId: Types.ObjectId,
+    optionsReq: Request,
+  ): Promise<Partial<EventDTO>[]> {
+    const queryParams = this.queryParams.parse(optionsReq);
+    const eventData = await this.eventRepository.getEventsByStoreId(
+      storeId,
+      queryParams,
+    );
+    if (!_.isEmpty(eventData)) {
+      const eventDTOs = _.map(eventData, (event) =>
+        new EventDTO(event).toDetailDTO(),
+      );
+      return eventDTOs;
+    }
+    throw new CustomError(
+      CustomResponseType.NOT_FOUND,
+      EventResponseType.FAILED_FOUND,
+    );
+  }
+
+  public async getSummaryEvents(id: string): Promise<Partial<EventDTO>> {
+    const event = await this.eventRepository.findById(id);
     if (_.isEmpty(event)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
-        this.msg.FAILED_FOUND,
+        EventResponseType.FAILED_FOUND,
       );
     }
     const _eventDTO = new EventDTO(event);
@@ -71,37 +98,7 @@ export class EventService {
     }
     throw new CustomError(
       CustomResponseType.UNAUTHORIZED,
-      this.msg.BAD_REQUEST,
+      EventResponseType.BAD_REQUEST,
     );
-  }
-  public async getEventsForStore(
-    storeId: string,
-    optionsReq: Request,
-  ): Promise<Partial<IEvent>[]> {
-    const queryParams = this.queryParams.parse(optionsReq);
-    const eventData = await this.eventRepository.getEventsByStoreId(
-      storeId,
-      queryParams,
-    );
-    console.log(eventData);
-    if (!_.isEmpty(eventData)) {
-      const eventDTOs = _.map(eventData, (event) =>
-        new EventDTO(event).toDetailDTO(),
-      );
-      return eventDTOs;
-    }
-    throw new CustomError(CustomResponseType.NOT_FOUND, this.msg.FAILED_FOUND);
-  }
-
-  public async getAllEvents(optionsReq: Request): Promise<Partial<IEvent>[]> {
-    const queryParams = this.queryParams.parse(optionsReq);
-    const eventData = await this.eventRepository.getAllEvents(queryParams);
-    if (_.isEmpty(eventData)) {
-      throw new CustomError(
-        CustomResponseType.NOT_FOUND,
-        this.msg.FAILED_FOUND,
-      );
-    }
-    return _.map(eventData, (event) => new EventDTO(event).toDetailDTO());
   }
 }

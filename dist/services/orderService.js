@@ -12,48 +12,178 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Order_1 = __importDefault(require("@/models/Order"));
-//import oose from 'mongoose';
-const OrderService = {
-    createOrder(OrderData) {
+exports.OrderService = void 0;
+const lodash_1 = __importDefault(require("lodash"));
+const OrderStatus_1 = require("@/enums/OrderStatus");
+const orderDTO_1 = require("@/dto/orderDTO");
+const eventDTO_1 = require("@/dto/eventDTO");
+const ticketDTO_1 = require("@/dto/ticketDTO");
+const orderRepository_1 = require("@/repositories/orderRepository");
+const eventRepository_1 = require("@/repositories/eventRepository");
+const ticketRepository_1 = require("@/repositories/ticketRepository");
+const CustomResponseType_1 = require("@/enums/CustomResponseType");
+const OrderResponseType_1 = require("@/types/OrderResponseType");
+const EventResponseType_1 = require("@/types/EventResponseType");
+const TicketResponseType_1 = require("@/types/TicketResponseType");
+const CustomError_1 = require("@/errors/CustomError");
+const Player_1 = __importDefault(require("@/models/Player"));
+class OrderService {
+    constructor() {
+        this.orderRepository = new orderRepository_1.OrderRepository();
+        this.eventRepository = new eventRepository_1.EventRepository();
+        this.ticketRepository = new ticketRepository_1.TicketRepository();
+    }
+    getById(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const existingOrder = yield Order_1.default.findOne({
-                    playerId: OrderData.playerId,
-                    createdAt: OrderData.createdAt,
-                });
-                if (existingOrder) {
-                    //return handleClientError('同一時間重複下訂單', 409);
-                }
-                const newOrder = new Order_1.default(OrderData);
-                yield newOrder.save();
-                //return handleSuccess(201);
+            const player = yield this.findPlayer(queryParams);
+            const order = yield this.findOrder(queryParams.params.orderId);
+            const eventId = order.eventId;
+            if (!eventId) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, 'Event ID is required in the order');
             }
-            catch (error) {
-                //return handleServerError(error, '創建訂單時發生錯誤');
+            const event = yield this.findEventByDbId(eventId);
+            const targetOrderDTO = new orderDTO_1.OrderDTO(order);
+            const targetEventDTO = new eventDTO_1.EventDTO(event);
+            if (targetOrderDTO.status === OrderStatus_1.Status.CANCEL) {
+                return {
+                    event: targetEventDTO.toSummaryDTO(),
+                    order: targetOrderDTO.toDetailDTO(),
+                    tickets: [],
+                };
             }
+            const ticketList = yield this.findTickets(order.id, player.user);
+            const targetTicketsDTO = ticketList.map((ticket) => new ticketDTO_1.TicketDTO(ticket).toDetailDTO());
+            return {
+                event: targetEventDTO.toSummaryDTO(),
+                order: targetOrderDTO.toDetailDTO(),
+                tickets: targetTicketsDTO,
+            };
         });
-    },
-};
-exports.default = OrderService;
-/*
-const OrderSchema: Schema = new Schema({
-  storeId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'stores',
-    required: true,
-  },
-  playerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'players',
-    required: true,
-  },
-  quantity: { type: Number, required: true },
-  payment: { type: Number, required: true },
-  discount: { type: Number, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
-
-*/
+    }
+    getAll(queryParams) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const player = yield this.findPlayer(queryParams);
+            const { limit, status, skip } = queryParams.query;
+            const orderList = yield this.findOrderList(player.user, {
+                limit,
+                status,
+                skip,
+            });
+            return orderList.map((x) => x.toDetailDTO());
+        });
+    }
+    create(queryParams) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const player = yield this.findPlayer(queryParams);
+            const targetEvent = yield this.findEventById(queryParams.body.eventId);
+            const targetOrderDTO = this.createOrderDTO(queryParams.body, targetEvent, player);
+            this.validateOrder(targetEvent, targetOrderDTO);
+            const OrderDocument = yield this.createOrder(targetOrderDTO);
+            yield this.updateEventParticipants(targetEvent, targetOrderDTO);
+            yield this.createTickets(OrderDocument.id, player.user, targetOrderDTO.registrationCount);
+            return true;
+        });
+    }
+    findPlayer(queryParams) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const player = yield Player_1.default.findOne({ user: queryParams.user });
+            if (lodash_1.default.isEmpty(player)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
+            }
+            return player;
+        });
+    }
+    findOrder(orderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const order = yield this.orderRepository.findById(orderId);
+            if (lodash_1.default.isEmpty(order)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
+            }
+            return order;
+        });
+    }
+    findOrderList(playerId, query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const queryObject = {
+                playerId,
+            };
+            if (query.status) {
+                queryObject.status = query.status;
+            }
+            const order = yield this.orderRepository.findAll(queryObject, {
+                limit: query.limit,
+                skip: query.skip,
+            });
+            if (lodash_1.default.isEmpty(order)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
+            }
+            return order.map((order) => new orderDTO_1.OrderDTO(order));
+        });
+    }
+    findEventByDbId(eventId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const event = yield this.eventRepository.findByDBId(eventId);
+            if (lodash_1.default.isEmpty(event)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
+            }
+            return event;
+        });
+    }
+    findEventById(eventId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const event = yield this.eventRepository.findById(eventId);
+            if (lodash_1.default.isEmpty(event)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
+            }
+            return event;
+        });
+    }
+    findTickets(orderId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ticketList = yield this.ticketRepository.findAll(orderId, userId);
+            if (lodash_1.default.isEmpty(ticketList)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
+            }
+            return ticketList;
+        });
+    }
+    createOrderDTO(body, event, player) {
+        return new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, body), { eventId: event._id, playerId: player.user }));
+    }
+    validateOrder(event, orderDTO) {
+        const targetEventDTO = new eventDTO_1.EventDTO(event);
+        if (!targetEventDTO.isRegisterable) {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_REGISTRATION_PERIOD);
+        }
+        if (targetEventDTO.participationFee * orderDTO.registrationCount !==
+            orderDTO.getTotalAmount) {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_MONEY);
+        }
+        if (targetEventDTO.availableSeat < orderDTO.registrationCount) {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.CREATED_ERROR_EXCEEDS_CAPACITY);
+        }
+    }
+    createOrder(orderDTO) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.orderRepository.create(orderDTO.toDetailDTO());
+        });
+    }
+    updateEventParticipants(event, orderDTO) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const targetEventDTO = new eventDTO_1.EventDTO(event);
+            const addedSeat = targetEventDTO.currentParticipantsCount + orderDTO.registrationCount;
+            yield this.eventRepository.updateParticipantsCount(targetEventDTO, addedSeat);
+        });
+    }
+    createTickets(orderId, userId, registrationCount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ticketPromises = [];
+            for (let index = 0; index < registrationCount; index++) {
+                ticketPromises.push(this.ticketRepository.create(orderId, userId));
+            }
+            yield Promise.all(ticketPromises);
+        });
+    }
+}
+exports.OrderService = OrderService;
 //# sourceMappingURL=orderService.js.map

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseRouter = void 0;
 const express_1 = require("express");
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
+const OtherResponseType_1 = require("@/types/OtherResponseType");
 const lodash_1 = __importDefault(require("lodash"));
 class BaseRouter {
     constructor() {
@@ -38,7 +39,7 @@ class BaseRouter {
             catch (error) {
                 res.status(500).json({
                     status: CustomResponseType_1.CustomResponseType.SYSTEM_ERROR,
-                    message: '服務器錯誤',
+                    message: `${OtherResponseType_1.SERVER_ERROR_MSG}:${error}`,
                     data: error,
                 });
             }

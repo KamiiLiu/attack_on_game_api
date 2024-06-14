@@ -1,4 +1,4 @@
-import { DefaultQuery } from '@/enums/eventRequest';
+import { DefaultQuery } from '@/enums/EventRequest';
 import { Request } from 'express';
 import {
   EventFormationStatus as FORMATION_STATUS,

@@ -4,9 +4,10 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 import { BaseDTO } from '@/dto/baseDTO';
-import { IEvent } from '@/interfaces/EventInterface';
+import { EventDocument } from '@/interfaces/EventInterface';
 import { Types } from 'mongoose';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
+import { generateCustomNanoId } from '@/utils/generateCustomNanoId';
 export class EventDTO extends BaseDTO {
   private readonly _storeId!: Types.ObjectId;
   private readonly _title!: string;
@@ -23,27 +24,41 @@ export class EventDTO extends BaseDTO {
   private readonly _participationFee!: number;
   private readonly _eventImageUrl!: string[];
   private readonly _isPublish!: boolean;
-  constructor(dto: IEvent) {
-    super(dto);
-    this._storeId = dto.storeId;
-    this._title = dto.title;
-    this._address = dto.address;
-    this._isFoodAllowed = dto.isFoodAllowed;
-    this._description = dto.description;
-    this._eventStartTime = dayjs(dto.eventStartTime).format(TIME_FORMATTER);
-    this._eventEndTime = dayjs(dto.eventEndTime).format(TIME_FORMATTER);
-    this._registrationStartTime = dayjs(dto.registrationStartTime).format(
-      TIME_FORMATTER,
-    );
-    this._registrationEndTime = dayjs(dto.registrationEndTime).format(
-      TIME_FORMATTER,
-    );
-    this._maxParticipants = dto.maxParticipants;
-    this._minParticipants = dto.minParticipants;
-    this._currentParticipantsCount = dto.currentParticipantsCount;
-    this._participationFee = dto.participationFee;
-    this._eventImageUrl = dto.eventImageUrl;
-    this._isPublish = dto.isPublish || true;
+  constructor(dto: Partial<EventDocument>) {
+    const dtoWithId = {
+      _id: dto._id || new Types.ObjectId(),
+      idNumber: dto.idNumber || generateCustomNanoId(),
+      createdAt:
+        dayjs(dto.createdAt).format(TIME_FORMATTER) ||
+        dayjs().format(TIME_FORMATTER),
+      updatedAt:
+        dayjs(dto.createdAt).format(TIME_FORMATTER) ||
+        dayjs().format(TIME_FORMATTER),
+    };
+    super(dtoWithId);
+    this._storeId = dto.storeId ?? new Types.ObjectId();
+    this._title = dto.title ?? '';
+    this._address = dto.address ?? '';
+    this._isFoodAllowed = dto.isFoodAllowed ?? false;
+    this._description = dto.description ?? '';
+    this._eventStartTime = dto.eventStartTime
+      ? dayjs(dto.eventStartTime).format(TIME_FORMATTER)
+      : '';
+    this._eventEndTime = dto.eventEndTime
+      ? dayjs(dto.eventEndTime).format(TIME_FORMATTER)
+      : '';
+    this._registrationStartTime = dto.registrationStartTime
+      ? dayjs(dto.registrationStartTime).format(TIME_FORMATTER)
+      : '';
+    this._registrationEndTime = dto.registrationEndTime
+      ? dayjs(dto.registrationEndTime).format(TIME_FORMATTER)
+      : '';
+    this._maxParticipants = dto.maxParticipants ?? 0;
+    this._minParticipants = dto.minParticipants ?? 0;
+    this._currentParticipantsCount = dto.currentParticipantsCount ?? 0;
+    this._participationFee = dto.participationFee ?? 0;
+    this._eventImageUrl = dto.eventImageUrl ?? [''];
+    this._isPublish = dto.isPublish ?? true;
   }
   public get isRegisterable() {
     const now = dayjs();
@@ -52,14 +67,14 @@ export class EventDTO extends BaseDTO {
       now.isSameOrAfter(this._registrationStartTime)
     );
   }
+  public get availableSeat() {
+    return this._maxParticipants - this._currentParticipantsCount;
+  }
   public get storeId() {
     return this._storeId;
   }
   public get isPublish() {
     return this._isPublish;
-  }
-  public get id() {
-    return this._id;
   }
   public get title() {
     return this._title;
@@ -101,7 +116,7 @@ export class EventDTO extends BaseDTO {
     return this._eventImageUrl;
   }
 
-  public toSummaryDTO(): Partial<EventDTO> {
+  public toSummaryDTO(): Partial<EventDocument> {
     return {
       title: this.title,
       address: this.address,
@@ -113,9 +128,9 @@ export class EventDTO extends BaseDTO {
       participationFee: this.participationFee,
     };
   }
-  public toDetailDTO(): Partial<EventDTO> {
+  public toDetailDTO(): Partial<EventDocument> {
     return {
-      _id: this.id,
+      idNumber: this.idNumber,
       storeId: this._storeId,
       isFoodAllowed: this._isFoodAllowed,
       description: this._description,

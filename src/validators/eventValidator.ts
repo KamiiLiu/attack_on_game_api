@@ -1,4 +1,4 @@
-import { validationConfig } from '@/config/validationConfig';
+import { validationConfig } from '@/config/validators/eventConfig';
 export class EventValidator {
   static validateEvent() {
     return Object.values(validationConfig.body).flat();

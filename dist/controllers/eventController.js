@@ -9,44 +9,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventController = exports.EventMessages = void 0;
+exports.EventController = void 0;
 const eventService_1 = require("@/services/eventService");
 const baseController_1 = require("@/controllers/baseController");
-exports.EventMessages = {
-    SUCCESS_CREATED: '建立活動成功，你真棒！',
-    FAILED_CREATED: '建立活動失敗，幫你哭。',
-    FAILED_FOUND: '沒有找到相關活動。可能原因包括：ID不正確。',
-    BAD_REQUEST: '無法找到相關活動。可能原因包括：活動已下架或報名尚未開放。',
-    SUCCESS_REQUEST: '成功獲取桌遊活動信息！',
-    SERVER_ERROR: '伺服器錯誤，請問問卡咪吧。',
-    SUCCESS_UPDATE: '成功更新桌遊活動！',
-    FAILED_UPDATE: '更新桌遊活動失敗，請再試一次。',
-};
+const EventResponseType_1 = require("@/types/EventResponseType");
+const mongoose_1 = require("mongoose");
 class EventController extends baseController_1.BaseController {
     constructor() {
-        super(exports.EventMessages);
-        this.createEvent = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.createNewEvent(req.body), exports.EventMessages.SUCCESS_CREATED);
+        super(EventResponseType_1.EventResponseType);
+        this.getById = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.getById(req.params.id), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
-        this.updateEvent = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.updateEvent(req.params.id, req.body), exports.EventMessages.SUCCESS_UPDATE);
+        this.getAll = (req) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.handleServiceResponse(() => this.eventService.getAll(req), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
+        });
+        this.create = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.create(req.body), EventResponseType_1.EventResponseType.SUCCESS_CREATED);
+        });
+        this.update = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.update(req.params.id, req.body), EventResponseType_1.EventResponseType.SUCCESS_UPDATE);
+        });
+        this.delete = (req) => __awaiter(this, void 0, void 0, function* () {
+            console.log(req);
+            throw new Error('Method not implemented.');
         });
         this.getEventSummary = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.getEventSummary(req.params.id), exports.EventMessages.SUCCESS_REQUEST);
+            return this.handleServiceResponse(() => this.eventService.getSummaryEvents(req.params.id), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
         this.getOwnEvent = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.getEventDetails(req.body.storeId, Boolean(req.query.isPublish)), exports.EventMessages.SUCCESS_REQUEST);
-        });
-        this.getEventDetail = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.getEventDetails(req.params.id, Boolean(req.query.isPublish)), exports.EventMessages.SUCCESS_REQUEST);
-        });
-        this.getEvents = (req) => __awaiter(this, void 0, void 0, function* () {
-            return yield this.handleServiceResponse(() => this.eventService.getAllEvents(req), exports.EventMessages.SUCCESS_REQUEST);
+            return this.handleServiceResponse(() => this.eventService.getById(req.body.storeId), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
         this.getEventsByStore = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.getEventsForStore(req.params.storeId, req), exports.EventMessages.SUCCESS_REQUEST);
+            return this.handleServiceResponse(() => this.eventService.getEventsForStore(new mongoose_1.Types.ObjectId(req.params.storeId), req), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
-        this.eventService = new eventService_1.EventService(exports.EventMessages);
+        this.eventService = new eventService_1.EventService();
     }
 }
 exports.EventController = EventController;
