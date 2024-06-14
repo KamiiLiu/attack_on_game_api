@@ -15,9 +15,7 @@ class BaseDTO {
         this.createdAt =
             (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
                 (0, dayjs_1.default)().format(TIME_FORMATTER_1.default);
-        this.updatedAt =
-            (0, dayjs_1.default)(dto.createdAt).format(TIME_FORMATTER_1.default) ||
-                (0, dayjs_1.default)().format(TIME_FORMATTER_1.default);
+        this.updatedAt = (0, dayjs_1.default)().format(TIME_FORMATTER_1.default);
     }
 }
 exports.BaseDTO = BaseDTO;

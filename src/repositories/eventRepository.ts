@@ -96,8 +96,6 @@ export class EventRepository implements IBaseRepository<EventDocument> {
     addedSeat: number,
   ): Promise<EventDocument | null> {
     try {
-      console.log(addedSeat);
-      console.log(content);
       return await EventModel.findOneAndUpdate(
         { _id: content._id },
         {

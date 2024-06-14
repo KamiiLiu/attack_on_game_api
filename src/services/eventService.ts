@@ -49,7 +49,7 @@ export class EventService implements IBaseService<EventDTO> {
     content: EventDocument,
   ): Promise<Partial<EventDTO> | null> {
     const updateContent = { ...content, idNumber: id };
-    const _content = new EventDTO(updateContent).toDetailDTO();
+    const _content = new EventDTO(updateContent);
     const _event = await this.eventRepository.update(_content);
     if (!_.isEmpty(_event)) {
       const _eventDTO = new EventDTO(_event);
@@ -61,7 +61,6 @@ export class EventService implements IBaseService<EventDTO> {
     );
   }
   delete(id: string): Promise<EventDTO | null> {
-    console.log(id);
     throw new Error('Method not implemented.');
   }
   public async getEventsForStore(
@@ -73,7 +72,6 @@ export class EventService implements IBaseService<EventDTO> {
       storeId,
       queryParams,
     );
-    console.log(eventData);
     if (!_.isEmpty(eventData)) {
       const eventDTOs = _.map(eventData, (event) =>
         new EventDTO(event).toDetailDTO(),

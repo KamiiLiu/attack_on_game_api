@@ -33,7 +33,6 @@ class BaseController {
                 }
             }
             catch (error) {
-                console.log('error', error);
                 if (this.isErrorCode(error)) {
                     return this.formatResponse(error.code || CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, error.msg);
                 }

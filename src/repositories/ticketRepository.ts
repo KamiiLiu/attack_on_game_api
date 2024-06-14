@@ -28,7 +28,6 @@ export class TicketRepository {
         qrCodeUrl: qrCodeUrl,
         playerId,
       });
-      console.log(ticketDTO);
       await TicketModel.create(ticketDTO);
       return true;
     } catch (error: any) {
@@ -73,7 +72,6 @@ export class TicketRepository {
     playerId: Types.ObjectId,
   ): Promise<TicketDocument[]> {
     try {
-      console.log(orderId, playerId);
       const tickets = await TicketModel.find({ orderId, playerId });
       if (_.isEmpty(tickets)) {
         throw new CustomError(
@@ -99,7 +97,6 @@ export class TicketRepository {
       const url = `${baseUrl}/order/my-ticket?qrCodeId=${idNumber}`;
       return await QRCode.toDataURL(url);
     } catch (error: any) {
-      console.log('xxx');
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,
         `${TicketResponseType.FAILED_CREATED}:${error.message || error}`,

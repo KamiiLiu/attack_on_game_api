@@ -22,6 +22,11 @@ class OrderRouter extends BaseRouter {
       this.handleRequest(this.controller.create),
     );
     this.router.get(
+      '/list',
+      jwtAuthenticator,
+      this.handleRequest(this.controller.getAll),
+    );
+    this.router.get(
       '/:orderId',
       jwtAuthenticator,
       this.handleRequest(this.controller.getById),

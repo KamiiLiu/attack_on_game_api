@@ -56,7 +56,7 @@ class EventService {
     update(id, content) {
         return __awaiter(this, void 0, void 0, function* () {
             const updateContent = Object.assign(Object.assign({}, content), { idNumber: id });
-            const _content = new eventDTO_1.EventDTO(updateContent).toDetailDTO();
+            const _content = new eventDTO_1.EventDTO(updateContent);
             const _event = yield this.eventRepository.update(_content);
             if (!lodash_1.default.isEmpty(_event)) {
                 const _eventDTO = new eventDTO_1.EventDTO(_event);
@@ -66,14 +66,12 @@ class EventService {
         });
     }
     delete(id) {
-        console.log(id);
         throw new Error('Method not implemented.');
     }
     getEventsForStore(storeId, optionsReq) {
         return __awaiter(this, void 0, void 0, function* () {
             const queryParams = this.queryParams.parse(optionsReq);
             const eventData = yield this.eventRepository.getEventsByStoreId(storeId, queryParams);
-            console.log(eventData);
             if (!lodash_1.default.isEmpty(eventData)) {
                 const eventDTOs = lodash_1.default.map(eventData, (event) => new eventDTO_1.EventDTO(event).toDetailDTO());
                 return eventDTOs;

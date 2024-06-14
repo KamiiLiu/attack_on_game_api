@@ -35,7 +35,6 @@ class TicketRepository {
                     qrCodeUrl: qrCodeUrl,
                     playerId,
                 });
-                console.log(ticketDTO);
                 yield TicketModel_1.default.create(ticketDTO);
                 return true;
             }
@@ -74,7 +73,6 @@ class TicketRepository {
     findAll(orderId, playerId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(orderId, playerId);
                 const tickets = yield TicketModel_1.default.find({ orderId, playerId });
                 if (lodash_1.default.isEmpty(tickets)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
@@ -97,7 +95,6 @@ class TicketRepository {
                 return yield qrcode_1.default.toDataURL(url);
             }
             catch (error) {
-                console.log('xxx');
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${TicketResponseType_1.TicketResponseType.FAILED_CREATED}:${error.message || error}`);
             }
         });

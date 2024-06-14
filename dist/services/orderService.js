@@ -63,13 +63,13 @@ class OrderService {
     getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const player = yield this.findPlayer(queryParams);
-            const { limit, status, skip } = queryParams.params;
+            const { limit, status, skip } = queryParams.query;
             const orderList = yield this.findOrderList(player.user, {
                 limit,
                 status,
                 skip,
             });
-            return orderList;
+            return orderList.map((x) => new orderDTO_1.OrderDTO(x).toDetailDTO());
         });
     }
     create(queryParams) {
