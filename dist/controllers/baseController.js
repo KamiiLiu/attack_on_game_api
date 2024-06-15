@@ -15,22 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseController = void 0;
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const responseDTO_1 = require("@/dto/responseDTO");
-const CustomError_1 = require("@/errors/CustomError");
+const OtherResponseType_1 = require("@/types/OtherResponseType");
 const lodash_1 = __importDefault(require("lodash"));
 class BaseController {
     constructor(msg) {
-        this.msg = msg;
-    }
-    formatResponse(status = CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, message, data) {
-        const options = {
-            status,
-            message,
-            data,
-        };
-        return new responseDTO_1.ResponseDTO(options);
-    }
-    handleServiceResponse(serviceMethod, successMessage) {
-        return __awaiter(this, void 0, void 0, function* () {
+        this.handleServiceResponse = (serviceMethod, successMessage) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield serviceMethod();
                 if (lodash_1.default.isBoolean(result)) {
@@ -40,17 +29,25 @@ class BaseController {
                     return this.formatResponse(CustomResponseType_1.CustomResponseType.SUCCESS, successMessage, result);
                 }
                 else {
-                    return this.formatResponse(CustomResponseType_1.CustomResponseType.OTHER, CustomError_1.SPECIAL_ERROR_MSG);
+                    return this.formatResponse(CustomResponseType_1.CustomResponseType.OTHER, OtherResponseType_1.SPECIAL_ERROR_MSG);
                 }
             }
             catch (error) {
-                console.log(error);
                 if (this.isErrorCode(error)) {
-                    return this.formatResponse(error.code, error.msg);
+                    return this.formatResponse(error.code || CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, error.msg);
                 }
                 return this.formatResponse(CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, this.msg.SERVER_ERROR);
             }
         });
+        this.msg = msg;
+    }
+    formatResponse(status = CustomResponseType_1.CustomResponseType.SYSTEM_ERROR, message, data) {
+        const options = {
+            status,
+            message,
+            data,
+        };
+        return new responseDTO_1.ResponseDTO(options);
     }
     isErrorCode(error) {
         return (error.code !== undefined &&

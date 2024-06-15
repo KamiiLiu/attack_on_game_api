@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IEvent } from '@/interfaces/EventInterface';
+import { EventDocument } from '@/interfaces/EventInterface';
 import dayjs from '@/utils/dayjs';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 const EventSchema: Schema = new Schema({
@@ -8,6 +8,7 @@ const EventSchema: Schema = new Schema({
     ref: 'store',
     required: true,
   },
+  idNumber: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
   address: { type: String, required: true },
@@ -28,6 +29,6 @@ const EventSchema: Schema = new Schema({
 
 EventSchema.index({ title: 1, updatedAt: 1 }, { unique: true });
 
-const EventModel = mongoose.model<IEvent>('Event', EventSchema);
+const EventModel = mongoose.model<EventDocument>('Event', EventSchema);
 
 export default EventModel;

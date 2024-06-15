@@ -5,7 +5,10 @@ import {
   ValidationChain,
   CustomValidator,
 } from 'express-validator';
-import { Types } from 'mongoose';
+import {
+  validateNanoidIds,
+  validateObjectIds,
+} from '@/config/validators/commonConfig';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isSameOrBefore);
@@ -15,7 +18,7 @@ import {
   SortBy,
   SortOrder,
 } from '@/enums/EventStatus';
-import { DefaultQuery } from '@/enums/eventRequest';
+import { DefaultQuery } from '@/enums/EventRequest';
 type ValidationConfig = {
   [key: string]: ValidationChain[];
 };
@@ -52,9 +55,7 @@ const validateFutureDate: CustomValidator = (value: string, { path }) => {
   }
   throw new Error(`${path}時間格式不對哦！必須是未來的日期`);
 };
-const validateObjectIds: CustomValidator = (value: string) => {
-  return Types.ObjectId.isValid(value);
-};
+
 export const validationConfig: {
   body: ValidationConfig;
   query: ValidationConfig;
@@ -184,7 +185,7 @@ export const validationConfig: {
     limit: [
       query('limit')
         .optional()
-        .isInt({ min: 1, max: Number(DefaultQuery.MAX_LIMIT) })
+        .isInt({ min: 1, max: Number(DefaultQuery.LIMIT) })
         .toInt()
         .withMessage('請輸入有效的最小參與人數！'),
     ],
@@ -225,8 +226,8 @@ export const validationConfig: {
   param: {
     id: [
       param('id')
-        .custom(validateObjectIds)
-        .withMessage('請提供有效的 ObjectId 格式'),
+        .custom(validateNanoidIds)
+        .withMessage('請提供有效的 6位數Id 格式'),
     ],
     storeId: [
       param('storeId')

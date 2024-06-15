@@ -3,8 +3,9 @@ import {
   EventFormationStatus as FORMATION_STATUS,
   EventRegistrationStatus as REGISTRATION_STATUS,
 } from '@/enums/EventStatus';
+import { Types } from 'mongoose';
 type QueryParams = {
-  storeId?: string;
+  storeId?: Types.ObjectId;
   keyword?: string;
   [key: string]: any;
 };
@@ -14,7 +15,7 @@ type StatusParams = {
   regStatus: REGISTRATION_STATUS;
 };
 interface QueryWithStore extends BaseQuery {
-  storeId?: string;
+  storeId?: Types.ObjectId;
   isPublish?: boolean;
   title?: { $regex: string; $options: string };
 }
