@@ -7,8 +7,8 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 require("module-alias/register");
-const dotenv = require('dotenv');
-dotenv.config({ path: '.env' });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config({ path: '.env' });
 const DB = `mongodb+srv://${process.env.dbUserName}:${process.env.dbPassword}@cluster0.2jethgx.mongodb.net/${process.env.dbName}?retryWrites=true&w=majority&appName=Cluster0`;
 const app = (0, express_1.default)();
 mongoose_1.default

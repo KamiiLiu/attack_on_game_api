@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import 'module-alias/register';
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 const DB = `mongodb+srv://${process.env.dbUserName}:${process.env.dbPassword}@cluster0.2jethgx.mongodb.net/${process.env.dbName}?retryWrites=true&w=majority&appName=Cluster0`;
 const app: Application = express();
