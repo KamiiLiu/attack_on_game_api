@@ -1,27 +1,13 @@
+import { ReviewDocument } from '@/interfaces/Review';
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
-
-interface ContentObject {
-    rate: number;
-    author: string;
-    // orderNo: string;
-    // eventId: string;
-    content: string;
-    createTime: Date;
-}
-
-interface ReviewObject {
-    object: string;
-    rate: number;
-    content: ContentObject[];
-}
 
 
 // 定義 ContentObject 的 Schema
 const ContentObjectSchema = new Schema({
     rate: { type: Number, required: true },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    // orderNo: { type: Schema.Types.ObjectId, required: true },
+    orderNo: { type: Schema.Types.ObjectId, required: true },
     // eventId: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
     content: { type: String, required: true },
     createTime: { type: Date, default: Date.now }
@@ -35,6 +21,6 @@ const ReviewObjectSchema = new Schema({
 });
 
 // 創建模型
-const ReviewObject = mongoose.model('ReviewObject', ReviewObjectSchema);
+const ReviewModel = mongoose.model<ReviewDocument>('ReviewObject', ReviewObjectSchema);
 
-export { ReviewObject };
+export { ReviewModel };
