@@ -1,5 +1,7 @@
 import { ReviewDocument } from '@/interfaces/Review';
 import mongoose from 'mongoose';
+import dayjs from 'dayjs';
+import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 const { Schema } = mongoose;
 
 
@@ -16,8 +18,11 @@ const ContentObjectSchema = new Schema({
 // 定義 ReviewObject 的 Schema，並將 ContentObjectSchema 嵌入其中
 const ReviewObjectSchema = new Schema({
     storeId: { type: Schema.Types.ObjectId, ref: 'Store', required: true },
+    idNumber: { type: String, required: true, unique: true },
     rate: { type: Number, required: true },
-    content: [ContentObjectSchema] // 嵌入 ContentObjectSchema
+    content: [ContentObjectSchema], // 嵌入 ContentObjectSchema
+    createdAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
+    updatedAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
 });
 
 // 創建模型

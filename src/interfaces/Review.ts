@@ -11,7 +11,11 @@ interface ContentObject {
 }
 
 export interface ReviewDocument extends Document {
-    object: string;
+    _id: Types.ObjectId;
+    idNumber: string;
+    storeId: Types.ObjectId;
     rate: number;
     content: ContentObject[];
+    createdAt: string;
+    updatedAt: string;
 }
