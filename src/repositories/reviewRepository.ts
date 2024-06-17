@@ -28,7 +28,7 @@ export class ReviewRepository implements IBaseRepository<ReviewDocument> {
     }
     async create(content: ReviewDocument): Promise<boolean> {
         try {
-            ReviewModel.create(content);
+            await ReviewModel.create(content);
             return true;
         } catch (error: any) {
             throw new CustomError(
