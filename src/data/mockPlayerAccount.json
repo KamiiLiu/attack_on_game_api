@@ -1,0 +1,37 @@
+[
+  {
+    "password": "123456789",
+    "email": "Henry2020@gmail.com",
+    "role": "player"
+  },
+  {
+    "password": "123456789",
+    "email": "Ivy2122@gmail.com",
+    "role": "player"
+  },
+  {
+    "password": "123456789",
+    "email": "Jack2324@gmail.com",
+    "role": "player"
+  },
+  {
+    "password": "123456789",
+    "email": "Kelly2526@gmail.com",
+    "role": "player"
+  },
+  {
+    "password": "123456789",
+    "email": "Leo2728@gmail.com",
+    "role": "player"
+  },
+  {
+    "password": "123456789",
+    "email": "Frank2930@gmail.com",
+    "role": "player"
+  },
+  {
+    "password": "123456789",
+    "email": "Nina3132@gmail.com",
+    "role": "player"
+  }
+]

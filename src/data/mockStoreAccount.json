@@ -1,0 +1,52 @@
+[
+  {
+    "password": "123456789",
+    "email": "Alice1234@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Bob5678@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Charlie91011@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "David1213@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Eve1415@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Frank1617@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Grace1819@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Hank2021@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Ivy2223@gmail.com",
+    "role": "store"
+  },
+  {
+    "password": "123456789",
+    "email": "Jack2425@gmail.com",
+    "role": "store"
+  }
+]
