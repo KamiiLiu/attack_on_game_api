@@ -16,11 +16,11 @@ export class ReviewService implements IBaseService<ReviewDTO> {
     getById(id: string): Promise<Partial<ReviewDTO>> {
         throw new Error("Method not implemented.");
     }
-    getAll(queryParams: ReviewDocument["storeId"]): Promise<Partial<ReviewDTO>[]> {
-        if (_.isEmpty(queryParams)) {
+    getAll(storeId: string): Promise<Partial<ReviewDTO>[]> {
+        if (_.isEmpty(storeId)) {
             throw new Error("No storeId provided");
         }
-        return this.reviewRepository.findAll({ storeId: queryParams });
+        return this.reviewRepository.findAll({ storeId: storeId });
     }
     create(content: any): Promise<boolean> {
         return this.reviewRepository.create(content);

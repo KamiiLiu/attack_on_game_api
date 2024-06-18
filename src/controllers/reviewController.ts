@@ -1,6 +1,8 @@
 import { BaseController } from "./baseController";
 import { ReviewService } from "../services/reviewService";
 import { ReviewResponseType } from "@/types/ReviewResponseType";
+import { Request } from "express";
+import { ResponseDTO } from "@/dto/responseDTO";
 
 
 export class ReviewController extends BaseController {
@@ -11,13 +13,14 @@ export class ReviewController extends BaseController {
         this.reviewService = new ReviewService();
     }
 
-    async getAllReviews(queryParams: any) {
-        this.handleServiceResponse(() => this.reviewService.getAll(queryParams),
+    async getAllReviews(req: Request): Promise<ResponseDTO> {
+        return this.handleServiceResponse(() => this.reviewService.getAll(req.params.storeId),
             ReviewResponseType.SUCCESS_REQUEST);
     }
 
-    async createReview(content: any) {
-        this.handleServiceResponse(() => this.reviewService.create(content),
+    async createReview(req: Request): Promise<ResponseDTO> {
+        const content = req.body;
+        return this.handleServiceResponse(() => this.reviewService.create(content),
             ReviewResponseType.SUCCESS_CREATED);
     }
 }
