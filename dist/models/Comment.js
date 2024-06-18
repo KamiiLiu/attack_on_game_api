@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Store = void 0;
 const mongoose_1 = require("mongoose");
-const storeSchema = new mongoose_1.Schema({
+const commentSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -14,5 +14,5 @@ const storeSchema = new mongoose_1.Schema({
     address: String,
     phone: String,
 });
-exports.Store = (0, mongoose_1.model)('Stores', storeSchema);
-//# sourceMappingURL=Store.js.map
+exports.Store = (0, mongoose_1.model)('Comments', commentSchema);
+//# sourceMappingURL=Comment.js.map

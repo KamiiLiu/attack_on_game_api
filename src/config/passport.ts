@@ -6,7 +6,7 @@ import {
   StrategyOptionsWithoutRequest,
 } from 'passport-jwt';
 
-import User from '../models/User';
+import User from '@/models/User';
 import { compare } from 'bcrypt';
 import { config } from 'dotenv';
 config();

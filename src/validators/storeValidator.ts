@@ -15,11 +15,6 @@ export const storValidationRule = [
     .withMessage(' Name is required.')
     .isString()
     .withMessage('Name must be String.'),
-  body('user')
-    .notEmpty()
-    .withMessage('User is required.')
-    .isMongoId()
-    .withMessage('User must be a valid MongoDB ObjectId.'),
   body('avatar').optional().isString().withMessage('Avatar must be a String.'),
   body('introduce')
     .optional()
@@ -29,5 +24,14 @@ export const storValidationRule = [
     .optional()
     .isString()
     .withMessage('Address must be a String.'),
-  body('phone').optional().isString().withMessage('Phone must be a String.'),
+  body('phone')
+    .optional()
+    .isString()
+    .withMessage('Phone must be a String.')
+    .custom((value) => {
+      if (!value.match(/^0[0-9]{9}$/)) {
+        throw new Error('Invalid phone number');
+      }
+      return true;
+    }),
 ];

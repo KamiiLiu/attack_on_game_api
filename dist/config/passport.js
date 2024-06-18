@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = require("passport-local");
 const passport_jwt_1 = require("passport-jwt");
-const User_1 = __importDefault(require("../models/User"));
+const User_1 = __importDefault(require("@/models/User"));
 const bcrypt_1 = require("bcrypt");
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();

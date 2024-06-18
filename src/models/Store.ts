@@ -22,4 +22,4 @@ const storeSchema: Schema = new Schema({
   phone: String,
 });
 
-export const Store = model<IStore>('stores', storeSchema);
+export const Store = model<IStore>('Stores', storeSchema);
