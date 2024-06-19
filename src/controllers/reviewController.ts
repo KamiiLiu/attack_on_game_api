@@ -3,6 +3,7 @@ import { ReviewService } from "../services/reviewService";
 import { ReviewResponseType } from "@/types/ReviewResponseType";
 import { Request } from "express";
 import { ResponseDTO } from "@/dto/responseDTO";
+import { getUser } from "@/utils/help";
 
 
 export class ReviewController extends BaseController {
@@ -19,8 +20,10 @@ export class ReviewController extends BaseController {
     }
 
     async createReview(req: Request): Promise<ResponseDTO> {
+        const user = getUser(req);
+        req.body.userId = user.id;
         const content = req.body;
         return this.handleServiceResponse(() => this.reviewService.create(content),
-            ReviewResponseType.SUCCESS_CREATED);
+            ReviewResponseType.SUCCESS_REQUEST);
     }
 }

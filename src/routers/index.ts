@@ -8,6 +8,7 @@ import StoreRouter from '@/routers/storeRouter';
 import OrderRouter from '@/routers/orderRouter';
 import PasswordRouter from '@/routers/password';
 import CommentRouter from '../routers/commentRouter';
+import ReviewRouter from '@/routers/review';
 
 const router = Router();
 router.use('/user', UserRouter);
@@ -18,5 +19,7 @@ router.use('/order', OrderRouter);
 router.use(PasswordRouter);
 router.use('/store', StoreRouter);
 router.use('/', CommentRouter);
+router.use('/review', ReviewRouter);
+
 
 export default router;

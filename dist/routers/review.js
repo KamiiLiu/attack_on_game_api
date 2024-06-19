@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const baseRouter_1 = require("./baseRouter");
 const reviewController_1 = require("@/controllers/reviewController");
+const auth_1 = require("@/middlewares/auth");
 class ReviewRouter extends baseRouter_1.BaseRouter {
     constructor() {
         super();
@@ -12,8 +13,8 @@ class ReviewRouter extends baseRouter_1.BaseRouter {
         this.setRouters();
     }
     setRouters() {
-        this.router.post('/', this.handleRequest(this.controller.createReview));
-        this.router.get('/', this.handleRequest(this.controller.getAllReviews));
+        this.router.post('/', auth_1.jwtAuthenticator, this.handleRequest(this.controller.createReview.bind(this.controller)));
+        this.router.get('/', auth_1.jwtAuthenticator, this.handleRequest(this.controller.getAllReviews.bind(this.controller)));
     }
 }
 exports.default = new ReviewRouter().router;

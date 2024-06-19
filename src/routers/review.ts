@@ -3,6 +3,7 @@ import { BaseRouter } from './baseRouter';
 import { ReviewController } from '@/controllers/reviewController';
 import { ReviewValidator } from '@/validators/reviewValidator';
 import { handleValidationErrors } from '@/middlewares/handleValidationErrors';
+import { jwtAuthenticator } from '@/middlewares/auth';
 
 class ReviewRouter extends BaseRouter {
     protected controller!: ReviewController;
@@ -17,11 +18,13 @@ class ReviewRouter extends BaseRouter {
     protected setRouters(): void {
         this.router.post(
             '/',
-            this.handleRequest(this.controller.createReview),
+            jwtAuthenticator,
+            this.handleRequest(this.controller.createReview.bind(this.controller)),
         );
         this.router.get(
             '/',
-            this.handleRequest(this.controller.getAllReviews),
+            jwtAuthenticator,
+            this.handleRequest(this.controller.getAllReviews.bind(this.controller)),
         );
     }
 }
