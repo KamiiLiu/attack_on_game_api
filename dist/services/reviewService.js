@@ -20,7 +20,7 @@ class ReviewService {
         return this.reviewRepository.findAll({ storeId: storeId });
     }
     create(content) {
-        return this.reviewRepository.create(content);
+        return this.reviewRepository.create(content, content.userId);
     }
     update(id, content) {
         throw new Error("Method not implemented.");

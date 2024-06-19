@@ -18,6 +18,8 @@ const lodash_1 = __importDefault(require("lodash"));
 const CustomError_1 = require("@/errors/CustomError");
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const OtherResponseType_1 = require("@/types/OtherResponseType");
+const OrderModel_1 = __importDefault(require("@/models/OrderModel"));
+const EventModel_1 = __importDefault(require("@/models/EventModel"));
 class ReviewRepository {
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -38,10 +40,40 @@ class ReviewRepository {
             }
         });
     }
-    create(content) {
+    create(contentObj, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield Review_1.ReviewModel.create(content);
+                const { orderNumber, content, rating } = contentObj;
+                // use order number to get store id
+                const order = yield OrderModel_1.default.findOne({ idNumber: orderNumber }, 'eventId -_id');
+                const event = yield EventModel_1.default.findById(order === null || order === void 0 ? void 0 : order.eventId).select('storeId');
+                const storeId = event === null || event === void 0 ? void 0 : event.storeId;
+                // use store id to check if review exists
+                const reviewExists = yield Review_1.ReviewModel.findOne({ storeId });
+                // create content object
+                const newContent = {
+                    rate: rating,
+                    author: userId,
+                    orderNo: orderNumber,
+                    content: content,
+                };
+                if (reviewExists) {
+                    // refresh store rating
+                    const newRating = (lodash_1.default.reduce(reviewExists.content, (sum, review) => sum + review.rate, 0) + rating) / (reviewExists.content.length + 1);
+                    // add content to existing review array
+                    reviewExists.content.push(newContent);
+                    reviewExists.rate = newRating;
+                    yield reviewExists.save();
+                    return true;
+                }
+                else {
+                    // create new review
+                    yield Review_1.ReviewModel.create({
+                        storeId: storeId,
+                        rate: rating,
+                        content: [newContent],
+                    });
+                }
                 return true;
             }
             catch (error) {
