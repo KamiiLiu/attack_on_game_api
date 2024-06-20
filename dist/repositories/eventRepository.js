@@ -52,8 +52,9 @@ class EventRepository {
     findAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
+                const { keyword, limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
                 const eventQuery = new EventQuery_1.EventQuery({}, {
+                    keyword,
                     forStatus: formationStatus,
                     regStatus: registrationStatus,
                 });
@@ -132,8 +133,9 @@ class EventRepository {
     getEventsByStoreId(storeId, queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
+                const { keyword, limit, skip, formationStatus, registrationStatus, sortBy, sortOrder, } = queryParams;
                 const eventQuery = new EventQuery_1.EventQuery({ storeId }, {
+                    keyword,
                     forStatus: formationStatus,
                     regStatus: registrationStatus,
                 });

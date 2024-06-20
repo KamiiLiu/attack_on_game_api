@@ -48,6 +48,7 @@ export class EventRepository implements IBaseRepository<EventDocument> {
   async findAll(queryParams: QueryParams): Promise<EventDocument[]> {
     try {
       const {
+        keyword,
         limit,
         skip,
         formationStatus,
@@ -58,6 +59,7 @@ export class EventRepository implements IBaseRepository<EventDocument> {
       const eventQuery = new EventQuery(
         {},
         {
+          keyword,
           forStatus: formationStatus,
           regStatus: registrationStatus,
         },
@@ -161,6 +163,7 @@ export class EventRepository implements IBaseRepository<EventDocument> {
   ): Promise<EventDocument[] | null> {
     try {
       const {
+        keyword,
         limit,
         skip,
         formationStatus,
@@ -171,6 +174,7 @@ export class EventRepository implements IBaseRepository<EventDocument> {
       const eventQuery = new EventQuery(
         { storeId },
         {
+          keyword,
           forStatus: formationStatus,
           regStatus: registrationStatus,
         },
