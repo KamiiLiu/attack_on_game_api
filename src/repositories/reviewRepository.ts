@@ -41,7 +41,19 @@ export class ReviewRepository {
 
             // use order number to get store id
             const order = await Order.findOne({ idNumber: orderNumber }, 'eventId -_id')
+            if (!order) {
+                throw new CustomError(
+                    CustomResponseType.DATABASE_OPERATION_FAILED,
+                    `訂單編號錯誤`,
+                );
+            }
             const event = await Event.findById(order?.eventId).select('storeId');
+            if (!event) {
+                throw new CustomError(
+                    CustomResponseType.DATABASE_OPERATION_FAILED,
+                    `Order not found`,
+                );
+            }
             const storeId = event?.storeId;
 
             // use store id to check if review exists

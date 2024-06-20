@@ -46,7 +46,13 @@ class ReviewRepository {
                 const { orderNumber, content, rating } = contentObj;
                 // use order number to get store id
                 const order = yield OrderModel_1.default.findOne({ idNumber: orderNumber }, 'eventId -_id');
+                if (!order) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `訂單編號錯誤`);
+                }
                 const event = yield EventModel_1.default.findById(order === null || order === void 0 ? void 0 : order.eventId).select('storeId');
+                if (!event) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `Order not found`);
+                }
                 const storeId = event === null || event === void 0 ? void 0 : event.storeId;
                 // use store id to check if review exists
                 const reviewExists = yield Review_1.ReviewModel.findOne({ storeId });
