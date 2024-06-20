@@ -19,12 +19,16 @@ class ReviewRouter extends BaseRouter {
         this.router.post(
             '/',
             jwtAuthenticator,
-            this.handleRequest(this.controller.createReview.bind(this.controller)),
+            ReviewValidator.validateReview(),
+            handleValidationErrors,
+            this.handleRequest(this.controller.createReview),
         );
         this.router.get(
-            '/',
+            '/:storeId',
             jwtAuthenticator,
-            this.handleRequest(this.controller.getAllReviews.bind(this.controller)),
+            ReviewValidator.validateObjectIds('storeId'),
+            handleValidationErrors,
+            this.handleRequest(this.controller.getAllReviews),
         );
     }
 }

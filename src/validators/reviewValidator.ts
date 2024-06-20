@@ -1,5 +1,5 @@
 
-import { validationConfig } from '@/config/validators/orderConfig';
+import { validationConfig } from '@/config/validators/reviewConfig';
 
 export class ReviewValidator {
     static validateReview() {

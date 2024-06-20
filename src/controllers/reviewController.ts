@@ -14,12 +14,12 @@ export class ReviewController extends BaseController {
         this.reviewService = new ReviewService();
     }
 
-    async getAllReviews(req: Request): Promise<ResponseDTO> {
+    public getAllReviews = (req: Request): Promise<ResponseDTO> => {
         return this.handleServiceResponse(() => this.reviewService.getAll(req.params.storeId),
             ReviewResponseType.SUCCESS_REQUEST);
     }
 
-    async createReview(req: Request): Promise<ResponseDTO> {
+    public createReview = (req: Request): Promise<ResponseDTO> => {
         const user = getUser(req);
         req.body.userId = user.id;
         const content = req.body;
