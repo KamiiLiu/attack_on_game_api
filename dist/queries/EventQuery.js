@@ -37,7 +37,7 @@ class EventQuery {
         }
     }
     buildRegistrationQuery(status) {
-        const today = new Date();
+        const today = new Date().toISOString();
         const query = {};
         if (status === EventStatus_1.EventRegistrationStatus.CLOSED) {
             query.$expr = {

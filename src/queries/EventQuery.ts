@@ -65,8 +65,9 @@ export class EventQuery {
   }
 
   private buildRegistrationQuery(status: REGISTRATION_STATUS): QueryWithStore {
-    const today = new Date();
+    const today = new Date().toISOString();
     const query: QueryWithStore = {};
+
     if (status === REGISTRATION_STATUS.CLOSED) {
       query.$expr = {
         $lt: [today, '$registrationEndTime'],
