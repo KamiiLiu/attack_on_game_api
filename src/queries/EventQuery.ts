@@ -97,7 +97,7 @@ export class EventQuery {
       query.$expr = {
         $and: [
           { $gte: ['$currentParticipantsCount', '$minParticipants'] },
-          { $lte: ['$currentParticipantsCount', '$maxParticipants'] },
+          { $lt: ['$currentParticipantsCount', '$maxParticipants'] },
         ],
       };
     } else if (status === FORMATION_STATUS.FULL) {
