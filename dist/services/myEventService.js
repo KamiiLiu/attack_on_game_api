@@ -23,8 +23,9 @@ class MyEventService {
         this.EventRepository = new EventRepository_1.EventRepository();
         this.lookupService = new LookupService_1.LookupService(new OrderRepository_1.OrderRepository(), this.EventRepository, new TicketRepository_1.TicketRepository());
     }
-    getOrderByyEventId(id) {
+    getOrderByEventId(req) {
         return __awaiter(this, void 0, void 0, function* () {
+            const store = yield this.lookupService.findStore(req);
             const event = yield this.lookupService.findEventById(id);
             const eventDTO = new eventDTO_1.EventDTO(event);
             if (!eventDTO.isPublish) {

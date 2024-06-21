@@ -20,11 +20,25 @@ const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const OrderResponseType_1 = require("@/types/OrderResponseType");
 const EventResponseType_1 = require("@/types/EventResponseType");
 const TicketResponseType_1 = require("@/types/TicketResponseType");
+const Store_1 = require("@/models/Store");
 class LookupService {
     constructor(orderRepository, EventRepository, ticketRepository) {
         this.orderRepository = orderRepository;
         this.EventRepository = EventRepository;
         this.ticketRepository = ticketRepository;
+    }
+    findStore(queryParams) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const reqWithUser = queryParams;
+            if (!reqWithUser.user) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
+            }
+            const store = yield Store_1.Store.findById({ user: reqWithUser.user });
+            if (lodash_1.default.isEmpty(store)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
+            }
+            return store;
+        });
     }
     findPlayer(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
