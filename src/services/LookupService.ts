@@ -1,5 +1,7 @@
+import _ from 'lodash';
 import { Types } from 'mongoose';
-import { Player, IPlayer as PlayerDocument } from '@/models/Player';
+import Player from '@/models/Player';
+import { IPlayer as PlayerDocument } from '@/models/Player';
 import { OrderRepository } from '@/repositories/OrderRepository';
 import { EventRepository } from '@/repositories/EventRepository';
 import { TicketRepository } from '@/repositories/TicketRepository';
@@ -11,17 +13,25 @@ import { TicketResponseType } from '@/types/TicketResponseType';
 import { OrderDocument } from '@/interfaces/OrderInterface';
 import { EventDocument } from '@/interfaces/EventInterface';
 import { TicketDocument } from '@/interfaces/TicketInterface';
-
+import { RequestWithUser } from '@/types/commonRequest';
+import { IQuery } from '@/enums/OrderRequest';
 export class LookupService {
   constructor(
     private orderRepository: OrderRepository,
-    private eventRepository: EventRepository,
+    private EventRepository: EventRepository,
     private ticketRepository: TicketRepository,
   ) {}
 
-  public async findPlayer(userId: string): Promise<PlayerDocument> {
-    const player = await Player.findOne({ user: userId });
-    if (!player) {
+  public async findPlayer(queryParams: Request): Promise<PlayerDocument> {
+    const reqWithUser = queryParams as RequestWithUser;
+    if (!reqWithUser.user) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+    const player = await Player.findOne({ user: queryParams.user });
+    if (_.isEmpty(player)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         OrderResponseType.ERROR_PLAYER_FOUND,
@@ -40,9 +50,30 @@ export class LookupService {
     }
     return order;
   }
-
+  public async findOrderList(
+    playerId: Types.ObjectId,
+    query: IQuery,
+  ): Promise<OrderDocument[]> {
+    const queryObject: any = {
+      playerId,
+    };
+    if (query.status) {
+      queryObject.status = query.status;
+    }
+    const order = await this.orderRepository.findAll(queryObject, {
+      limit: query.limit,
+      skip: query.skip,
+    });
+    if (_.isEmpty(order)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.FAILED_FOUND,
+      );
+    }
+    return order;
+  }
   public async findEventById(eventId: string): Promise<Partial<EventDocument>> {
-    const event = await this.eventRepository.findById(eventId);
+    const event = await this.EventRepository.findById(eventId);
     if (!event) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
@@ -55,7 +86,7 @@ export class LookupService {
   public async findEventByDbId(
     eventId: Types.ObjectId,
   ): Promise<Partial<EventDocument>> {
-    const event = await this.eventRepository.findByDBId(eventId);
+    const event = await this.EventRepository.findByDBId(eventId);
     if (!event) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,

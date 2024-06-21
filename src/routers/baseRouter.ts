@@ -3,6 +3,7 @@ import { ResponseDTO } from '@/dto/responseDTO';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { SERVER_ERROR_MSG } from '@/types/OtherResponseType';
 import _ from 'lodash';
+import { RequestWithUser } from '@/types/commonRequest';
 export abstract class BaseRouter {
   public router: Router;
 
@@ -34,7 +35,6 @@ export abstract class BaseRouter {
       }
     };
   }
-
   private mapStatusCode(status: CustomResponseType): number {
     switch (status) {
       case CustomResponseType.SUCCESS:

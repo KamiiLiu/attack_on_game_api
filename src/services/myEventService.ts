@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { EventRepository } from '@/repositories/eventRepository';
+import { EventRepository } from '@/repositories/EventRepository';
 import { LookupService } from './LookupService';
 import { CustomError } from '@/errors/CustomError';
 import { CustomResponseType } from '@/enums/CustomResponseType';
@@ -9,20 +9,20 @@ import { EventDocument } from '@/interfaces/EventInterface';
 import { OrderRepository } from '@/repositories/OrderRepository';
 import { TicketRepository } from '@/repositories/TicketRepository';
 
-class MyEventService {
-  private eventRepository: EventRepository;
+export class MyEventService {
+  private EventRepository: EventRepository;
   private lookupService: LookupService;
 
   constructor() {
-    this.eventRepository = new EventRepository();
+    this.EventRepository = new EventRepository();
     this.lookupService = new LookupService(
       new OrderRepository(),
-      this.eventRepository,
+      this.EventRepository,
       new TicketRepository(),
     );
   }
 
-  public async getEventById(id: string): Promise<Partial<EventDTO>> {
+  public async getOrderByyEventId(id: string): Promise<Partial<EventDTO>> {
     const event = await this.lookupService.findEventById(id);
     const eventDTO = new EventDTO(event);
     if (!eventDTO.isPublish) {
@@ -34,10 +34,10 @@ class MyEventService {
     return eventDTO.toDetailDTO();
   }
 
-  public async getAllEvents(
+  public async getAllEventOrder(
     queryParams: Request['query'],
   ): Promise<Partial<EventDTO>[]> {
-    const eventData = await this.eventRepository.findAll(queryParams);
+    const eventData = await this.EventRepository.findAll(queryParams);
     if (!eventData.length) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
@@ -49,7 +49,7 @@ class MyEventService {
 
   public async createEvent(content: EventDocument): Promise<boolean> {
     const eventDTO = new EventDTO(content).toDetailDTO();
-    return await this.eventRepository.create(eventDTO);
+    return await this.EventRepository.create(eventDTO);
   }
 
   public async updateEvent(
@@ -58,11 +58,11 @@ class MyEventService {
   ): Promise<Partial<EventDTO> | null> {
     const event = await this.lookupService.findEventById(id);
     const eventDTO = new EventDTO(content).toDetailDTO();
-    return await this.eventRepository.update(id, eventDTO);
+    return await this.EventRepository.update(id, eventDTO);
   }
 
   public async deleteEvent(id: string): Promise<boolean> {
-    return await this.eventRepository.delete(id);
+    return await this.EventRepository.delete(id);
   }
 }
 

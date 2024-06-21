@@ -10,7 +10,7 @@ export const ResponseType: IHTTPSMessage = {
   FAILED_UPDATE: '更新失敗',
   FAILED_DELETION: '刪除失敗',
   FAILED_OPERATION: '操作失敗',
-  FAILED_OWNER_FOUND:'沒有找到店家'
+  FAILED_OWNER_FOUND: '沒有找到店家',
   SYSTEM_ERROR: '系統錯誤',
   UNKNOWN_ERROR: '未知錯誤',
 };
