@@ -1,7 +1,9 @@
 import _ from 'lodash';
+import { Request } from 'express';
 import { Types } from 'mongoose';
 import Player from '@/models/Player';
 import { IPlayer as PlayerDocument } from '@/models/Player';
+import { IStore as StoreDocument } from '@/models/Store';
 import { OrderRepository } from '@/repositories/OrderRepository';
 import { EventRepository } from '@/repositories/EventRepository';
 import { TicketRepository } from '@/repositories/TicketRepository';
@@ -15,22 +17,40 @@ import { EventDocument } from '@/interfaces/EventInterface';
 import { TicketDocument } from '@/interfaces/TicketInterface';
 import { RequestWithUser } from '@/types/commonRequest';
 import { IQuery } from '@/enums/OrderRequest';
+import { Store } from '@/models/Store';
 export class LookupService {
   constructor(
     private orderRepository: OrderRepository,
     private EventRepository: EventRepository,
     private ticketRepository: TicketRepository,
   ) {}
-
-  public async findPlayer(queryParams: Request): Promise<PlayerDocument> {
-    const reqWithUser = queryParams as RequestWithUser;
+  public async findStore(queryParams: Request): Promise<StoreDocument> {
+    const reqWithUser = queryParams as unknown as RequestWithUser;
     if (!reqWithUser.user) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         OrderResponseType.ERROR_PLAYER_FOUND,
       );
     }
-    const player = await Player.findOne({ user: queryParams.user });
+    const store = await Store.findById({ user: reqWithUser.user });
+    if (_.isEmpty(store)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+    return store;
+  }
+
+  public async findPlayer(queryParams: Request): Promise<PlayerDocument> {
+    const reqWithUser = queryParams as unknown as RequestWithUser;
+    if (!reqWithUser.user) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+    const player = await Player.findOne({ user: reqWithUser.user });
     if (_.isEmpty(player)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,

@@ -22,7 +22,8 @@ export class MyEventService {
     );
   }
 
-  public async getOrderByyEventId(id: string): Promise<Partial<EventDTO>> {
+  public async getOrderByEventId(req: Request): Promise<Partial<EventDTO>> {
+    const store = await this.lookupService.findStore(req);
     const event = await this.lookupService.findEventById(id);
     const eventDTO = new EventDTO(event);
     if (!eventDTO.isPublish) {

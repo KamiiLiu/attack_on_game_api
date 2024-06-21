@@ -32,7 +32,7 @@ class LookupService {
             if (!reqWithUser.user) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
-            const player = yield Player_1.default.findOne({ user: queryParams.user });
+            const player = yield Player_1.default.findOne({ user: reqWithUser.user });
             if (lodash_1.default.isEmpty(player)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
