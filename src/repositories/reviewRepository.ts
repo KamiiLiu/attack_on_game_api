@@ -11,7 +11,7 @@ import { getUser } from "@/utils/help";
 
 
 type ReviewContentRequest = {
-    rating: number;
+    rate: number;
     orderNumber: string;
     content: string;
 }
@@ -37,7 +37,7 @@ export class ReviewRepository {
     }
     async create(contentObj: ReviewContentRequest, userId: string): Promise<boolean> {
         try {
-            const { orderNumber, content, rating } = contentObj;
+            const { orderNumber, content, rate } = contentObj;
 
             // use order number to get store id
             const order = await Order.findOne({ idNumber: orderNumber }, 'eventId -_id')
@@ -60,14 +60,14 @@ export class ReviewRepository {
             const reviewExists = await ReviewModel.findOne({ storeId });
             // create content object
             const newContent: ContentObject = {
-                rate: rating,
+                rate,
                 author: userId,
                 orderNo: orderNumber,
                 content: content,
             }
             if (reviewExists) {
                 // refresh store rating
-                const newRating = (_.reduce(reviewExists.content, (sum, review) => sum + review.rate, 0) + rating) / (reviewExists.content.length + 1);
+                const newRating = (_.reduce(reviewExists.content, (sum, review) => sum + review.rate, 0) + rate) / (reviewExists.content.length + 1);
 
                 // add content to existing review array
                 reviewExists.content.push(newContent);
@@ -79,7 +79,7 @@ export class ReviewRepository {
                 // create new review
                 await ReviewModel.create({
                     storeId: storeId,
-                    rate: rating,
+                    rate,
                     content: [newContent],
                 });
             }

@@ -29,7 +29,7 @@ exports.validationConfig = {
     query: {},
     param: {
         storeId: [
-            (0, express_validator_1.body)('storeId')
+            (0, express_validator_1.param)('storeId')
                 .notEmpty()
                 .withMessage('storeId 不能為空')
                 .isString()

@@ -43,7 +43,7 @@ class ReviewRepository {
     create(contentObj, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { orderNumber, content, rating } = contentObj;
+                const { orderNumber, content, rate } = contentObj;
                 // use order number to get store id
                 const order = yield OrderModel_1.default.findOne({ idNumber: orderNumber }, 'eventId -_id');
                 if (!order) {
@@ -58,14 +58,14 @@ class ReviewRepository {
                 const reviewExists = yield Review_1.ReviewModel.findOne({ storeId });
                 // create content object
                 const newContent = {
-                    rate: rating,
+                    rate,
                     author: userId,
                     orderNo: orderNumber,
                     content: content,
                 };
                 if (reviewExists) {
                     // refresh store rating
-                    const newRating = (lodash_1.default.reduce(reviewExists.content, (sum, review) => sum + review.rate, 0) + rating) / (reviewExists.content.length + 1);
+                    const newRating = (lodash_1.default.reduce(reviewExists.content, (sum, review) => sum + review.rate, 0) + rate) / (reviewExists.content.length + 1);
                     // add content to existing review array
                     reviewExists.content.push(newContent);
                     reviewExists.rate = newRating;
@@ -76,7 +76,7 @@ class ReviewRepository {
                     // create new review
                     yield Review_1.ReviewModel.create({
                         storeId: storeId,
-                        rate: rating,
+                        rate,
                         content: [newContent],
                     });
                 }

@@ -1,5 +1,5 @@
 
-import { body, ValidationChain } from 'express-validator';
+import { body, param, ValidationChain } from 'express-validator';
 
 type ValidationConfig = {
     [key: string]: ValidationChain[];
@@ -36,7 +36,7 @@ export const validationConfig: {
     query: {},
     param: {
         storeId: [
-            body('storeId')
+            param('storeId')
                 .notEmpty()
                 .withMessage('storeId 不能為空')
                 .isString()

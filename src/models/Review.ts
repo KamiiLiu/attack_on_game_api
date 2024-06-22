@@ -28,4 +28,10 @@ const ReviewObjectSchema = new Schema({
 // 創建模型
 const ReviewModel = mongoose.model<ReviewDocument>('ReviewObject', ReviewObjectSchema);
 
+//updateTime
+ReviewObjectSchema.pre('save', function (next) {
+    this.set('updatedAt', dayjs().format(TIME_FORMATTER));
+    next();
+});
+
 export { ReviewModel };

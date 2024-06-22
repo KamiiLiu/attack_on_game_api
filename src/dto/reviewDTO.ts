@@ -10,9 +10,14 @@ export class ReviewDTO extends BaseDTO {
     private content!: ReviewDocument["content"];
 
     constructor(dto: ReviewDocument) {
-        super(dto);
-        this._storeId = dto.storeId;
-        this.rate = dto.rate;
+        super({
+            _id: dto._id!,
+            idNumber: dto.idNumber!,
+            createdAt: dto.createdAt!,
+            updatedAt: dto.updatedAt!,
+        });
+        this._storeId = dto.storeId!;
+        this.rate = dto.rate!;
     }
 
     public toDetailDTO(): Partial<ReviewDocument> {
