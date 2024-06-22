@@ -16,6 +16,7 @@ exports.OrderService = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 const OrderStatus_1 = require("@/enums/OrderStatus");
 const orderDTO_1 = require("@/dto/orderDTO");
+const orderListDTO_1 = require("@/dto/orderListDTO");
 const eventDTO_1 = require("@/dto/eventDTO");
 const ticketDTO_1 = require("@/dto/ticketDTO");
 const orderRepository_1 = require("@/repositories/orderRepository");
@@ -69,7 +70,21 @@ class OrderService {
                 status,
                 skip,
             });
-            return orderList.map((x) => x.toDetailDTO());
+            const eventIds = orderList.map((x) => x.eventId);
+            const eventList = yield this.eventRepository.getEventsData({
+                _id: { $in: eventIds },
+            });
+            const result = orderList
+                .map((x) => {
+                const findEvent = eventList.find((y) => {
+                    return y._id.toString() == x.eventId.toString();
+                });
+                if (findEvent)
+                    return new orderListDTO_1.OrderListDTO(x, findEvent);
+                return undefined;
+            })
+                .filter((x) => x !== undefined);
+            return result;
         });
     }
     create(queryParams) {

@@ -6,6 +6,7 @@ import { EventDocument } from '@/interfaces/EventInterface';
 import { TicketDocument } from '@/interfaces/TicketInterface';
 import { IPlayer as PlayerDocument } from '@/models/Player';
 import { OrderDTO } from '@/dto/orderDTO';
+import { OrderListDTO } from '@/dto/orderListDTO';
 import { EventDTO } from '@/dto/eventDTO';
 import { TicketDTO } from '@/dto/ticketDTO';
 import { OrderRepository } from '@/repositories/orderRepository';
@@ -68,7 +69,7 @@ export class OrderService {
       tickets: targetTicketsDTO,
     };
   }
-  async getAll(queryParams: Request): Promise<Partial<OrderDTO>[]> {
+  async getAll(queryParams: Request): Promise<OrderListDTO[]> {
     const player = await this.findPlayer(queryParams);
     const { limit, status, skip } = queryParams.query as IQuery;
     const orderList = await this.findOrderList(player.user, {
@@ -76,7 +77,20 @@ export class OrderService {
       status,
       skip,
     });
-    return orderList.map((x) => x.toDetailDTO());
+    const eventIds = orderList.map((x) => x.eventId);
+    const eventList = await this.eventRepository.getEventsData({
+      _id: { $in: eventIds },
+    });
+    const result = orderList
+      .map((x) => {
+        const findEvent = eventList.find((y) => {
+          return y._id.toString() == x.eventId.toString();
+        });
+        if (findEvent) return new OrderListDTO(x, findEvent);
+        return undefined;
+      })
+      .filter((x): x is OrderListDTO => x !== undefined);
+    return result;
   }
   async create(queryParams: Request): Promise<boolean> {
     const player = await this.findPlayer(queryParams);
