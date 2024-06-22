@@ -58,32 +58,8 @@ export const validationConfig: {
         .toInt()
         .withMessage('請輸入有效的跳過值！'),
     ],
-    startTime: [
-      body('startTime')
-        .notEmpty()
-        .withMessage('活動開始時間不能為空哦！')
-        .custom((value, { req, location, path }) =>
-          isValidDateFormat(value, { req, location, path }),
-        )
-        .custom((value, { req, location, path }) =>
-          isPastDate(value, { req, location, path }),
-        ),
-    ],
-    endTime: [
-      body('endTime')
-        .notEmpty()
-        .withMessage('活動開始時間不能為空哦！')
-        .custom((value, { req, location, path }) =>
-          isValidDateFormat(value, { req, location, path }),
-        )
-        .custom((value, { req, location, path }) =>
-          isValidDateFormat(value, { req, location, path }),
-        )
-        .custom((value, { req, location, path }) =>
-          isPastDate(value, { req, location, path }),
-        )
-        .custom(validateEventTimesOrder),
-    ],
+    startTime: [query('startTime').optional()],
+    endTime: [query('endTime').optional()],
   },
   param: {
     eventId: [

@@ -65,8 +65,9 @@ export class EventQuery {
   }
 
   private buildRegistrationQuery(status: REGISTRATION_STATUS): QueryWithStore {
-    const today = new Date();
+    const today = new Date().toISOString();
     const query: QueryWithStore = {};
+
     if (status === REGISTRATION_STATUS.CLOSED) {
       query.$expr = {
         $lt: [today, '$registrationEndTime'],
@@ -96,7 +97,7 @@ export class EventQuery {
       query.$expr = {
         $and: [
           { $gte: ['$currentParticipantsCount', '$minParticipants'] },
-          { $lte: ['$currentParticipantsCount', '$maxParticipants'] },
+          { $lt: ['$currentParticipantsCount', '$maxParticipants'] },
         ],
       };
     } else if (status === FORMATION_STATUS.FULL) {

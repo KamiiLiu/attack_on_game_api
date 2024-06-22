@@ -17,16 +17,10 @@ class MyEventController extends baseController_1.BaseController {
     constructor() {
         super(myEventResponseType_1.ResponseType);
         this.getById = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.getById(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
+            return this.handleServiceResponse(() => this.eventService.getOrderByEventId(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
         });
         this.getAll = (req) => __awaiter(this, void 0, void 0, function* () {
-            return yield this.handleServiceResponse(() => this.eventService.getAll(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
-        });
-        this.deletUser = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.deletUser(req), myEventResponseType_1.ResponseType.SUCCESS_UPDATE);
-        });
-        this.deletEvent = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.deletEvent(req), myEventResponseType_1.ResponseType.SUCCESS_UPDATE);
+            return yield this.handleServiceResponse(() => this.eventService.getAllEventOrder(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
         });
         this.eventService = new myEventService_1.MyEventService();
     }

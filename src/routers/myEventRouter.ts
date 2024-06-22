@@ -17,7 +17,7 @@ class MyEventRouter extends BaseRouter {
     this.router.get(
       '/list',
       jwtAuthenticator,
-      EventValidator.validateEventQuery,
+      EventValidator.validateEventQuery(),
       handleValidationErrors,
       this.handleRequest(this.controller.getAll),
     );
@@ -28,20 +28,20 @@ class MyEventRouter extends BaseRouter {
       handleValidationErrors,
       this.handleRequest(this.controller.getById),
     );
-    this.router.patch(
-      '/cancel-user',
-      jwtAuthenticator,
-      EventValidator.validateEventBody('playerId'),
-      handleValidationErrors,
-      this.handleRequest(this.controller.deletUser),
-    );
-    this.router.patch(
-      '/cancel-event',
-      jwtAuthenticator,
-      EventValidator.validateEventBody('eventId'),
-      handleValidationErrors,
-      this.handleRequest(this.controller.deletEvent),
-    );
+    // this.router.patch(
+    //   '/cancel-user',
+    //   jwtAuthenticator,
+    //   EventValidator.validateEventBody('playerId'),
+    //   handleValidationErrors,
+    //   this.handleRequest(this.controller.deletUser),
+    // );
+    // this.router.patch(
+    //   '/cancel-event',
+    //   jwtAuthenticator,
+    //   EventValidator.validateEventBody('eventId'),
+    //   handleValidationErrors,
+    //   this.handleRequest(this.controller.deletEvent),
+    // );
   }
 }
 export default new MyEventRouter().router;

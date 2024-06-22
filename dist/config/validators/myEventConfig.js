@@ -42,22 +42,8 @@ exports.validationConfig = {
                 .toInt()
                 .withMessage('請輸入有效的跳過值！'),
         ],
-        startTime: [
-            (0, express_validator_1.body)('startTime')
-                .notEmpty()
-                .withMessage('活動開始時間不能為空哦！')
-                .custom((value, { req, location, path }) => (0, commonConfig_1.isValidDateFormat)(value, { req, location, path }))
-                .custom((value, { req, location, path }) => (0, commonConfig_1.isPastDate)(value, { req, location, path })),
-        ],
-        endTime: [
-            (0, express_validator_1.body)('endTime')
-                .notEmpty()
-                .withMessage('活動開始時間不能為空哦！')
-                .custom((value, { req, location, path }) => (0, commonConfig_1.isValidDateFormat)(value, { req, location, path }))
-                .custom((value, { req, location, path }) => (0, commonConfig_1.isValidDateFormat)(value, { req, location, path }))
-                .custom((value, { req, location, path }) => (0, commonConfig_1.isPastDate)(value, { req, location, path }))
-                .custom(validateEventTimesOrder),
-        ],
+        startTime: [(0, express_validator_1.query)('startTime').optional()],
+        endTime: [(0, express_validator_1.query)('endTime').optional()],
     },
     param: {
         eventId: [

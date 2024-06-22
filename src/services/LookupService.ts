@@ -32,7 +32,7 @@ export class LookupService {
         OrderResponseType.ERROR_PLAYER_FOUND,
       );
     }
-    const store = await Store.findById({ user: reqWithUser.user });
+    const store = await Store.findOne({ user: reqWithUser.user });
     if (_.isEmpty(store)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,

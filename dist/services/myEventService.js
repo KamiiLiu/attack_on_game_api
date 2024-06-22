@@ -18,47 +18,38 @@ const EventResponseType_1 = require("@/types/EventResponseType");
 const eventDTO_1 = require("@/dto/eventDTO");
 const OrderRepository_1 = require("@/repositories/OrderRepository");
 const TicketRepository_1 = require("@/repositories/TicketRepository");
+const userOrderDTO_1 = require("@/dto/userOrderDTO");
 class MyEventService {
     constructor() {
-        this.EventRepository = new EventRepository_1.EventRepository();
-        this.lookupService = new LookupService_1.LookupService(new OrderRepository_1.OrderRepository(), this.EventRepository, new TicketRepository_1.TicketRepository());
+        this.orderRepository = new OrderRepository_1.OrderRepository();
+        this.eventRepository = new EventRepository_1.EventRepository();
+        this.lookupService = new LookupService_1.LookupService(this.orderRepository, this.eventRepository, new TicketRepository_1.TicketRepository());
     }
     getOrderByEventId(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStore(req);
-            const event = yield this.lookupService.findEventById(id);
-            const eventDTO = new eventDTO_1.EventDTO(event);
-            if (!eventDTO.isPublish) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.FAILED_AUTHORIZATION);
+            console.log(req.params.eventId);
+            const eventData = yield this.eventRepository.getEventsByAprilStoreId(store.user, { idNumber: req.params.eventId });
+            console.log('eventData', eventData);
+            if (!eventData.length) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }
-            return eventDTO.toDetailDTO();
+            const eventDTO = new eventDTO_1.EventDTO(eventData[0]);
+            const buyers = yield this.orderRepository.findAllBuyers(eventDTO._id);
+            console.log('eventDTO._id', eventDTO._id);
+            console.log('eventData[0]._id', eventData[0]._id);
+            console.log('buyers', buyers);
+            return buyers.map((x) => new userOrderDTO_1.UserOrderDTO(x));
         });
     }
     getAllEventOrder(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const eventData = yield this.EventRepository.findAll(queryParams);
+            const store = yield this.lookupService.findStore(queryParams);
+            const eventData = yield this.eventRepository.getEventsByAprilStoreId(store.user);
             if (!eventData.length) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }
             return eventData.map((event) => new eventDTO_1.EventDTO(event).toDetailDTO());
-        });
-    }
-    createEvent(content) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const eventDTO = new eventDTO_1.EventDTO(content).toDetailDTO();
-            return yield this.EventRepository.create(eventDTO);
-        });
-    }
-    updateEvent(id, content) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const event = yield this.lookupService.findEventById(id);
-            const eventDTO = new eventDTO_1.EventDTO(content).toDetailDTO();
-            return yield this.EventRepository.update(id, eventDTO);
-        });
-    }
-    deleteEvent(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.EventRepository.delete(id);
         });
     }
 }

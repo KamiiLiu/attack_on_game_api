@@ -37,7 +37,7 @@ class EventQuery {
         }
     }
     buildRegistrationQuery(status) {
-        const today = new Date();
+        const today = new Date().toISOString();
         const query = {};
         if (status === EventStatus_1.EventRegistrationStatus.CLOSED) {
             query.$expr = {
@@ -70,7 +70,7 @@ class EventQuery {
             query.$expr = {
                 $and: [
                     { $gte: ['$currentParticipantsCount', '$minParticipants'] },
-                    { $lte: ['$currentParticipantsCount', '$maxParticipants'] },
+                    { $lt: ['$currentParticipantsCount', '$maxParticipants'] },
                 ],
             };
         }

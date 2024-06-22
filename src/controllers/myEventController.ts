@@ -4,6 +4,7 @@ import { ResponseDTO } from '@/dto/responseDTO';
 import { ResponseType } from '@/types/myEventResponseType';
 import { Request } from 'express';
 import { IBaseController } from '@/controllers/IBaseController';
+
 export class MyEventController
   extends BaseController
   implements IBaseController
@@ -16,26 +17,26 @@ export class MyEventController
   }
   public getById = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.getById(req),
+      () => this.eventService.getOrderByEventId(req),
       ResponseType.SUCCESS_REQUEST,
     );
   };
   public getAll = async (req: Request): Promise<ResponseDTO> => {
     return await this.handleServiceResponse(
-      () => this.eventService.getAll(req),
+      () => this.eventService.getAllEventOrder(req),
       ResponseType.SUCCESS_REQUEST,
     );
   };
-  public deletUser = async (req: Request): Promise<ResponseDTO> => {
-    return this.handleServiceResponse(
-      () => this.eventService.deletUser(req),
-      ResponseType.SUCCESS_UPDATE,
-    );
-  };
-  public deletEvent = async (req: Request): Promise<ResponseDTO> => {
-    return this.handleServiceResponse(
-      () => this.eventService.deletEvent(req),
-      ResponseType.SUCCESS_UPDATE,
-    );
-  };
+  // public deletUser = async (req: Request): Promise<ResponseDTO> => {
+  //   return this.handleServiceResponse(
+  //     () => this.eventService.deletUser(req),
+  //     ResponseType.SUCCESS_UPDATE,
+  //   );
+  // };
+  // public deletEvent = async (req: Request): Promise<ResponseDTO> => {
+  //   return this.handleServiceResponse(
+  //     () => this.eventService.deletEvent(req),
+  //     ResponseType.SUCCESS_UPDATE,
+  //   );
+  // };
 }

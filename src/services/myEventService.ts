@@ -8,37 +8,50 @@ import { EventDTO } from '@/dto/eventDTO';
 import { EventDocument } from '@/interfaces/EventInterface';
 import { OrderRepository } from '@/repositories/OrderRepository';
 import { TicketRepository } from '@/repositories/TicketRepository';
-
+import { UserOrderDTO } from '@/dto/userOrderDTO';
 export class MyEventService {
-  private EventRepository: EventRepository;
+  private eventRepository: EventRepository;
   private lookupService: LookupService;
-
+  private orderRepository: OrderRepository;
   constructor() {
-    this.EventRepository = new EventRepository();
+    this.orderRepository = new OrderRepository();
+    this.eventRepository = new EventRepository();
     this.lookupService = new LookupService(
-      new OrderRepository(),
-      this.EventRepository,
+      this.orderRepository,
+      this.eventRepository,
       new TicketRepository(),
     );
   }
 
-  public async getOrderByEventId(req: Request): Promise<Partial<EventDTO>> {
+  public async getOrderByEventId(req: Request): Promise<UserOrderDTO[]> {
     const store = await this.lookupService.findStore(req);
-    const event = await this.lookupService.findEventById(id);
-    const eventDTO = new EventDTO(event);
-    if (!eventDTO.isPublish) {
+    console.log(req.params.eventId);
+    const eventData = await this.eventRepository.getEventsByAprilStoreId(
+      store.user,
+      { idNumber: req.params.eventId },
+    );
+    console.log('eventData', eventData);
+    if (!eventData.length) {
       throw new CustomError(
-        CustomResponseType.UNAUTHORIZED,
-        EventResponseType.FAILED_AUTHORIZATION,
+        CustomResponseType.NOT_FOUND,
+        EventResponseType.FAILED_FOUND,
       );
     }
-    return eventDTO.toDetailDTO();
+    const eventDTO = new EventDTO(eventData[0]);
+    const buyers = await this.orderRepository.findAllBuyers(eventDTO._id);
+    console.log('eventDTO._id', eventDTO._id);
+    console.log('eventData[0]._id', eventData[0]._id);
+    console.log('buyers', buyers);
+    return buyers.map((x) => new UserOrderDTO(x));
   }
 
   public async getAllEventOrder(
-    queryParams: Request['query'],
+    queryParams: Request,
   ): Promise<Partial<EventDTO>[]> {
-    const eventData = await this.EventRepository.findAll(queryParams);
+    const store = await this.lookupService.findStore(queryParams);
+    const eventData = await this.eventRepository.getEventsByAprilStoreId(
+      store.user,
+    );
     if (!eventData.length) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
@@ -46,24 +59,6 @@ export class MyEventService {
       );
     }
     return eventData.map((event) => new EventDTO(event).toDetailDTO());
-  }
-
-  public async createEvent(content: EventDocument): Promise<boolean> {
-    const eventDTO = new EventDTO(content).toDetailDTO();
-    return await this.EventRepository.create(eventDTO);
-  }
-
-  public async updateEvent(
-    id: string,
-    content: EventDocument,
-  ): Promise<Partial<EventDTO> | null> {
-    const event = await this.lookupService.findEventById(id);
-    const eventDTO = new EventDTO(content).toDetailDTO();
-    return await this.EventRepository.update(id, eventDTO);
-  }
-
-  public async deleteEvent(id: string): Promise<boolean> {
-    return await this.EventRepository.delete(id);
   }
 }
 

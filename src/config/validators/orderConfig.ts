@@ -83,8 +83,8 @@ export const validationConfig: {
   },
   param: {
     orderId: [
-      query('orderId')
-        .matches(/^o-\d{6}-[a-z0-9]{4}$/)
+      param('orderId')
+        .matches(/^o-[0-9]{6}-[a-z0-9]{4}$/)
         .withMessage('錯誤的訂單編號'),
     ],
   },

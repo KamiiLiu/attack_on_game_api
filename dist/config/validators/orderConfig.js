@@ -79,8 +79,8 @@ exports.validationConfig = {
     },
     param: {
         orderId: [
-            (0, express_validator_1.query)('orderId')
-                .matches(/^o-\d{6}-[a-z0-9]{4}$/)
+            (0, express_validator_1.param)('orderId')
+                .matches(/^o-[0-9]{6}-[a-z0-9]{4}$/)
                 .withMessage('錯誤的訂單編號'),
         ],
     },

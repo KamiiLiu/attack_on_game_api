@@ -15,10 +15,22 @@ class MyEventRouter extends baseRouter_1.BaseRouter {
         this.setRouters();
     }
     setRouters() {
-        this.router.get('/list', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventQuery, handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getAll));
+        this.router.get('/list', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventQuery(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getAll));
         this.router.get('/:eventId', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventParam(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getById));
-        this.router.patch('/cancel-user', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventBody('playerId'), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.deletUser));
-        this.router.patch('/cancel-event', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventBody('eventId'), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.deletEvent));
+        // this.router.patch(
+        //   '/cancel-user',
+        //   jwtAuthenticator,
+        //   EventValidator.validateEventBody('playerId'),
+        //   handleValidationErrors,
+        //   this.handleRequest(this.controller.deletUser),
+        // );
+        // this.router.patch(
+        //   '/cancel-event',
+        //   jwtAuthenticator,
+        //   EventValidator.validateEventBody('eventId'),
+        //   handleValidationErrors,
+        //   this.handleRequest(this.controller.deletEvent),
+        // );
     }
 }
 exports.default = new MyEventRouter().router;
