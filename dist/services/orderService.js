@@ -91,13 +91,13 @@ class OrderService {
             });
             const result = orderList
                 .map((x) => {
-                    const findEvent = eventList.find((y) => {
-                        return y._id.toString() == x.eventId.toString();
-                    });
-                    if (findEvent)
-                        return new orderListDTO_1.OrderListDTO(x, findEvent);
-                    return undefined;
-                })
+                const findEvent = eventList.find((y) => {
+                    return y._id.toString() == x.eventId.toString();
+                });
+                if (findEvent)
+                    return new orderListDTO_1.OrderListDTO(x, findEvent);
+                return undefined;
+            })
                 .filter((x) => x !== undefined);
             return result;
         });
