@@ -10,6 +10,7 @@ import { IBaseRepository } from '@/repositories/IBaseRepository';
 import { EventResponseType } from '@/types/EventResponseType';
 import { MONGODB_ERROR_MSG } from '@/types/OtherResponseType';
 import { DefaultQuery } from '@/enums/EventRequest';
+import mongoose from 'mongoose';
 import _ from 'lodash';
 export class EventRepository implements IBaseRepository<EventDocument> {
   async findById(id: string): Promise<EventDocument> {
@@ -45,6 +46,20 @@ export class EventRepository implements IBaseRepository<EventDocument> {
         `${MONGODB_ERROR_MSG}:${error.message || error}`,
       );
     }
+  }
+  public async getEventsByAprilStoreId(
+    storeId: mongoose.Schema.Types.ObjectId,
+    query = {},
+  ): Promise<EventDocument[]> {
+    console.log({
+      storeId: new Types.ObjectId(storeId.toString()),
+      ...query,
+    });
+    const eventData = await EventModel.find({
+      storeId: new Types.ObjectId(storeId.toString()),
+      ...query,
+    });
+    return eventData || [];
   }
   async findAll(queryParams: QueryParams): Promise<EventDocument[]> {
     try {

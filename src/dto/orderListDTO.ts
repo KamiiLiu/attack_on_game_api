@@ -1,7 +1,6 @@
 import { PaymentStatus, PaymentMethod, Status } from '@/enums/OrderStatus';
 import { EventDocument } from '@/interfaces/EventInterface';
 import { OrderDTO } from '@/dto/orderDTO';
-
 export class OrderListDTO {
   readonly idNumber!: string;
   readonly title!: string;
@@ -15,7 +14,6 @@ export class OrderListDTO {
   readonly paymentMethod: PaymentMethod;
   readonly isCommented: boolean;
   readonly status: Status;
-
   constructor(order: OrderDTO, event: EventDocument) {
     this.idNumber = order.idNumber;
     this.title = event.title;

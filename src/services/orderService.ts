@@ -1,43 +1,72 @@
 import _ from 'lodash';
-import { IQuery } from '@/enums/OrderRequest';
-import { Status } from '@/enums/OrderStatus';
+import { Request } from 'express';
+import { OrderRepository } from '@/repositories/OrderRepository';
+import { EventRepository } from '@/repositories/EventRepository';
+import { TicketRepository } from '@/repositories/TicketRepository';
+import { LookupService } from './LookupService';
+import { EventDTO } from '@/dto/eventDTO';
+import { OrderDTO } from '@/dto/orderDTO';
+import { OrderListDTO } from '@/dto/orderListDTO';
+import { TicketDTO } from '@/dto/ticketDTO';
+import { CustomError } from '@/errors/CustomError';
+import { CustomResponseType } from '@/enums/CustomResponseType';
+import { OrderResponseType } from '@/types/OrderResponseType';
 import { OrderDocument } from '@/interfaces/OrderInterface';
 import { EventDocument } from '@/interfaces/EventInterface';
 import { TicketDocument } from '@/interfaces/TicketInterface';
 import { IPlayer as PlayerDocument } from '@/models/Player';
-import { OrderDTO } from '@/dto/orderDTO';
-import { OrderListDTO } from '@/dto/orderListDTO';
-import { EventDTO } from '@/dto/eventDTO';
-import { TicketDTO } from '@/dto/ticketDTO';
-import { OrderRepository } from '@/repositories/orderRepository';
-import { EventRepository } from '@/repositories/eventRepository';
-import { TicketRepository } from '@/repositories/ticketRepository';
-import { CustomResponseType } from '@/enums/CustomResponseType';
-import { OrderResponseType } from '@/types/OrderResponseType';
 import { EventResponseType } from '@/types/EventResponseType';
 import { TicketResponseType } from '@/types/TicketResponseType';
-import { CustomError } from '@/errors/CustomError';
-import { Request } from 'express';
 import Player from '@/models/Player';
 import { Types } from 'mongoose';
+import { Status } from '@/enums/OrderStatus';
+import { IQuery } from '@/enums/OrderRequest';
 interface IGetByIdResult {
   event: Partial<EventDocument>;
   order: Partial<OrderDocument>;
   tickets: Partial<TicketDocument>[];
 }
-
 export class OrderService {
   private orderRepository: OrderRepository;
+  private lookupService: LookupService;
   private eventRepository: EventRepository;
   private ticketRepository: TicketRepository;
   constructor() {
     this.orderRepository = new OrderRepository();
     this.eventRepository = new EventRepository();
     this.ticketRepository = new TicketRepository();
+    this.lookupService = new LookupService(
+      this.orderRepository,
+      new EventRepository(),
+      new TicketRepository(),
+    );
   }
-  async getById(queryParams: Request): Promise<IGetByIdResult> {
-    const player = await this.findPlayer(queryParams);
-    const order = await this.findOrder(queryParams.params.orderId);
+
+  public async create(req: Request): Promise<OrderDocument> {
+    const { eventId } = req.body;
+
+    const event = await this.lookupService.findEventById(eventId);
+    const player = await this.lookupService.findPlayer(req);
+
+    const orderDTO = this.createOrderDTO(req.body, event, player);
+    this.validateOrder(event, orderDTO);
+
+    const order = await this.createOrder(orderDTO);
+    await this.updateEventParticipants(event, orderDTO);
+    await this.createTickets(
+      order._id,
+      player.user,
+      orderDTO.registrationCount,
+    );
+
+    return order;
+  }
+
+  public async getById(queryParams: Request): Promise<IGetByIdResult> {
+    const player = await this.lookupService.findPlayer(queryParams);
+    const order = await this.lookupService.findOrder(
+      queryParams.params.orderId,
+    );
     const eventId = order.eventId;
     if (!eventId) {
       throw new CustomError(
@@ -45,7 +74,7 @@ export class OrderService {
         OrderResponseType.FAILED_VALIDATION_EVENT_ID,
       );
     }
-    const event = await this.findEventByDbId(eventId);
+    const event = await this.lookupService.findEventByDbId(eventId);
 
     const targetOrderDTO = new OrderDTO(order);
     const targetEventDTO = new EventDTO(event);
@@ -58,7 +87,10 @@ export class OrderService {
       };
     }
 
-    const ticketList = await this.findTickets(order.id, player.user);
+    const ticketList = await this.lookupService.findTickets(
+      order.id,
+      player.user,
+    );
     const targetTicketsDTO = ticketList.map((ticket) =>
       new TicketDTO(ticket).toDetailDTO(),
     );
@@ -72,7 +104,7 @@ export class OrderService {
   async getAll(queryParams: Request): Promise<OrderListDTO[]> {
     const player = await this.findPlayer(queryParams);
     const { limit, status, skip } = queryParams.query as IQuery;
-    const orderList = await this.findOrderList(player.user, {
+    const orderList = await this.lookupService.findOrderList(player.user, {
       limit,
       status,
       skip,
@@ -91,28 +123,6 @@ export class OrderService {
       })
       .filter((x): x is OrderListDTO => x !== undefined);
     return result;
-  }
-  async create(queryParams: Request): Promise<boolean> {
-    const player = await this.findPlayer(queryParams);
-    const targetEvent = await this.findEventById(queryParams.body.eventId);
-    const targetOrderDTO = this.createOrderDTO(
-      queryParams.body,
-      targetEvent,
-      player,
-    );
-
-    this.validateOrder(targetEvent, targetOrderDTO);
-
-    const OrderDocument = await this.createOrder(targetOrderDTO);
-    await this.updateEventParticipants(targetEvent, targetOrderDTO);
-
-    await this.createTickets(
-      OrderDocument.id,
-      player.user,
-      targetOrderDTO.registrationCount,
-    );
-
-    return true;
   }
   private async findPlayer(queryParams: Request): Promise<PlayerDocument> {
     const player = await Player.findOne({ user: queryParams.user });
@@ -205,6 +215,7 @@ export class OrderService {
       playerId: player.user,
     });
   }
+
   private validateOrder(
     event: Partial<EventDocument>,
     orderDTO: OrderDTO,
@@ -259,3 +270,5 @@ export class OrderService {
     await Promise.all(ticketPromises);
   }
 }
+
+export default OrderService;

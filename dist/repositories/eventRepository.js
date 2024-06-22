@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventRepository = void 0;
 const EventModel_1 = __importDefault(require("@/models/EventModel"));
 const EventQuery_1 = require("@/queries/EventQuery");
+const mongoose_1 = require("mongoose");
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const CustomError_1 = require("@/errors/CustomError");
 const EventResponseType_1 = require("@/types/EventResponseType");
@@ -48,6 +49,13 @@ class EventRepository {
             catch (error) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);
             }
+        });
+    }
+    getEventsByAprilStoreId(storeId_1) {
+        return __awaiter(this, arguments, void 0, function* (storeId, query = {}) {
+            console.log(Object.assign({ storeId: new mongoose_1.Types.ObjectId(storeId.toString()) }, query));
+            const eventData = yield EventModel_1.default.find(Object.assign({ storeId: new mongoose_1.Types.ObjectId(storeId.toString()) }, query));
+            return eventData || [];
         });
     }
     findAll(queryParams) {
@@ -167,4 +175,4 @@ class EventRepository {
     }
 }
 exports.EventRepository = EventRepository;
-//# sourceMappingURL=eventRepository.js.map
+//# sourceMappingURL=EventRepository.js.map
