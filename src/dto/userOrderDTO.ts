@@ -3,7 +3,6 @@ export class UserOrderDTO {
   idNumber: string;
   registrationCount: number;
   payment: number;
-  discount: number;
   name: string;
   phone: string;
   notes: string;
@@ -14,8 +13,7 @@ export class UserOrderDTO {
   constructor(order: OrderDocument) {
     this.idNumber = order.idNumber;
     this.registrationCount = order.registrationCount;
-    this.payment = order.payment;
-    this.discount = order.discount;
+    this.payment = order.payment + order.discount;
     this.name = order.name;
     this.phone = order.phone;
     this.notes = order.notes;

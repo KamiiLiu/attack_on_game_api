@@ -5,8 +5,7 @@ class UserOrderDTO {
     constructor(order) {
         this.idNumber = order.idNumber;
         this.registrationCount = order.registrationCount;
-        this.payment = order.payment;
-        this.discount = order.discount;
+        this.payment = order.payment + order.discount;
         this.name = order.name;
         this.phone = order.phone;
         this.notes = order.notes;

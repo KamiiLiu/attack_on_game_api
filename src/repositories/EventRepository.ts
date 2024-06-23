@@ -51,10 +51,6 @@ export class EventRepository implements IBaseRepository<EventDocument> {
     storeId: mongoose.Schema.Types.ObjectId,
     query = {},
   ): Promise<EventDocument[]> {
-    console.log({
-      storeId: new Types.ObjectId(storeId.toString()),
-      ...query,
-    });
     const eventData = await EventModel.find({
       storeId: new Types.ObjectId(storeId.toString()),
       ...query,

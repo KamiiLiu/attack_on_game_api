@@ -28,18 +28,16 @@ class MyEventService {
     getOrderByEventId(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStore(req);
-            console.log(req.params.eventId);
             const eventData = yield this.eventRepository.getEventsByAprilStoreId(store.user, { idNumber: req.params.eventId });
-            console.log('eventData', eventData);
             if (!eventData.length) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }
             const eventDTO = new eventDTO_1.EventDTO(eventData[0]);
             const buyers = yield this.orderRepository.findAllBuyers(eventDTO._id);
-            console.log('eventDTO._id', eventDTO._id);
-            console.log('eventData[0]._id', eventData[0]._id);
-            console.log('buyers', buyers);
-            return buyers.map((x) => new userOrderDTO_1.UserOrderDTO(x));
+            return {
+                event: eventDTO.toDetailDTO(),
+                user: buyers.map((x) => new userOrderDTO_1.UserOrderDTO(x)),
+            };
         });
     }
     getAllEventOrder(queryParams) {
