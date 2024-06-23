@@ -9,8 +9,9 @@ const OrderStatus_1 = require("@/enums/OrderStatus");
 const dayjs_1 = __importDefault(require("@/utils/dayjs"));
 class OrderDTO extends baseDTO_1.BaseDTO {
     constructor(order) {
+        var _a;
         super(order);
-        this.idNumber = generateOrderNumber();
+        this.idNumber = (_a = order.idNumber) !== null && _a !== void 0 ? _a : generateOrderNumber();
         this.eventId = order.eventId;
         this.playerId = order.playerId;
         this.payment = order.payment;

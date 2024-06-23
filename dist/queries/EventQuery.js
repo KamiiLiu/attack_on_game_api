@@ -12,18 +12,18 @@ class EventQuery {
         if (this.configuredQuery.storeId) {
             query.storeId = this.configuredQuery.storeId;
         }
-        if (this.configuredQuery.keyword) {
-            query.title = { $regex: this.configuredQuery.keyword, $options: 'i' };
-        }
         this.withOptionsQuery(query, this.optionalQuery);
         return query;
     }
     buildBaseQuery() {
         return { isPublish: true };
     }
-    withOptionsQuery(query, { forStatus, regStatus }) {
+    withOptionsQuery(query, { forStatus, regStatus, keyword }) {
         const formationQuery = this.buildFormationQuery(forStatus);
         const registrationQuery = this.buildRegistrationQuery(regStatus);
+        if (keyword) {
+            query.title = { $regex: keyword, $options: 'i' };
+        }
         if (formationQuery.$expr) {
             query.$and = query.$and || [];
             query.$and.push({ $expr: formationQuery.$expr });
@@ -37,7 +37,7 @@ class EventQuery {
         }
     }
     buildRegistrationQuery(status) {
-        const today = new Date();
+        const today = new Date().toISOString();
         const query = {};
         if (status === EventStatus_1.EventRegistrationStatus.CLOSED) {
             query.$expr = {
@@ -70,7 +70,7 @@ class EventQuery {
             query.$expr = {
                 $and: [
                     { $gte: ['$currentParticipantsCount', '$minParticipants'] },
-                    { $lte: ['$currentParticipantsCount', '$maxParticipants'] },
+                    { $lt: ['$currentParticipantsCount', '$maxParticipants'] },
                 ],
             };
         }

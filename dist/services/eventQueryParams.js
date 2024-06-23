@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueryParamsParser = void 0;
 const EventRequest_1 = require("@/enums/EventRequest");
+const EventResponseType_1 = require("@/types/EventResponseType");
+const CustomResponseType_1 = require("@/enums/CustomResponseType");
+const CustomError_1 = require("@/errors/CustomError");
 class QueryParamsParser {
     constructor() {
         this.defaultLimit = EventRequest_1.DefaultQuery.LIMIT;
@@ -13,14 +16,24 @@ class QueryParamsParser {
         this.maxLimit = EventRequest_1.DefaultQuery.MAX_LIMIT;
     }
     parse(req) {
-        const { limit = this.defaultLimit, skip = this.defaultSkip, formationStatus = this.defaultFormationStatus, registrationStatus = this.defaultRegistrationStatus, sortBy = this.defaultSortBy, sortOrder = this.defaultSortOrder, } = req.query || {};
+        const { keyword = '', limit = this.defaultLimit, skip = this.defaultSkip, formationStatus = this.defaultFormationStatus, registrationStatus = this.defaultRegistrationStatus, sortBy = this.defaultSortBy, sortOrder = this.defaultSortOrder, } = req.query || {};
         const parsedLimit = Math.min(Number(limit), this.maxLimit);
         const parsedSkip = Number(skip);
         const parsedFormationStatus = Number(formationStatus);
         const parsedRegistrationStatus = Number(registrationStatus);
         const parsedSortBy = sortBy;
         const parsedSortOrder = sortOrder;
+        if (typeof keyword !== 'string') {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, EventResponseType_1.EventResponseType.FAILED_VALIDATION);
+        }
+        if (typeof sortBy !== 'string') {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, EventResponseType_1.EventResponseType.FAILED_VALIDATION);
+        }
+        if (typeof sortOrder !== 'string') {
+            throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, EventResponseType_1.EventResponseType.FAILED_VALIDATION);
+        }
         return {
+            keyword: keyword.trim(),
             limit: parsedLimit,
             skip: parsedSkip,
             formationStatus: parsedFormationStatus,

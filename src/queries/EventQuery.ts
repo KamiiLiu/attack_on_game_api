@@ -13,11 +13,11 @@ type QueryParams = {
 type StatusParams = {
   forStatus: FORMATION_STATUS;
   regStatus: REGISTRATION_STATUS;
+  keyword: string;
 };
 interface QueryWithStore extends BaseQuery {
   storeId?: Types.ObjectId;
   isPublish?: boolean;
-  title?: { $regex: string; $options: string };
 }
 export class EventQuery {
   private configuredQuery: QueryParams;
@@ -34,9 +34,6 @@ export class EventQuery {
     if (this.configuredQuery.storeId) {
       query.storeId = this.configuredQuery.storeId;
     }
-    if (this.configuredQuery.keyword) {
-      query.title = { $regex: this.configuredQuery.keyword, $options: 'i' };
-    }
     this.withOptionsQuery(query, this.optionalQuery);
     return query;
   }
@@ -46,11 +43,14 @@ export class EventQuery {
   }
 
   private withOptionsQuery(
-    query: QueryWithStore,
-    { forStatus, regStatus }: StatusParams,
+    query: QueryParams,
+    { forStatus, regStatus, keyword }: StatusParams,
   ): void {
     const formationQuery = this.buildFormationQuery(forStatus);
     const registrationQuery = this.buildRegistrationQuery(regStatus);
+    if (keyword) {
+      query.title = { $regex: keyword, $options: 'i' };
+    }
     if (formationQuery.$expr) {
       query.$and = query.$and || [];
       query.$and.push({ $expr: formationQuery.$expr });
@@ -65,8 +65,9 @@ export class EventQuery {
   }
 
   private buildRegistrationQuery(status: REGISTRATION_STATUS): QueryWithStore {
-    const today = new Date();
+    const today = new Date().toISOString();
     const query: QueryWithStore = {};
+
     if (status === REGISTRATION_STATUS.CLOSED) {
       query.$expr = {
         $lt: [today, '$registrationEndTime'],
@@ -96,7 +97,7 @@ export class EventQuery {
       query.$expr = {
         $and: [
           { $gte: ['$currentParticipantsCount', '$minParticipants'] },
-          { $lte: ['$currentParticipantsCount', '$maxParticipants'] },
+          { $lt: ['$currentParticipantsCount', '$maxParticipants'] },
         ],
       };
     } else if (status === FORMATION_STATUS.FULL) {

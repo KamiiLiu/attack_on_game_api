@@ -20,7 +20,7 @@ export class OrderDTO extends BaseDTO {
   readonly status: Status;
   constructor(order: OrderDocument) {
     super(order);
-    this.idNumber = generateOrderNumber();
+    this.idNumber = order.idNumber ?? generateOrderNumber();
     this.eventId = order.eventId;
     this.playerId = order.playerId;
     this.payment = order.payment;
