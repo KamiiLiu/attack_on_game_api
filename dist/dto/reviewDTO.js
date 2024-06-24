@@ -4,7 +4,12 @@ exports.ReviewDTO = void 0;
 const baseDTO_1 = require("./baseDTO");
 class ReviewDTO extends baseDTO_1.BaseDTO {
     constructor(dto) {
-        super(dto);
+        super({
+            _id: dto._id,
+            idNumber: dto.idNumber,
+            createdAt: dto.createdAt,
+            updatedAt: dto.updatedAt,
+        });
         this._storeId = dto.storeId;
         this.rate = dto.rate;
     }

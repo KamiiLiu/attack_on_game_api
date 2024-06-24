@@ -23,7 +23,7 @@ const EventModel_1 = __importDefault(require("@/models/EventModel"));
 class ReviewRepository {
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            throw new Error("Method not implemented.");
+            throw new Error('Method not implemented.');
         });
     }
     findAll(queryParams) {
@@ -31,7 +31,7 @@ class ReviewRepository {
             try {
                 const reviews = yield Review_1.ReviewModel.find(queryParams);
                 if (lodash_1.default.isEmpty(reviews)) {
-                    throw new Error("No reviews found");
+                    throw new Error('No reviews found');
                 }
                 return reviews;
             }
@@ -65,7 +65,9 @@ class ReviewRepository {
                 };
                 if (reviewExists) {
                     // refresh store rating
-                    const newRating = (lodash_1.default.reduce(reviewExists.content, (sum, review) => sum + review.rate, 0) + rate) / (reviewExists.content.length + 1);
+                    const newRating = (lodash_1.default.reduce(reviewExists.content, (sum, review) => sum + review.rate, 0) +
+                        rate) /
+                        (reviewExists.content.length + 1);
                     // add content to existing review array
                     reviewExists.content.push(newContent);
                     reviewExists.rate = newRating;
@@ -89,12 +91,12 @@ class ReviewRepository {
     }
     update(content) {
         return __awaiter(this, void 0, void 0, function* () {
-            throw new Error("Method not implemented.");
+            throw new Error('Method not implemented.');
         });
     }
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            throw new Error("Method not implemented.");
+            throw new Error('Method not implemented.');
         });
     }
 }

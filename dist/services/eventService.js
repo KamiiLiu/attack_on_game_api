@@ -21,11 +21,15 @@ const EventRepository_1 = require("@/repositories/EventRepository");
 const eventQueryParams_1 = require("@/services/eventQueryParams");
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const CustomError_1 = require("@/errors/CustomError");
+const OrderRepository_1 = require("@/repositories/OrderRepository");
+const TicketRepository_1 = require("@/repositories/TicketRepository");
 const EventResponseType_1 = require("@/types/EventResponseType");
+const LookupService_1 = require("./LookupService");
 class EventService {
     constructor() {
         this.EventRepository = new EventRepository_1.EventRepository();
         this.queryParams = new eventQueryParams_1.QueryParamsParser();
+        this.lookupService = new LookupService_1.LookupService(new OrderRepository_1.OrderRepository(), new EventRepository_1.EventRepository(), new TicketRepository_1.TicketRepository());
     }
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -34,7 +38,8 @@ class EventService {
             if (!eventDTO.isPublish) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.FAILED_AUTHORIZATION);
             }
-            return eventDTO.toDetailDTO();
+            const owner = yield this.lookupService.findStoreByUserId(eventDTO.storeId);
+            return { event: eventDTO.toDetailDTO(), store: owner };
         });
     }
     getAll(queryParams) {
@@ -64,9 +69,6 @@ class EventService {
             }
             throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
         });
-    }
-    delete(id) {
-        throw new Error('Method not implemented.');
     }
     getEventsForStore(storeId, optionsReq) {
         return __awaiter(this, void 0, void 0, function* () {

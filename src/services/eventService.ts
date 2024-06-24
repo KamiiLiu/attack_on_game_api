@@ -2,23 +2,36 @@
 //TODO:寫一個fs模塊，批量上傳假資料
 import _ from 'lodash';
 import { Request } from 'express';
+import { IStore as StoreDocument } from '@/models/Store';
 import { EventDTO } from '@/dto/eventDTO';
 import { EventRepository } from '@/repositories/EventRepository';
 import { QueryParamsParser } from '@/services/eventQueryParams';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { CustomError } from '@/errors/CustomError';
-import { IBaseService } from '@/services/IBaseService';
+import { OrderRepository } from '@/repositories/OrderRepository';
+import { TicketRepository } from '@/repositories/TicketRepository';
 import { EventResponseType } from '@/types/EventResponseType';
 import { EventDocument } from '@/interfaces/EventInterface';
+import { LookupService } from './LookupService';
 import { Types } from 'mongoose';
-export class EventService implements IBaseService<EventDTO> {
+interface IEventDetail {
+  event: Partial<EventDTO>;
+  store: StoreDocument;
+}
+export class EventService {
   private EventRepository: EventRepository;
   private queryParams: QueryParamsParser;
+  private lookupService: LookupService;
   constructor() {
     this.EventRepository = new EventRepository();
     this.queryParams = new QueryParamsParser();
+    this.lookupService = new LookupService(
+      new OrderRepository(),
+      new EventRepository(),
+      new TicketRepository(),
+    );
   }
-  async getById(id: string): Promise<Partial<EventDTO>> {
+  async getById(id: string): Promise<IEventDetail> {
     const event = await this.EventRepository.findById(id);
     const eventDTO = new EventDTO(event);
     if (!eventDTO.isPublish) {
@@ -27,7 +40,8 @@ export class EventService implements IBaseService<EventDTO> {
         EventResponseType.FAILED_AUTHORIZATION,
       );
     }
-    return eventDTO.toDetailDTO();
+    const owner = await this.lookupService.findStoreByUserId(eventDTO.storeId);
+    return { event: eventDTO.toDetailDTO(), store: owner };
   }
   async getAll(queryParams: any): Promise<Partial<EventDTO>[]> {
     const _queryParams = this.queryParams.parse(queryParams);
@@ -59,9 +73,6 @@ export class EventService implements IBaseService<EventDTO> {
       CustomResponseType.NOT_FOUND,
       EventResponseType.FAILED_FOUND,
     );
-  }
-  delete(id: string): Promise<EventDTO | null> {
-    throw new Error('Method not implemented.');
   }
   public async getEventsForStore(
     storeId: Types.ObjectId,

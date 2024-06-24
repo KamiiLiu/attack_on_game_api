@@ -23,5 +23,4 @@ router.use('/store', StoreRouter);
 router.use('/', CommentRouter);
 router.use('/review', ReviewRouter);
 
-
 export default router;

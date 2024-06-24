@@ -41,7 +41,18 @@ export class LookupService {
     }
     return store;
   }
-
+  public async findStoreByUserId(
+    userId: Types.ObjectId,
+  ): Promise<StoreDocument> {
+    const store = await Store.findOne({ user: userId });
+    if (_.isEmpty(store)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+    return store;
+  }
   public async findPlayer(queryParams: Request): Promise<PlayerDocument> {
     const reqWithUser = queryParams as unknown as RequestWithUser;
     if (!reqWithUser.user) {

@@ -11,11 +11,11 @@ class ReviewService {
         this.reviewRepository = new reviewRepository_1.ReviewRepository();
     }
     getById(id) {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     getAll(storeId) {
         if (lodash_1.default.isEmpty(storeId)) {
-            throw new Error("No storeId provided");
+            throw new Error('No storeId provided');
         }
         return this.reviewRepository.findAll({ storeId: storeId });
     }
@@ -23,10 +23,10 @@ class ReviewService {
         return this.reviewRepository.create(content, content.userId);
     }
     update(id, content) {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     delete(id) {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
 }
 exports.ReviewService = ReviewService;

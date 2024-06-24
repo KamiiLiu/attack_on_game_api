@@ -16,6 +16,6 @@ exports.ReviewResponseType = {
     UNKNOWN_ERROR: '未知錯誤，請稍後再試或聯繫支持',
     INVALID_REVIEW: '無效的評論信息，請檢查並重試',
     REVIEW_EXPIRED: '評論已過期，無法使用',
-    REVIEW_ALREADY_USED: '評論已被使用，無法'
+    REVIEW_ALREADY_USED: '評論已被使用，無法',
 };
 //# sourceMappingURL=ReviewResponseType.js.map
