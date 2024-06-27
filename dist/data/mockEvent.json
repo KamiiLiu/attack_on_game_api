@@ -1,0 +1,316 @@
+[
+    {
+        "storeId": "666fb04ed0bb0dbef3fb6c28",
+        "title": "週六撲克牌瘋狂大戰",
+        "description": "準備好迎接撲克牌的瘋狂挑戰了嗎？快來參加我們的週六撲克牌瘋狂大戰吧！不管你是撲克牌小白還是老手，都能在這裡找到無限的樂趣和挑戰。我們準備了豐富的獎品，還有免費的零食和飲料等你來享用。帶上你的好運和牌技，來這裡和小夥伴們一起玩得開心、贏得精彩！",
+        "eventStartTime": "2024-07-01T10:00:00Z",
+        "eventEndTime": "2024-07-01T18:00:00Z",
+        "registrationStartTime": "2024-05-30T00:00:00Z",
+        "registrationEndTime": "2024-06-30T23:59:59Z",
+        "address": "台中市西屯區中港路二段185號",
+        "location": {
+            "lng": 120.6398842,
+            "lat": 24.1814451,
+            "city": "台中市",
+            "district": "西屯區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 8,
+        "minParticipants": 3,
+        "participationFee": 250,
+        "eventImageUrl": [
+            "https://i.ibb.co/gtmkKhQ/yudai-9s50005-TP-V.jpg"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 0,
+        "createdAt": "2024-05-24T00:00:00Z",
+        "updatedAt": "2024-05-24T00:00:00Z"
+    },
+    {
+        "storeId": "666fb055d0bb0dbef3fb6c2b",
+        "title": "週末UNO派對桌遊大狂歡🎉",
+        "description": "快來參加我們的週末UNO派對桌遊大狂歡！一起翻牌搶紅、笑聲不斷，還有豐富獎品等你拿🎁。帶上你的好朋友，一起玩得開心吧！😄",
+        "eventStartTime": "2024-06-15T14:00:00Z",
+        "eventEndTime": "2024-06-15T18:00:00Z",
+        "registrationStartTime": "2024-05-30T00:00:00Z",
+        "registrationEndTime": "2024-06-14T23:59:59Z",
+        "address": "高雄市前金區中山一路50號",
+        "location": {
+            "lng": 120.301997987694,
+            "lat": 22.629518016535,
+            "city": "高雄市",
+            "district": "新興區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 10,
+        "minParticipants": 8,
+        "participationFee": 300,
+        "eventImageUrl": [
+            "https://i.ibb.co/BcXHF9C/UNO114278-PAR54666-TP-V.jpg",
+            "https://i.ibb.co/px2cjnW/UNO114256-PAR54582-TP-V.jpg"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 0,
+        "createdAt": "2024-05-25T00:00:00Z",
+        "updatedAt": "2024-05-25T00:00:00Z"
+    },
+    {
+        "storeId": "666fb05cd0bb0dbef3fb6c2e",
+        "title": "單身聯誼桌遊派對，愛就在這裡💖",
+        "description": "單身的你，快來參加我們的單身聯誼桌遊派對吧！甜蜜的桌遊時光，浪漫的邂逅，還有更多驚喜等著你🎲💕。一起遊玩、一起心動，愛情就在這裡萌芽🌟。",
+        "eventStartTime": "2024-06-22T18:00:00Z",
+        "eventEndTime": "2024-06-22T22:00:00Z",
+        "registrationStartTime": "2024-06-01T00:00:00Z",
+        "registrationEndTime": "2024-06-21T23:59:59Z",
+        "address": "新北市板橋區文化路二段22號",
+        "location": {
+            "lng": 121.468984634368,
+            "lat": 25.024305789277,
+            "city": "新北市",
+            "district": "板橋區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 15,
+        "minParticipants": 5,
+        "participationFee": 1000,
+        "eventImageUrl": [
+            "https://i.ibb.co/mvSDTSG/party-PAUI1710-TP-V.jpg",
+            "https://i.ibb.co/5kMt3jR/party-PAUI2142-TP-V.jpg"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 0,
+        "createdAt": "2024-05-25T00:00:00Z",
+        "updatedAt": "2024-05-25T00:00:00Z"
+    },
+    {
+        "storeId": "666fb064d0bb0dbef3fb6c31",
+        "title": "刺激陣營桌遊派對，來挑戰吧！🔥",
+        "description": "來加入我們的刺激陣營桌遊派對！展現你的策略與智慧，挑戰對手，成為最強陣營領袖。快來體驗緊張刺激的桌遊對決！",
+        "eventStartTime": "2024-06-29T16:00:00Z",
+        "eventEndTime": "2024-06-29T20:00:00Z",
+        "registrationStartTime": "2024-06-10T00:00:00Z",
+        "registrationEndTime": "2024-06-28T23:59:59Z",
+        "address": "台南市東區勝利路30號",
+        "location": {
+            "lng": 120.217791041461,
+            "lat": 22.990457980423,
+            "city": "台南市",
+            "district": "東區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 10,
+        "minParticipants": 8,
+        "participationFee": 199,
+        "eventImageUrl": [
+            "https://i.ibb.co/nD51K0L/ookawa1224-IMGL1752-TP-V.jpg",
+            "https://i.ibb.co/MpSWcMW/ookawa-IMGL1665-TP-V.jpg",
+            "https://i.ibb.co/k5Pr9ps/ookawajenga-IMGL1676-TP-V.jpg"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 0,
+        "createdAt": "2024-05-25T00:00:00Z",
+        "updatedAt": "2024-05-25T00:00:00Z"
+    },
+    {
+        "storeId": "666fb06cd0bb0dbef3fb6c34",
+        "title": "6-10歲孩子的刺激桌遊派對！🎉",
+        "description": "親愛的媽媽們，快帶孩子來參加我們的刺激桌遊派對吧！這裡有適合6-10歲小朋友的有趣遊戲，孩子們將在快樂中學習與成長。快來讓孩子們度過一個難忘的下午吧！",
+        "eventStartTime": "2024-07-05T14:00:00Z",
+        "eventEndTime": "2024-07-05T17:00:00Z",
+        "registrationStartTime": "2024-06-15T00:00:00Z",
+        "registrationEndTime": "2024-07-04T23:59:59Z",
+        "address": "台北市信義區松壽路12號",
+        "location": {
+            "lng": 121.565997033178,
+            "lat": 25.035689000523,
+            "city": "台北市",
+            "district": "信義區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 5,
+        "minParticipants": 5,
+        "participationFee": 300,
+        "eventImageUrl": [
+            "https://i.ibb.co/wStbk34/aomidori-IMGL1213-TP-V.jpg",
+            "https://i.ibb.co/ZXCcv9x/aomidori-IMGL1216-TP-V.jpg"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 0,
+        "createdAt": "2024-05-25T00:00:00Z",
+        "updatedAt": "2024-05-25T00:00:00Z"
+    },
+    {
+        "storeId": "666fb078d0bb0dbef3fb6c37",
+        "title": "大學生桌遊狂歡，期末考完就來！🎲",
+        "description": "大家好，管他期末考考幾分！！決定來場桌遊狂歡，趕快加入吧！不管你是高手還是新手，大家一起開心玩遊戲、放鬆心情。帶上你的朋友們，現在就來嗨吧！😆",
+        "eventStartTime": "2024-06-20T20:00:00Z",
+        "eventEndTime": "2024-06-20T23:00:00Z",
+        "registrationStartTime": "2024-06-20T00:00:00Z",
+        "registrationEndTime": "2024-06-20T19:59:59Z",
+        "address": "桃園市中壢區中山路45號",
+        "location": {
+            "lng": 121.565997033178,
+            "lat": 25.035689000523,
+            "city": "桃園市",
+            "district": "中壢區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 10,
+        "minParticipants": 2,
+        "participationFee": 150,
+        "eventImageUrl": [
+            "https://i.ibb.co/59PNh07/IMG-10330745shikun1011-TP-V.jpg"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 1,
+        "createdAt": "2024-05-25T00:00:00Z",
+        "updatedAt": "2024-05-25T00:00:00Z"
+    },
+    {
+        "storeId": "666fb080d0bb0dbef3fb6c3a",
+        "title": "單身聯誼桌遊夜，找到你的另一半！💖",
+        "description": "嗨，單身的朋友們！想要認識新朋友，甚至找到另一半嗎？來參加我們的單身聯誼桌遊夜吧！這是一個輕鬆愉快的場合，你可以通過玩桌遊來結交新朋友，甚至可能找到心儀的對象哦！🎲",
+        "eventStartTime": "2024-06-30T18:00:00Z",
+        "eventEndTime": "2024-06-30T21:00:00Z",
+        "registrationStartTime": "2024-06-25T00:00:00Z",
+        "registrationEndTime": "2024-06-30T17:59:59Z",
+        "address": "新竹市東區光復路一段88號",
+        "location": {
+            "lng": 121.024406310648,
+            "lat": 24.781426482266,
+            "city": "新竹市",
+            "district": "東區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 5,
+        "minParticipants": 4,
+        "participationFee": 200,
+        "eventImageUrl": [
+            "https://telegraph-image-2b5.pages.dev/file/8b45d37d364381b8c1218.png"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 3,
+        "createdAt": "2024-06-01T00:00:00Z",
+        "updatedAt": "2024-06-01T00:00:00Z"
+    },
+    {
+        "storeId": "666fb087d0bb0dbef3fb6c3d",
+        "title": "下班後桌遊聚會，來放鬆一下！🎲",
+        "description": "各位辛苦的上班族們！工作了一天，是時候來放鬆一下了。我們準備了一場下班後的桌遊聚會，邀請大家一起來玩桌遊、聊天、釋放壓力。不論你是桌遊高手還是新手，都歡迎來參加，讓我們一起度過一個輕鬆愉快的晚上吧！😊",
+        "eventStartTime": "2024-06-28T19:00:00Z",
+        "eventEndTime": "2024-06-28T22:00:00Z",
+        "registrationStartTime": "2024-06-20T00:00:00Z",
+        "registrationEndTime": "2024-06-28T18:59:59Z",
+        "address": "台北市大同區民權西路14號",
+        "location": {
+            "lng": 121.521904031523,
+            "lat": 25.062563016574,
+            "city": "台北市",
+            "district": "中山區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 6,
+        "minParticipants": 3,
+        "participationFee": 150,
+        "eventImageUrl": [
+            "https://i.ibb.co/7Jj6mxt/DALL-E-2024-06-01-06-59-49-A-wide-screen-ratio-image-of-an-Asian-woman-holding-a-board-game-She-is-s.png"
+        ],
+        "isPublish": true,
+        "currentParticipantsCount": 5,
+        "createdAt": "2024-06-01T00:00:00Z",
+        "updatedAt": "2024-06-01T00:00:00Z"
+    },
+    {
+        "storeId": "666fb046d0bb0dbef3fb6c25",
+        "title": "週末桌遊狂歡，開心度過周末！🎉",
+        "description": "親愛的桌遊愛好者們，這個週末我們將舉辦一場桌遊狂歡派對！無論您是喜歡策略遊戲、派對遊戲還是卡牌遊戲，都能在這裡找到樂趣。我們還會準備一些小吃和飲料，讓大家在遊戲之餘能夠補充能量。快來加入我們，一起度過一個充滿歡笑和挑戰的週末吧！",
+        "eventStartTime": "2024-07-12T14:00:00Z",
+        "eventEndTime": "2024-07-12T18:00:00Z",
+        "registrationStartTime": "2024-06-01T00:00:00Z",
+        "registrationEndTime": "2024-07-12T13:59:59Z",
+        "address": "台北市大安區敦化南路一段245號",
+        "location": {
+            "lng": 121.549273124686,
+            "lat": 25.039125203639,
+            "city": "台北市",
+            "district": "大安區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 6,
+        "minParticipants": 4,
+        "participationFee": 200,
+        "eventImageUrl": [
+            "https://i.imgur.com/AoFPsEo.jpeg"
+        ]
+    },
+    {
+        "storeId": "666fb046d0bb0dbef3fb6c25",
+        "title": "夏日桌遊派對，清涼一夏！🍹",
+        "description": "炎炎夏日，來我們的桌遊派對涼快一下吧！這次活動特別邀請了一些桌遊高手，為大家帶來更多的挑戰和樂趣。不管你是桌遊新手還是老手，都能在這裡找到適合自己的遊戲。我們還會提供夏日特飲和小吃，讓你在遊戲之餘也能享受到清涼。趕快報名，和我們一起迎接這個充滿歡樂的夏日夜晚吧！",
+        "eventStartTime": "2024-07-19T18:00:00Z",
+        "eventEndTime": "2024-07-19T21:00:00Z",
+        "registrationStartTime": "2024-06-01T00:00:00Z",
+        "registrationEndTime": "2024-07-19T17:59:59Z",
+        "address": "台北市大安區敦化南路一段245號",
+        "location": {
+            "lng": 121.549273124686,
+            "lat": 25.039125203639,
+            "city": "台北市",
+            "district": "大安區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 8,
+        "minParticipants": 2,
+        "participationFee": 180,
+        "eventImageUrl": [
+            "https://i.imgur.com/Uc3yR7z.jpeg"
+        ]
+    },
+    {
+        "storeId": "666fb08dd0bb0dbef3fb6c40",
+        "title": "親子桌遊下午茶，樂享親子時光！👨‍👩‍👧‍👦",
+        "description": "週末帶著孩子們來參加我們的親子桌遊下午茶活動吧！這次活動專為家庭設計，提供各種適合不同年齡段的桌遊，讓大人和孩子們都能享受其中。我們還會準備豐富的下午茶點心，讓您和家人在遊戲之餘也能享受到美食。歡迎各位家庭來參加，讓我們一起度過一個充滿歡笑和溫馨的下午吧！",
+        "eventStartTime": "2024-07-20T14:00:00Z",
+        "eventEndTime": "2024-07-20T17:00:00Z",
+        "registrationStartTime": "2024-05-05T00:00:00Z",
+        "registrationEndTime": "2024-06-20T13:59:59Z",
+        "address": "台北市中山區南京東路三段65號",
+        "location": {
+            "lng": 121.538348990278,
+            "lat": 25.0523119909,
+            "city": "台北市",
+            "district": "中山區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 4,
+        "minParticipants": 2,
+        "participationFee": 250,
+        "eventImageUrl": [
+            "https://i.imgur.com/l3rD07m.jpeg",
+            "https://i.imgur.com/yZtxUKz.jpeg"
+        ]
+    },
+    {
+        "storeId": "666fb08dd0bb0dbef3fb6c40",
+        "title": "夜貓子桌遊之夜，不眠不休！🌙",
+        "description": "夜貓子們，這場桌遊之夜就是為你們準備的！我們將提供一整晚的桌遊活動，讓你能夠在夜深人靜的時候盡情玩樂。我們會挑選一些耐玩的策略遊戲和充滿挑戰的卡牌遊戲，讓你和朋友們可以盡情挑戰和競賽。還會有一些夜宵供應，確保你們能夠保持精力。趕快報名，來體驗一場不一樣的桌遊之夜吧！",
+        "eventStartTime": "2024-07-27T22:00:00Z",
+        "eventEndTime": "2024-07-28T02:00:00Z",
+        "registrationStartTime": "2024-06-10T00:00:00Z",
+        "registrationEndTime": "2024-07-27T21:59:59Z",
+        "address": "台北市中山區南京東路三段65號",
+        "location": {
+            "lng": 121.538348990278,
+            "lat": 25.0523119909,
+            "city": "台北市",
+            "district": "中山區"
+        },
+        "isFoodAllowed": true,
+        "maxParticipants": 6,
+        "minParticipants": 2,
+        "participationFee": 300,
+        "eventImageUrl": [
+            "https://i.imgur.com/zrkw8ae.jpeg"
+        ]
+    }
+]

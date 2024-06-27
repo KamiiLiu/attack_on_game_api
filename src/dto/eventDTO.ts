@@ -4,26 +4,28 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 import { BaseDTO } from '@/dto/baseDTO';
-import { EventDocument } from '@/interfaces/EventInterface';
+import { EventDocument, Ilocation } from '@/interfaces/EventInterface';
 import { Types } from 'mongoose';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 import { generateCustomNanoId } from '@/utils/generateCustomNanoId';
+import DEFAULT_ADDRESS from '@/const/DEFAULT_ADDRESS';
 export class EventDTO extends BaseDTO {
-  private readonly _storeId!: Types.ObjectId;
-  private readonly _address!: string;
-  private readonly _isFoodAllowed: boolean;
-  private readonly _description: string;
-  private readonly _title!: string;
-  private readonly _eventStartTime!: string;
-  private readonly _eventEndTime!: string;
-  private readonly _eventImageUrl!: string[];
-  private readonly _registrationStartTime!: string;
-  private readonly _registrationEndTime!: string;
-  private readonly _maxParticipants!: number;
-  private readonly _minParticipants!: number;
-  private readonly _currentParticipantsCount!: number;
-  private readonly _participationFee!: number;
-  private readonly _isPublish!: boolean;
+  readonly storeId!: Types.ObjectId;
+  readonly address!: string;
+  readonly location: Ilocation;
+  readonly isFoodAllowed: boolean;
+  readonly description: string;
+  readonly title!: string;
+  readonly eventStartTime!: string;
+  readonly eventEndTime!: string;
+  readonly eventImageUrl!: string[];
+  readonly registrationStartTime!: string;
+  readonly registrationEndTime!: string;
+  readonly maxParticipants!: number;
+  readonly minParticipants!: number;
+  readonly currentParticipantsCount!: number;
+  readonly participationFee!: number;
+  readonly isPublish!: boolean;
   constructor(dto: Partial<EventDocument>) {
     const dtoWithId = {
       _id: dto._id || new Types.ObjectId(),
@@ -36,86 +38,43 @@ export class EventDTO extends BaseDTO {
         dayjs().format(TIME_FORMATTER),
     };
     super(dtoWithId);
-    this._storeId = dto.storeId ?? new Types.ObjectId();
-    this._title = dto.title ?? '';
-    this._address = dto.address ?? '';
-    this._isFoodAllowed = dto.isFoodAllowed ?? false;
-    this._description = dto.description ?? '';
-    this._eventStartTime = dto.eventStartTime
+    this.storeId = dto.storeId ?? new Types.ObjectId();
+    this.title = dto.title ?? '';
+    this.address = dto.address ?? '';
+    this.isFoodAllowed = dto.isFoodAllowed ?? false;
+    this.description = dto.description ?? '';
+    this.eventStartTime = dto.eventStartTime
       ? dayjs(dto.eventStartTime).format(TIME_FORMATTER)
       : '';
-    this._eventEndTime = dto.eventEndTime
+    this.eventEndTime = dto.eventEndTime
       ? dayjs(dto.eventEndTime).format(TIME_FORMATTER)
       : '';
-    this._registrationStartTime = dto.registrationStartTime
+    this.registrationStartTime = dto.registrationStartTime
       ? dayjs(dto.registrationStartTime).format(TIME_FORMATTER)
       : '';
-    this._registrationEndTime = dto.registrationEndTime
+    this.registrationEndTime = dto.registrationEndTime
       ? dayjs(dto.registrationEndTime).format(TIME_FORMATTER)
       : '';
-    this._maxParticipants = dto.maxParticipants ?? 0;
-    this._minParticipants = dto.minParticipants ?? 0;
-    this._currentParticipantsCount = dto.currentParticipantsCount ?? 0;
-    this._participationFee = dto.participationFee ?? 0;
-    this._eventImageUrl = dto.eventImageUrl ?? [''];
-    this._isPublish = dto.isPublish ?? true;
+    this.maxParticipants = dto.maxParticipants ?? 0;
+    this.minParticipants = dto.minParticipants ?? 0;
+    this.currentParticipantsCount = dto.currentParticipantsCount ?? 0;
+    this.participationFee = dto.participationFee ?? 0;
+    this.eventImageUrl = dto.eventImageUrl ?? [''];
+    this.isPublish = dto.isPublish ?? true;
+    this.location = dto.location ?? {
+      city: DEFAULT_ADDRESS.city,
+      district: DEFAULT_ADDRESS.district,
+      lng: DEFAULT_ADDRESS.lng,
+      lat: DEFAULT_ADDRESS.lat,
+    };
   }
   public get isRegisterable() {
     const now = dayjs();
     return (
-      now.isSameOrBefore(this._registrationEndTime) &&
-      now.isSameOrAfter(this._registrationStartTime)
+      now.isSameOrBefore(this.registrationEndTime) &&
+      now.isSameOrAfter(this.registrationStartTime)
     );
   }
-  public get availableSeat() {
-    return this._maxParticipants - this._currentParticipantsCount;
-  }
-  public get storeId() {
-    return this._storeId;
-  }
-  public get isPublish() {
-    return this._isPublish;
-  }
-  public get title() {
-    return this._title;
-  }
-  public get address() {
-    return this._address;
-  }
-  public get isFoodAllowed() {
-    return this._isFoodAllowed;
-  }
-  public get description() {
-    return this._description;
-  }
-  public get eventStartTime() {
-    return this._eventStartTime;
-  }
-  public get eventEndTime() {
-    return this._eventEndTime;
-  }
-  public get registrationStartTime() {
-    return this._registrationStartTime;
-  }
-  public get registrationEndTime() {
-    return this._registrationEndTime;
-  }
-  public get maxParticipants() {
-    return this._maxParticipants;
-  }
-  public get minParticipants() {
-    return this._minParticipants;
-  }
-  public get currentParticipantsCount() {
-    return this._currentParticipantsCount;
-  }
-  public get participationFee() {
-    return this._participationFee;
-  }
-  public get eventImageUrl() {
-    return this._eventImageUrl;
-  }
-
   public toSummaryDTO(): Partial<EventDocument> {
     return {
       title: this.title,
@@ -131,11 +90,12 @@ export class EventDTO extends BaseDTO {
   public toDetailDTO(): Partial<EventDocument> {
     return {
       idNumber: this.idNumber,
-      storeId: this._storeId,
-      isFoodAllowed: this._isFoodAllowed,
-      description: this._description,
+      storeId: this.storeId,
+      isFoodAllowed: this.isFoodAllowed,
+      description: this.description,
       title: this.title,
       address: this.address,
+      location: this.location,
       eventStartTime: this.eventStartTime,
       eventEndTime: this.eventEndTime,
       registrationStartTime: this.registrationStartTime,

@@ -8,11 +8,19 @@
     "registrationStartTime": "2024-05-30T00:00:00Z",
     "registrationEndTime": "2024-06-30T23:59:59Z",
     "address": "台中市西屯區中港路二段185號",
+    "location": {
+      "lng": 120.6398842,
+      "lat": 24.1814451,
+      "city": "台中市",
+      "district": "西屯區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 8,
     "minParticipants": 3,
     "participationFee": 250,
-    "eventImageUrl": ["https://i.ibb.co/gtmkKhQ/yudai-9s50005-TP-V.jpg"],
+    "eventImageUrl": [
+      "https://i.ibb.co/gtmkKhQ/yudai-9s50005-TP-V.jpg"
+    ],
     "isPublish": true,
     "currentParticipantsCount": 0,
     "createdAt": "2024-05-24T00:00:00Z",
@@ -27,6 +35,12 @@
     "registrationStartTime": "2024-05-30T00:00:00Z",
     "registrationEndTime": "2024-06-14T23:59:59Z",
     "address": "高雄市前金區中山一路50號",
+    "location": {
+      "lng": 120.301997987694,
+      "lat": 22.629518016535,
+      "city": "高雄市",
+      "district": "新興區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 10,
     "minParticipants": 8,
@@ -49,6 +63,12 @@
     "registrationStartTime": "2024-06-01T00:00:00Z",
     "registrationEndTime": "2024-06-21T23:59:59Z",
     "address": "新北市板橋區文化路二段22號",
+    "location": {
+      "lng": 121.468984634368,
+      "lat": 25.024305789277,
+      "city": "新北市",
+      "district": "板橋區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 15,
     "minParticipants": 5,
@@ -71,6 +91,12 @@
     "registrationStartTime": "2024-06-10T00:00:00Z",
     "registrationEndTime": "2024-06-28T23:59:59Z",
     "address": "台南市東區勝利路30號",
+    "location": {
+      "lng": 120.217791041461,
+      "lat": 22.990457980423,
+      "city": "台南市",
+      "district": "東區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 10,
     "minParticipants": 8,
@@ -94,6 +120,12 @@
     "registrationStartTime": "2024-06-15T00:00:00Z",
     "registrationEndTime": "2024-07-04T23:59:59Z",
     "address": "台北市信義區松壽路12號",
+    "location": {
+      "lng": 121.565997033178,
+      "lat": 25.035689000523,
+      "city": "台北市",
+      "district": "信義區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 5,
     "minParticipants": 5,
@@ -116,6 +148,12 @@
     "registrationStartTime": "2024-06-20T00:00:00Z",
     "registrationEndTime": "2024-06-20T19:59:59Z",
     "address": "桃園市中壢區中山路45號",
+    "location": {
+      "lng": 121.565997033178,
+      "lat": 25.035689000523,
+      "city": "桃園市",
+      "district": "中壢區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 10,
     "minParticipants": 2,
@@ -137,6 +175,12 @@
     "registrationStartTime": "2024-06-25T00:00:00Z",
     "registrationEndTime": "2024-06-30T17:59:59Z",
     "address": "新竹市東區光復路一段88號",
+    "location": {
+      "lng": 121.024406310648,
+      "lat": 24.781426482266,
+      "city": "新竹市",
+      "district": "東區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 5,
     "minParticipants": 4,
@@ -158,6 +202,12 @@
     "registrationStartTime": "2024-06-20T00:00:00Z",
     "registrationEndTime": "2024-06-28T18:59:59Z",
     "address": "台北市大同區民權西路14號",
+    "location": {
+      "lng": 121.521904031523,
+      "lat": 25.062563016574,
+      "city": "台北市",
+      "district": "中山區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 6,
     "minParticipants": 3,
@@ -179,11 +229,19 @@
     "registrationStartTime": "2024-06-01T00:00:00Z",
     "registrationEndTime": "2024-07-12T13:59:59Z",
     "address": "台北市大安區敦化南路一段245號",
+    "location": {
+      "lng": 121.549273124686,
+      "lat": 25.039125203639,
+      "city": "台北市",
+      "district": "大安區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 6,
     "minParticipants": 4,
     "participationFee": 200,
-    "eventImageUrl": ["https://i.imgur.com/AoFPsEo.jpeg"]
+    "eventImageUrl": [
+      "https://i.imgur.com/AoFPsEo.jpeg"
+    ]
   },
   {
     "storeId": "666fb046d0bb0dbef3fb6c25",
@@ -194,11 +252,19 @@
     "registrationStartTime": "2024-06-01T00:00:00Z",
     "registrationEndTime": "2024-07-19T17:59:59Z",
     "address": "台北市大安區敦化南路一段245號",
+    "location": {
+      "lng": 121.549273124686,
+      "lat": 25.039125203639,
+      "city": "台北市",
+      "district": "大安區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 8,
     "minParticipants": 2,
     "participationFee": 180,
-    "eventImageUrl": ["https://i.imgur.com/Uc3yR7z.jpeg"]
+    "eventImageUrl": [
+      "https://i.imgur.com/Uc3yR7z.jpeg"
+    ]
   },
   {
     "storeId": "666fb08dd0bb0dbef3fb6c40",
@@ -209,6 +275,12 @@
     "registrationStartTime": "2024-05-05T00:00:00Z",
     "registrationEndTime": "2024-06-20T13:59:59Z",
     "address": "台北市中山區南京東路三段65號",
+    "location": {
+      "lng": 121.538348990278,
+      "lat": 25.0523119909,
+      "city": "台北市",
+      "district": "中山區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 4,
     "minParticipants": 2,
@@ -227,10 +299,18 @@
     "registrationStartTime": "2024-06-10T00:00:00Z",
     "registrationEndTime": "2024-07-27T21:59:59Z",
     "address": "台北市中山區南京東路三段65號",
+    "location": {
+      "lng": 121.538348990278,
+      "lat": 25.0523119909,
+      "city": "台北市",
+      "district": "中山區"
+    },
     "isFoodAllowed": true,
     "maxParticipants": 6,
     "minParticipants": 2,
     "participationFee": 300,
-    "eventImageUrl": ["https://i.imgur.com/zrkw8ae.jpeg"]
+    "eventImageUrl": [
+      "https://i.imgur.com/zrkw8ae.jpeg"
+    ]
   }
 ]

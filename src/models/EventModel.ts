@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import { EventDocument } from '@/interfaces/EventInterface';
 import dayjs from '@/utils/dayjs';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
+import DEFAULT_ADDRESS from '@/const/DEFAULT_ADDRESS';
 const EventSchema: Schema = new Schema({
   storeId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -12,6 +13,24 @@ const EventSchema: Schema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   address: { type: String, required: true },
+  location: {
+    city: {
+      type: String,
+      default: DEFAULT_ADDRESS.city,
+    },
+    district: {
+      type: String,
+      default: DEFAULT_ADDRESS.district,
+    },
+    lng: {
+      type: Number,
+      default: DEFAULT_ADDRESS.lng,
+    },
+    lat: {
+      type: Number,
+      default: DEFAULT_ADDRESS.lat,
+    },
+  },
   eventStartTime: { type: String, required: true },
   eventEndTime: { type: String, required: true },
   registrationStartTime: { type: String, required: true },

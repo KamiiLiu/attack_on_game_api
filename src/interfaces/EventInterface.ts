@@ -1,5 +1,10 @@
 import { Document, Types } from 'mongoose';
-
+export interface Ilocation {
+  city: string;
+  district: string;
+  lng: number;
+  lat: number;
+}
 export interface EventDocument extends Document {
   _id: Types.ObjectId;
   idNumber: string;
@@ -12,6 +17,7 @@ export interface EventDocument extends Document {
   registrationEndTime: string;
   isFoodAllowed: boolean;
   address: string;
+  location: Ilocation;
   maxParticipants: number;
   minParticipants: number;
   currentParticipantsCount: number;
