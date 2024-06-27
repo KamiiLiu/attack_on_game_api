@@ -68,6 +68,9 @@ export class EventDTO extends BaseDTO {
       lat: DEFAULT_ADDRESS.lat,
     };
   }
+  public get availableSeat() {
+    return this.maxParticipants - this.currentParticipantsCount;
+  }
   public get isRegisterable() {
     const now = dayjs();
     return (

@@ -6,13 +6,14 @@ AttackOnGame API是桌遊揪團網站【聚人】使用的後端API項目，目�
 
 ## 如何安装
 
-Node.js 版本建議為：`v18.20.2` 
+Node.js 版本建議為：`v18.20.2`
 
 ### 取得專案
 
 ```bash
 git clone https://github.com/KamiiLiu/attack_on_game_api.git
 ```
+
 ### 移動到專案內
 
 ```bash
@@ -26,6 +27,7 @@ npm install
 ```
 
 ### 資料夾說明
+
 ```txt
 attack_on_game_api
 ├─ dist               // TypeScript編譯後的JS檔
@@ -43,13 +45,14 @@ attack_on_game_api
 ├─ .eslintrc.js       // eslint設定檔
 ├─ .gitignore         // Git 忽略檔案
 ├─ .prettierrc.json   // Prettier 設定檔
-├─ package-lock.json 
+├─ package-lock.json
 ├─ package.json
 └─ tsconfig.json
 
 ```
 
 ## 專案技術
+
 - node.js v18.20.2
 - express v4.16.1
 - mongoose v7.6.13
