@@ -59,6 +59,7 @@ class EventDTO extends baseDTO_1.BaseDTO {
     get availableSeat() {
         return this.maxParticipants - this.currentParticipantsCount;
     }
+
     get isRegisterable() {
         const now = (0, dayjs_1.default)();
         return (now.isSameOrBefore(this.registrationEndTime) &&
