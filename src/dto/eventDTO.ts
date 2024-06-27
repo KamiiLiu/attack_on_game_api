@@ -79,6 +79,7 @@ export class EventDTO extends BaseDTO {
     return {
       title: this.title,
       address: this.address,
+      location: this.location,
       eventStartTime: this.eventStartTime,
       eventEndTime: this.eventEndTime,
       maxParticipants: this.maxParticipants,

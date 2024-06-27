@@ -65,6 +65,7 @@ class EventDTO extends baseDTO_1.BaseDTO {
         return {
             title: this.title,
             address: this.address,
+            location: this.location,
             eventStartTime: this.eventStartTime,
             eventEndTime: this.eventEndTime,
             maxParticipants: this.maxParticipants,
