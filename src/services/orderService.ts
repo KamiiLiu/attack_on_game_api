@@ -97,16 +97,12 @@ export class OrderService {
         store,
       };
     }
-
     const ticketList = await this.lookupService.findTickets(
       order.id,
       player.user,
     );
     const targetTicketsDTO = ticketList.map((ticket) =>
       new TicketDTO(ticket).toDetailDTO(),
-    );
-    const store = await this.lookupService.findStoreByStoreId(
-      targetEventDTO.storeId,
     );
     return {
       event: targetEventDTO.toSummaryDTO(),
