@@ -72,10 +72,12 @@ class OrderService {
             }
             const ticketList = yield this.lookupService.findTickets(order.id, player.user);
             const targetTicketsDTO = ticketList.map((ticket) => new ticketDTO_1.TicketDTO(ticket).toDetailDTO());
+            const store = yield this.lookupService.findStoreByStoreId(targetEventDTO.storeId);
             return {
                 event: targetEventDTO.toSummaryDTO(),
                 order: targetOrderDTO.toDetailDTO(),
                 tickets: targetTicketsDTO,
+                store,
             };
         });
     }
