@@ -28,7 +28,7 @@ class MyEventService {
     getOrderByEventId(req) {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStore(req);
-            const eventData = yield this.eventRepository.getEventsByAprilStoreId(store.user, { idNumber: req.params.eventId });
+            const eventData = yield this.eventRepository.getEventsByAprilStoreId(store._id, { idNumber: req.params.eventId });
             if (!eventData.length) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }
@@ -43,7 +43,7 @@ class MyEventService {
     getAllEventOrder(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStore(queryParams);
-            const eventData = yield this.eventRepository.getEventsByAprilStoreId(store.user);
+            const eventData = yield this.eventRepository.getEventsByAprilStoreId(store._id);
             if (!eventData.length) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
             }

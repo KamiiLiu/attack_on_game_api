@@ -27,22 +27,38 @@ class LookupService {
         this.EventRepository = EventRepository;
         this.ticketRepository = ticketRepository;
     }
-    findStore(queryParams) {
+    findStoreById(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const reqWithUser = queryParams;
             if (!reqWithUser.user) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
-            const store = yield Store_1.Store.findOne({ user: reqWithUser.user });
+            const store = yield Store_1.Store.findOne({ user: reqWithUser.user._id });
             if (lodash_1.default.isEmpty(store)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
             return store;
         });
     }
-    findStoreByUserId(userId) {
+    findStore(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const store = yield Store_1.Store.findOne({ user: userId });
+            const reqWithUser = queryParams;
+            console.log(reqWithUser);
+            if (!reqWithUser.user) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
+            }
+            console.log(reqWithUser.user._id);
+            const store = yield Store_1.Store.findOne({ user: reqWithUser.user._id });
+            console.log('store', store);
+            if (lodash_1.default.isEmpty(store)) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
+            }
+            return store;
+        });
+    }
+    findStoreByStoreId(storeId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const store = yield Store_1.Store.findOne({ _id: storeId });
             if (lodash_1.default.isEmpty(store)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }

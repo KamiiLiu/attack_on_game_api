@@ -261,6 +261,24 @@
     "eventImageUrl": ["https://i.imgur.com/Uc3yR7z.jpeg"]
   },
   {
+    "title": "激動人心的週六陣營對決桌遊大戰等你來挑戰！無經驗可！包含完整新手教學30min",
+    "description": "準備好加入我們的陣營對決桌遊大戰了嗎？這個週六，快來參加我們的活動吧！無論你是桌遊新手還是高手，都能在這裡找到無盡的樂趣和挑戰。我們為你準備了豐富的獎品，還有免費的零食和飲料等你享用。帶上你的智慧和策略，與小夥伴們一起競技，玩得開心，贏得榮耀！",
+    "eventStartTime": "2024-07-01T10:00:00Z",
+    "eventEndTime": "2024-07-01T18:00:00Z",
+    "registrationStartTime": "2024-05-30T00:00:00Z",
+    "registrationEndTime": "2024-06-30T23:59:59Z",
+    "address": "台北市中山區南京東路三段65號",
+    "isFoodAllowed": true,
+    "maxParticipants": 10,
+    "minParticipants": 4,
+    "participationFee": 300,
+    "eventImageUrl": ["https://i.imgur.com/L3BGkky.jpeg"],
+    "isPublish": true,
+    "currentParticipantsCount": 0,
+    "createdAt": "2024-05-24T00:00:00Z",
+    "updatedAt": "2024-05-24T00:00:00Z"
+  },
+  {
     "storeId": "666fb08dd0bb0dbef3fb6c40",
     "title": "親子桌遊下午茶，樂享親子時光！👨‍👩‍👧‍👦",
     "description": "週末帶著孩子們來參加我們的親子桌遊下午茶活動吧！這次活動專為家庭設計，提供各種適合不同年齡段的桌遊，讓大人和孩子們都能享受其中。我們還會準備豐富的下午茶點心，讓您和家人在遊戲之餘也能享受到美食。歡迎各位家庭來參加，讓我們一起度過一個充滿歡笑和溫馨的下午吧！",

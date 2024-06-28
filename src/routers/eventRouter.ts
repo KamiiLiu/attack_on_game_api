@@ -2,6 +2,7 @@ import { EventController } from '@/controllers/eventController';
 import { handleValidationErrors } from '@/middlewares/handleValidationErrors';
 import { EventValidator } from '@/validators/eventValidator';
 import { BaseRouter } from '@/routers/baseRouter';
+import { jwtAuthenticator } from '@/middlewares/auth';
 class EventRouter extends BaseRouter {
   protected controller!: EventController;
   constructor() {
@@ -15,6 +16,7 @@ class EventRouter extends BaseRouter {
   protected setRouters(): void {
     this.router.post(
       '/',
+      jwtAuthenticator,
       EventValidator.validateEvent(),
       handleValidationErrors,
       this.handleRequest(this.controller.create),
@@ -47,6 +49,7 @@ class EventRouter extends BaseRouter {
     /* */
     this.router.patch(
       '/:id',
+      jwtAuthenticator,
       EventValidator.validateEventParam('id'),
       EventValidator.validateEvent(),
       handleValidationErrors,

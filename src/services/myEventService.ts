@@ -30,7 +30,7 @@ export class MyEventService {
   public async getOrderByEventId(req: Request): Promise<IUserOrderDTO> {
     const store = await this.lookupService.findStore(req);
     const eventData = await this.eventRepository.getEventsByAprilStoreId(
-      store.user,
+      store._id,
       { idNumber: req.params.eventId },
     );
     if (!eventData.length) {
@@ -52,7 +52,7 @@ export class MyEventService {
   ): Promise<Partial<EventDTO>[]> {
     const store = await this.lookupService.findStore(queryParams);
     const eventData = await this.eventRepository.getEventsByAprilStoreId(
-      store.user,
+      store._id,
     );
     if (!eventData.length) {
       throw new CustomError(

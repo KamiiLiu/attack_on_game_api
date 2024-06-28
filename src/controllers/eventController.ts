@@ -26,13 +26,13 @@ export class EventController extends BaseController implements IBaseController {
   };
   public create = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.create(req.body),
+      () => this.eventService.create(req),
       EventResponseType.SUCCESS_CREATED,
     );
   };
   public update = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.update(req.params.id, req.body),
+      () => this.eventService.update(req),
       EventResponseType.SUCCESS_UPDATE,
     );
   };
