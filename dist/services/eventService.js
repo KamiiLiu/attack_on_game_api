@@ -38,7 +38,8 @@ class EventService {
             if (!eventDTO.isPublish) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.FAILED_AUTHORIZATION);
             }
-            return eventDTO.toDetailDTO();
+            const owner = yield this.lookupService.findStoreByUserId(eventDTO.storeId);
+            return { event: eventDTO.toDetailDTO(), store: owner };
         });
     }
     getAll(queryParams) {

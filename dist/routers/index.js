@@ -14,6 +14,7 @@ const orderRouter_1 = __importDefault(require("@/routers/orderRouter"));
 const myEventRouter_1 = __importDefault(require("@/routers/myEventRouter"));
 const password_1 = __importDefault(require("@/routers/password"));
 const commentRouter_1 = __importDefault(require("../routers/commentRouter"));
+const review_1 = __importDefault(require("@/routers/review"));
 const router = (0, express_1.Router)();
 router.use('/user', user_1.default);
 router.use('/player', auth_1.jwtAuthenticator, player_1.default);
@@ -24,5 +25,6 @@ router.use('/order', orderRouter_1.default);
 router.use(password_1.default);
 router.use('/store', storeRouter_1.default);
 router.use('/', commentRouter_1.default);
+router.use('/review', review_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

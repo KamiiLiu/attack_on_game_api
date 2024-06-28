@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const dayjs_1 = __importDefault(require("@/utils/dayjs"));
 const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
+const DEFAULT_ADDRESS_1 = __importDefault(require("@/const/DEFAULT_ADDRESS"));
 const EventSchema = new mongoose_1.Schema({
     storeId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
@@ -39,6 +40,24 @@ const EventSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     address: { type: String, required: true },
+    location: {
+        city: {
+            type: String,
+            default: DEFAULT_ADDRESS_1.default.city,
+        },
+        district: {
+            type: String,
+            default: DEFAULT_ADDRESS_1.default.district,
+        },
+        lng: {
+            type: Number,
+            default: DEFAULT_ADDRESS_1.default.lng,
+        },
+        lat: {
+            type: Number,
+            default: DEFAULT_ADDRESS_1.default.lat,
+        },
+    },
     eventStartTime: { type: String, required: true },
     eventEndTime: { type: String, required: true },
     registrationStartTime: { type: String, required: true },

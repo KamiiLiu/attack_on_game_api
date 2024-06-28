@@ -2,6 +2,7 @@
 //TODO:寫一個fs模塊，批量上傳假資料
 import _ from 'lodash';
 import { Request } from 'express';
+import { IStore as StoreDocument } from '@/models/Store';
 import { EventDTO } from '@/dto/eventDTO';
 import { EventRepository } from '@/repositories/EventRepository';
 import { QueryParamsParser } from '@/services/eventQueryParams';
@@ -15,6 +16,7 @@ import { TicketRepository } from '@/repositories/TicketRepository';
 export class EventService {
   private eventRepository: EventRepository;
   private queryParams: QueryParamsParser;
+  private lookupService: LookupService;
   private lookupService: LookupService;
   constructor() {
     this.eventRepository = new EventRepository();
@@ -34,7 +36,8 @@ export class EventService {
         EventResponseType.FAILED_AUTHORIZATION,
       );
     }
-    return eventDTO.toDetailDTO();
+    const owner = await this.lookupService.findStoreByUserId(eventDTO.storeId);
+    return { event: eventDTO.toDetailDTO(), store: owner };
   }
   async getAll(queryParams: any): Promise<Partial<EventDTO>[]> {
     const _queryParams = this.queryParams.parse(queryParams);
