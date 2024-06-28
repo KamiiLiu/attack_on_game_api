@@ -32,7 +32,7 @@ export class EventController extends BaseController implements IBaseController {
   };
   public update = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.update(req.params.id, req.body),
+      () => this.eventService.update(req),
       EventResponseType.SUCCESS_UPDATE,
     );
   };

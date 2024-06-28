@@ -34,11 +34,12 @@ class EventService {
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const event = yield this.eventRepository.findById(id);
+            console.log(event);
             const eventDTO = new eventDTO_1.EventDTO(event);
             if (!eventDTO.isPublish) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.FAILED_AUTHORIZATION);
             }
-            const owner = yield this.lookupService.findStoreByUserId(eventDTO.storeId);
+            const owner = yield this.lookupService.findStoreByStoreId(eventDTO.storeId);
             return { event: eventDTO.toDetailDTO(), store: owner };
         });
     }
@@ -64,8 +65,11 @@ class EventService {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStore(queryParams);
             const findEvent = yield this.eventRepository.findById(queryParams.params.id);
-            if (store._id === findEvent.storeId) {
-                const updateContent = Object.assign({ _id: findEvent._id, storeId: store._id }, queryParams.body.content);
+            console.log('findEvent', findEvent);
+            console.log('store', store);
+            console.log('queryParams.params.id', queryParams.params.id);
+            if (store._id.toString() === findEvent.storeId.toString()) {
+                const updateContent = Object.assign({ _id: findEvent._id, idNumber: findEvent.idNumber, storeId: store._id }, queryParams.body);
                 const _content = new eventDTO_1.EventDTO(updateContent);
                 const _event = yield this.eventRepository.update(_content);
                 if (!lodash_1.default.isEmpty(_event)) {

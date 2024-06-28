@@ -105,7 +105,7 @@ class EventRepository {
     update(content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield EventModel_1.default.findOneAndUpdate({ idNumber: content.idNumber }, {
+                return yield EventModel_1.default.findOneAndUpdate({ _id: content._id }, {
                     title: content.title,
                     description: content.description,
                     isFoodAllowed: content.isFoodAllowed,

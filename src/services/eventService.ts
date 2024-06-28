@@ -13,10 +13,13 @@ import { LookupService } from './LookupService';
 import { Types } from 'mongoose';
 import { OrderRepository } from '@/repositories/OrderRepository';
 import { TicketRepository } from '@/repositories/TicketRepository';
+interface IEvent {
+  event: Partial<EventDTO>;
+  store: StoreDocument;
+}
 export class EventService {
   private eventRepository: EventRepository;
   private queryParams: QueryParamsParser;
-  private lookupService: LookupService;
   private lookupService: LookupService;
   constructor() {
     this.eventRepository = new EventRepository();
@@ -27,8 +30,9 @@ export class EventService {
       new TicketRepository(),
     );
   }
-  async getById(id: string): Promise<Partial<EventDTO>> {
+  async getById(id: string): Promise<IEvent> {
     const event = await this.eventRepository.findById(id);
+    console.log(event);
     const eventDTO = new EventDTO(event);
     if (!eventDTO.isPublish) {
       throw new CustomError(
@@ -36,7 +40,7 @@ export class EventService {
         EventResponseType.FAILED_AUTHORIZATION,
       );
     }
-    const owner = await this.lookupService.findStoreByUserId(eventDTO.storeId);
+    const owner = await this.lookupService.findStoreByStoreId(eventDTO.storeId);
     return { event: eventDTO.toDetailDTO(), store: owner };
   }
   async getAll(queryParams: any): Promise<Partial<EventDTO>[]> {
@@ -64,11 +68,15 @@ export class EventService {
     const findEvent = await this.eventRepository.findById(
       queryParams.params.id,
     );
-    if (store._id === findEvent.storeId) {
+    console.log('findEvent', findEvent);
+    console.log('store', store);
+    console.log('queryParams.params.id', queryParams.params.id);
+    if (store._id.toString() === findEvent.storeId.toString()) {
       const updateContent = {
         _id: findEvent._id,
+        idNumber: findEvent.idNumber,
         storeId: store._id,
-        ...queryParams.body.content,
+        ...queryParams.body,
       };
       const _content = new EventDTO(updateContent);
       const _event = await this.eventRepository.update(_content);

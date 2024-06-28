@@ -50,8 +50,9 @@ export class LookupService {
         OrderResponseType.ERROR_PLAYER_FOUND,
       );
     }
-    console.log(reqWithUser);
-    const store = await Store.findOne({ user: reqWithUser.user });
+    console.log(reqWithUser.user._id);
+    const store = await Store.findOne({ user: reqWithUser.user._id });
+    console.log('store', store);
     if (_.isEmpty(store)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
@@ -60,10 +61,10 @@ export class LookupService {
     }
     return store;
   }
-  public async findStoreByUserId(
-    userId: Types.ObjectId,
+  public async findStoreByStoreId(
+    storeId: Types.ObjectId,
   ): Promise<StoreDocument> {
-    const store = await Store.findOne({ user: userId });
+    const store = await Store.findOne({ _id: storeId });
     if (_.isEmpty(store)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
