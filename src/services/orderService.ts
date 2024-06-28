@@ -105,7 +105,9 @@ export class OrderService {
     const targetTicketsDTO = ticketList.map((ticket) =>
       new TicketDTO(ticket).toDetailDTO(),
     );
-
+    const store = await this.lookupService.findStoreByStoreId(
+      targetEventDTO.storeId,
+    );
     return {
       event: targetEventDTO.toSummaryDTO(),
       order: targetOrderDTO.toDetailDTO(),
