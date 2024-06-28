@@ -34,7 +34,6 @@ class LookupService {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
             const store = yield Store_1.Store.findOne({ user: reqWithUser.user._id });
-            console.log(reqWithUser.user);
             if (lodash_1.default.isEmpty(store)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
             }
