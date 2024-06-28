@@ -86,12 +86,15 @@ export class OrderService {
 
     const targetOrderDTO = new OrderDTO(order);
     const targetEventDTO = new EventDTO(event);
-
+    const store = await this.lookupService.findStoreByStoreId(
+      targetEventDTO.storeId,
+    );
     if (targetOrderDTO.status === Status.CANCEL) {
       return {
         event: targetEventDTO.toSummaryDTO(),
         order: targetOrderDTO.toDetailDTO(),
         tickets: [],
+        store,
       };
     }
 
@@ -102,9 +105,7 @@ export class OrderService {
     const targetTicketsDTO = ticketList.map((ticket) =>
       new TicketDTO(ticket).toDetailDTO(),
     );
-    const store = await this.lookupService.findStoreByStoreId(
-      targetEventDTO.storeId,
-    );
+
     return {
       event: targetEventDTO.toSummaryDTO(),
       order: targetOrderDTO.toDetailDTO(),
