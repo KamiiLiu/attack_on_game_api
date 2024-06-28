@@ -65,15 +65,6 @@ class LookupService {
             return store;
         });
     }
-    findStoreByUserId(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const store = yield Store_1.Store.findOne({ user: userId });
-            if (lodash_1.default.isEmpty(store)) {
-                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.ERROR_PLAYER_FOUND);
-            }
-            return store;
-        });
-    }
     findPlayer(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const reqWithUser = queryParams;

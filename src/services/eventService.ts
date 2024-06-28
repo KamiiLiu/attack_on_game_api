@@ -32,7 +32,6 @@ export class EventService {
   }
   async getById(id: string): Promise<IEvent> {
     const event = await this.eventRepository.findById(id);
-    console.log(event);
     const eventDTO = new EventDTO(event);
     if (!eventDTO.isPublish) {
       throw new CustomError(

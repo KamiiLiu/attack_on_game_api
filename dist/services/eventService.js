@@ -34,7 +34,6 @@ class EventService {
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const event = yield this.eventRepository.findById(id);
-            console.log(event);
             const eventDTO = new eventDTO_1.EventDTO(event);
             if (!eventDTO.isPublish) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.UNAUTHORIZED, EventResponseType_1.EventResponseType.FAILED_AUTHORIZATION);
