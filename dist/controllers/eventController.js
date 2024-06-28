@@ -24,7 +24,7 @@ class EventController extends baseController_1.BaseController {
             return yield this.handleServiceResponse(() => this.eventService.getAll(req), EventResponseType_1.EventResponseType.SUCCESS_REQUEST);
         });
         this.create = (req) => __awaiter(this, void 0, void 0, function* () {
-            return this.handleServiceResponse(() => this.eventService.create(req.body), EventResponseType_1.EventResponseType.SUCCESS_CREATED);
+            return this.handleServiceResponse(() => this.eventService.create(req), EventResponseType_1.EventResponseType.SUCCESS_CREATED);
         });
         this.update = (req) => __awaiter(this, void 0, void 0, function* () {
             return this.handleServiceResponse(() => this.eventService.update(req.params.id, req.body), EventResponseType_1.EventResponseType.SUCCESS_UPDATE);

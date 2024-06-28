@@ -7,19 +7,26 @@ import { EventRepository } from '@/repositories/EventRepository';
 import { QueryParamsParser } from '@/services/eventQueryParams';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { CustomError } from '@/errors/CustomError';
-import { IBaseService } from '@/services/IBaseService';
 import { EventResponseType } from '@/types/EventResponseType';
-import { EventDocument } from '@/interfaces/EventInterface';
+import { LookupService } from './LookupService';
 import { Types } from 'mongoose';
-export class EventService implements IBaseService<EventDTO> {
-  private EventRepository: EventRepository;
+import { OrderRepository } from '@/repositories/OrderRepository';
+import { TicketRepository } from '@/repositories/TicketRepository';
+export class EventService {
+  private eventRepository: EventRepository;
   private queryParams: QueryParamsParser;
+  private lookupService: LookupService;
   constructor() {
-    this.EventRepository = new EventRepository();
+    this.eventRepository = new EventRepository();
     this.queryParams = new QueryParamsParser();
+    this.lookupService = new LookupService(
+      new OrderRepository(),
+      this.eventRepository,
+      new TicketRepository(),
+    );
   }
   async getById(id: string): Promise<Partial<EventDTO>> {
-    const event = await this.EventRepository.findById(id);
+    const event = await this.eventRepository.findById(id);
     const eventDTO = new EventDTO(event);
     if (!eventDTO.isPublish) {
       throw new CustomError(
@@ -31,7 +38,7 @@ export class EventService implements IBaseService<EventDTO> {
   }
   async getAll(queryParams: any): Promise<Partial<EventDTO>[]> {
     const _queryParams = this.queryParams.parse(queryParams);
-    const eventData = await this.EventRepository.findAll(_queryParams);
+    const eventData = await this.eventRepository.findAll(_queryParams);
     if (_.isEmpty(eventData)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
@@ -40,20 +47,36 @@ export class EventService implements IBaseService<EventDTO> {
     }
     return _.map(eventData, (event) => new EventDTO(event).toDetailDTO());
   }
-  async create(content: EventDocument): Promise<boolean> {
-    const _content = new EventDTO(content).toDetailDTO();
-    return await this.EventRepository.create(_content);
+  async create(queryParams: Request): Promise<boolean> {
+    const store = await this.lookupService.findStoreById(queryParams);
+    const _content = new EventDTO({
+      ...queryParams.body,
+      storeId: store._id,
+    }).toDetailDTO();
+    console.log(_content);
+    return await this.eventRepository.create(_content);
   }
-  async update(
-    id: string,
-    content: EventDocument,
-  ): Promise<Partial<EventDTO> | null> {
-    const updateContent = { ...content, idNumber: id };
-    const _content = new EventDTO(updateContent);
-    const _event = await this.EventRepository.update(_content);
-    if (!_.isEmpty(_event)) {
-      const _eventDTO = new EventDTO(_event);
-      return _eventDTO.toDetailDTO();
+  async update(queryParams: Request): Promise<Partial<EventDTO> | null> {
+    const store = await this.lookupService.findStore(queryParams);
+    const findEvent = await this.eventRepository.findById(
+      queryParams.params.id,
+    );
+    if (store._id === findEvent.storeId) {
+      const updateContent = {
+        _id: findEvent._id,
+        storeId: store._id,
+        ...queryParams.body.content,
+      };
+      const _content = new EventDTO(updateContent);
+      const _event = await this.eventRepository.update(_content);
+      if (!_.isEmpty(_event)) {
+        const _eventDTO = new EventDTO(_event);
+        return _eventDTO.toDetailDTO();
+      }
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        EventResponseType.FAILED_FOUND,
+      );
     }
     throw new CustomError(
       CustomResponseType.NOT_FOUND,
@@ -68,7 +91,7 @@ export class EventService implements IBaseService<EventDTO> {
     optionsReq: Request,
   ): Promise<Partial<EventDTO>[]> {
     const queryParams = this.queryParams.parse(optionsReq);
-    const eventData = await this.EventRepository.getEventsByStoreId(
+    const eventData = await this.eventRepository.getEventsByStoreId(
       storeId,
       queryParams,
     );
@@ -85,7 +108,7 @@ export class EventService implements IBaseService<EventDTO> {
   }
 
   public async getSummaryEvents(id: string): Promise<Partial<EventDTO>> {
-    const event = await this.EventRepository.findById(id);
+    const event = await this.eventRepository.findById(id);
     if (_.isEmpty(event)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,

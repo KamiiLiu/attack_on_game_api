@@ -24,7 +24,7 @@ export class LookupService {
     private EventRepository: EventRepository,
     private ticketRepository: TicketRepository,
   ) {}
-  public async findStore(queryParams: Request): Promise<StoreDocument> {
+  public async findStoreById(queryParams: Request): Promise<StoreDocument> {
     const reqWithUser = queryParams as unknown as RequestWithUser;
     if (!reqWithUser.user) {
       throw new CustomError(
@@ -32,6 +32,25 @@ export class LookupService {
         OrderResponseType.ERROR_PLAYER_FOUND,
       );
     }
+    const store = await Store.findOne({ user: reqWithUser.user._id });
+    if (_.isEmpty(store)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+    return store;
+  }
+  public async findStore(queryParams: Request): Promise<StoreDocument> {
+    const reqWithUser = queryParams as unknown as RequestWithUser;
+    console.log(reqWithUser);
+    if (!reqWithUser.user) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+    console.log(reqWithUser);
     const store = await Store.findOne({ user: reqWithUser.user });
     if (_.isEmpty(store)) {
       throw new CustomError(

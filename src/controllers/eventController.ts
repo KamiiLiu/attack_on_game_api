@@ -26,7 +26,7 @@ export class EventController extends BaseController implements IBaseController {
   };
   public create = async (req: Request): Promise<ResponseDTO> => {
     return this.handleServiceResponse(
-      () => this.eventService.create(req.body),
+      () => this.eventService.create(req),
       EventResponseType.SUCCESS_CREATED,
     );
   };
