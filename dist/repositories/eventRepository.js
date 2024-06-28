@@ -25,8 +25,10 @@ const lodash_1 = __importDefault(require("lodash"));
 class EventRepository {
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("findEvent by number Id ", id);
             try {
                 const event = yield EventModel_1.default.findOne({ idNumber: id });
+                console.log("findEvent by number Id ", event);
                 if (lodash_1.default.isEmpty(event)) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
                 }
