@@ -80,6 +80,7 @@ export class EventDTO extends BaseDTO {
   }
   public toSummaryDTO(): Partial<EventDocument> {
     return {
+      idNumber: this.idNumber,
       title: this.title,
       address: this.address,
       location: this.location,

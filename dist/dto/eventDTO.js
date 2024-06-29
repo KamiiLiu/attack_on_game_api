@@ -66,6 +66,7 @@ class EventDTO extends baseDTO_1.BaseDTO {
     }
     toSummaryDTO() {
         return {
+            idNumber: this.idNumber,
             title: this.title,
             address: this.address,
             location: this.location,
