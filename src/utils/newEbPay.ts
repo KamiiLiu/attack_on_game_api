@@ -10,19 +10,25 @@ import * as crypto from 'crypto';
 // }
 
 // Define the types for the global variables
-const MerchantID: string = process.env.MerchantID || '';
-const RespondType: string = process.env.RespondType || 'JSON';
-const Version: string = process.env.VERSION || '2.0';
 const HASHKEY: string = process.env.HASHKEY || '';
 const HASHIV: string = process.env.HASHIV || '';
+const needEncodeField: string[] = ['ItemDesc', 'Email', 'ReturnURL', 'NotifyURL', 'ClientBackURL'];
 // 字串組合
 export function genDataChain(order: any): string {
-    return `MerchantID=${MerchantID}&RespondType=${RespondType}&TimeStamp=${order.TimeStamp
-        }&Version=${Version}&MerchantOrderNo=${order.MerchantOrderNo}&Amt=${order.Amt
-        }&ItemDesc=${encodeURIComponent(order.ItemDesc)}&Email=${encodeURIComponent(
-            order.Email,
-        )}&NotifyURL=${encodeURIComponent(order.NotifyURL)}&ClientBackURL=${encodeURIComponent(order.ClientBackURL)}&OrderComment=${encodeURIComponent(order.OrderComment)}
-        &ReturnURL=${encodeURIComponent(order.ReturnURL)}`
+
+    const result: string[] = []
+
+    Object.entries(order).forEach(([key, value]) => {
+        if (typeof value !== 'string' || typeof value !== 'number') throw new Error('value must be string or number')
+        if (needEncodeField.includes(key)) {
+            result.push(`${key}=${encodeURIComponent(value)}`)
+            return
+        }
+        result.push(`${key}=${value}`)
+    })
+
+    return result.join('&')
+
 }
 
 // 對應文件 P16：使用 aes 加密

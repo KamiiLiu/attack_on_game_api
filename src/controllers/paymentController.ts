@@ -1,20 +1,6 @@
 
 import { Request, Response } from 'express';
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '@/utils/newEbPay';
-
-/**
- * 
- *  {
-    "eventId": "cco7quxx",
-    "payment":250,
-    "discount": 50,
-    "name": "Carol White",
-    "phone": "789-012-3456",
-    "registrationCount": 1
-}
- *
- */
-
 const config = {
     MerchantID: process.env.MerchantID || '',
     Version: process.env.VERSION || '2.0',
@@ -35,7 +21,7 @@ export const getPaymetData = async (req: Request, res: Response) => {
             Amt: payment,
             ItemDesc: eventId,
             Email: "eagle163013@gmail.com",
-            ClientBackURL: `${config.FrontEndUrl}/#/player/admin/checkout/success`,
+            ClientBackURL: config.FrontEndUrl,
             NotifyURL: config.NotifyUrl,
             OrderComment: "Payment test",
             ReturnURL: config.ReturnUrl,
@@ -49,7 +35,6 @@ export const getPaymetData = async (req: Request, res: Response) => {
             TradeInfo: aesEncrypt,
             TradeSha: shaEncrypt,
             Version: config.Version,
-            //ReturnURL: config.ReturnUrl,
         });
     } catch (error) {
         console.log('error:', error);
@@ -78,8 +63,8 @@ export const getNotifyData = async (req: Request, res: Response) => {
         console.log('getNotifyData:', "Body", response);
 
         const aesEncrypt = create_mpg_aes_encrypt(response.TradeInfo);
-        if (aesEncrypt !== response.TradeInfo) {
-            console.log('aesEncrypt:', aesEncrypt, response.TradeInfo);
+        if (aesEncrypt !== response.TradeSha) {
+            console.log('訊息與訂單資料不一致');
             return res.end();
         }
 
