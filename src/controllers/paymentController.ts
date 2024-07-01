@@ -34,8 +34,11 @@ export const getPaymetData = async (req: Request, res: Response) => {
             MerchantOrderNo: Date.now(),
             Amt: payment,
             ItemDesc: eventId,
-            Email: "eagle163013@gmail.com"
-
+            Email: "eagle163013@gmail.com",
+            ClientBackURL: `${config.FrontEndUrl}/#/player/admin/checkout/success`,
+            NotifyURL: config.NotifyUrl,
+            OrderComment: "Payment test",
+            ReturnURL: config.ReturnUrl,
         }
 
         const aesEncrypt = create_mpg_aes_encrypt(order)
@@ -46,8 +49,6 @@ export const getPaymetData = async (req: Request, res: Response) => {
             TradeInfo: aesEncrypt,
             TradeSha: shaEncrypt,
             Version: config.Version,
-            ClientBackURL: `${config.FrontEndUrl}/#/player/admin/checkout/success`,
-            NotifyURL: config.NotifyUrl,
             //ReturnURL: config.ReturnUrl,
         });
     } catch (error) {
@@ -84,9 +85,8 @@ export const getReturnData = async (req: Request, res: Response) => {
 
 export const getNotifyData = async (req: Request, res: Response) => {
     try {
-        const response = req.body;
 
-        console.log('response:', response);
+        console.log('getNotifyData:', "Body", req.body, "Query", req.query, "Params", req.params, "Headers", req.headers);
         res.end();
     } catch (error) {
         console.log('error:', error);

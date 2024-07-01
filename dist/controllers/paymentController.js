@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getReturnData = exports.getPaymetData = void 0;
+exports.getNotifyData = exports.getReturnData = exports.getPaymetData = void 0;
 const newEbPay_1 = require("@/utils/newEbPay");
 /**
  *
@@ -28,7 +28,8 @@ const config = {
     Version: process.env.VERSION || '2.0',
     PayGateWay: process.env.PayGateWay || '',
     ReturnUrl: process.env.ReturnUrl || '',
-    NotifyUrl: process.env.NotifyUrl || ''
+    NotifyUrl: process.env.NotifyUrl || '',
+    FrontEndUrl: process.env.FrontEndUrl || '',
 };
 const getPaymetData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -38,7 +39,11 @@ const getPaymetData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             MerchantOrderNo: Date.now(),
             Amt: payment,
             ItemDesc: eventId,
-            Email: "eagle163013@gmail.com"
+            Email: "eagle163013@gmail.com",
+            ClientBackURL: `${config.FrontEndUrl}/#/player/admin/checkout/success`,
+            NotifyURL: config.NotifyUrl,
+            OrderComment: "Payment test",
+            ReturnURL: config.ReturnUrl,
         };
         const aesEncrypt = (0, newEbPay_1.create_mpg_aes_encrypt)(order);
         const shaEncrypt = (0, newEbPay_1.create_mpg_sha_encrypt)(aesEncrypt);
@@ -48,9 +53,7 @@ const getPaymetData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             TradeInfo: aesEncrypt,
             TradeSha: shaEncrypt,
             Version: config.Version,
-            PayGateWay: config.PayGateWay,
-            ClientBackURL: config.ReturnUrl,
-            NotifyURL: config.NotifyUrl,
+            //ReturnURL: config.ReturnUrl,
         });
     }
     catch (error) {
@@ -61,7 +64,7 @@ exports.getPaymetData = getPaymetData;
 const getReturnData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = req.body;
-        console.log('response:', response, 'Request', req);
+        console.log('response:', response);
         // const thisShaEncrypt = create_mpg_aes_decrypt(response.TradeInfo);
         // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
         // if (!thisShaEncrypt === response.TradeSha) {
@@ -71,11 +74,22 @@ const getReturnData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         // 解密交易內容
         // const data = create_mpg_aes_decrypt(response.TradeInfo);
         // console.log('data:', data);
-        return res.end();
+        return res.redirect(config.FrontEndUrl);
     }
     catch (error) {
         console.log('error:', error);
     }
 });
 exports.getReturnData = getReturnData;
+const getNotifyData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log('getNotifyData:', "Body", req.body, "Query", req.query, "Params", req.params, "Headers", req.headers);
+        res.end();
+    }
+    catch (error) {
+        console.log('error:', error);
+        res.end();
+    }
+});
+exports.getNotifyData = getNotifyData;
 //# sourceMappingURL=paymentController.js.map

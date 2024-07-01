@@ -21,7 +21,8 @@ export function genDataChain(order: any): string {
         }&Version=${Version}&MerchantOrderNo=${order.MerchantOrderNo}&Amt=${order.Amt
         }&ItemDesc=${encodeURIComponent(order.ItemDesc)}&Email=${encodeURIComponent(
             order.Email,
-        )}`;
+        )}&NotifyURL=${encodeURIComponent(order.NotifyURL)}&ClientBackURL=${encodeURIComponent(order.ClientBackURL)}&OrderComment=${encodeURIComponent(order.OrderComment)}
+        $ReturnURL=${encodeURIComponent(order.ReturnURL)}`
 }
 
 // 對應文件 P16：使用 aes 加密
