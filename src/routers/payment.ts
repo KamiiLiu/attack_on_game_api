@@ -1,11 +1,13 @@
 
 import express from 'express';
-import { getPaymetData, getReturnData } from '@/controllers/paymentController';
+import { getPaymetData, getReturnData, getNotifyData } from '@/controllers/paymentController';
 const router = express.Router();
 
 
 router.post('/', getPaymetData);
 
-router.post('/notify', getReturnData)
+router.post('/notify', getNotifyData)
 
-export default router;
+router.post('/return', getReturnData)
+
+export default router; 

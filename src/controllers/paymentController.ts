@@ -20,7 +20,8 @@ const config = {
     Version: process.env.VERSION || '2.0',
     PayGateWay: process.env.PayGateWay || '',
     ReturnUrl: process.env.ReturnUrl || '',
-    NotifyUrl: process.env.NotifyUrl || ''
+    NotifyUrl: process.env.NotifyUrl || '',
+    FrontEndUrl: process.env.FrontEndUrl || '',
 }
 
 export const getPaymetData = async (req: Request, res: Response) => {
@@ -59,7 +60,7 @@ export const getReturnData = async (req: Request, res: Response) => {
     try {
         const response = req.body;
 
-        console.log('response:', response, 'Request', req);
+        console.log('response:', response);
 
         // const thisShaEncrypt = create_mpg_aes_decrypt(response.TradeInfo);
 
@@ -73,9 +74,22 @@ export const getReturnData = async (req: Request, res: Response) => {
         // const data = create_mpg_aes_decrypt(response.TradeInfo);
         // console.log('data:', data);
 
-        return res.end();
+        return res.redirect(config.FrontEndUrl);
     } catch (error) {
         console.log('error:', error);
     }
 
+}
+
+
+export const getNotifyData = async (req: Request, res: Response) => {
+    try {
+        const response = req.body;
+
+        console.log('response:', response);
+        res.end();
+    } catch (error) {
+        console.log('error:', error);
+        res.end();
+    }
 }
