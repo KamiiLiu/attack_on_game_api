@@ -46,8 +46,8 @@ export const getPaymetData = async (req: Request, res: Response) => {
             TradeSha: shaEncrypt,
             Version: config.Version,
             PayGateWay: config.PayGateWay,
-            ReturnUrl: config.ReturnUrl,
-            NotifyUrl: config.NotifyUrl,
+            ClientBackURL: config.ReturnUrl,
+            NotifyURL: config.NotifyUrl,
         });
     } catch (error) {
         console.log('error:', error);
@@ -58,17 +58,20 @@ export const getPaymetData = async (req: Request, res: Response) => {
 export const getReturnData = async (req: Request, res: Response) => {
     try {
         const response = req.body;
-        const thisShaEncrypt = create_mpg_aes_decrypt(response.TradeInfo);
+
+        console.log('response:', response, 'Request', req);
+
+        // const thisShaEncrypt = create_mpg_aes_decrypt(response.TradeInfo);
 
         // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
-        if (!thisShaEncrypt === response.TradeSha) {
-            console.log('付款失敗：TradeSha 不一致');
-            return res.end();
-        }
+        // if (!thisShaEncrypt === response.TradeSha) {
+        //     console.log('付款失敗：TradeSha 不一致');
+        //     return res.end();
+        // }
 
         // 解密交易內容
-        const data = create_mpg_aes_decrypt(response.TradeInfo);
-        console.log('data:', data);
+        // const data = create_mpg_aes_decrypt(response.TradeInfo);
+        // console.log('data:', data);
 
         return res.end();
     } catch (error) {
