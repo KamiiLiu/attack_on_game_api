@@ -24,4 +24,27 @@ router.use('/store', StoreRouter);
 router.use('/', CommentRouter);
 router.use('/review', ReviewRouter);
 router.use('/payment', PaymetRouter);
+
+router.post('/return', (req, res) => {
+    try {
+        console.log('return:', req.body);
+
+        res.send(`${process.env.FrontEndUrl}/#/player/admin/checkout/success`);
+    } catch (error) {
+        console.log('error:', error);
+        res.send('error');
+    }
+
+});
+
+router.post('/notify', (req, res) => {
+    try {
+        console.log('notify:', req.body);
+        res.send('notify');
+    } catch (error) {
+        console.log('error:', error);
+        res.send('error');
+    }
+
+});
 export default router;
