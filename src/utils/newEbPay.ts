@@ -19,7 +19,9 @@ export function genDataChain(order: any): string {
     const result: string[] = []
 
     Object.entries(order).forEach(([key, value]) => {
-        if (typeof value !== 'string' || typeof value !== 'number') throw new Error('value must be string or number')
+
+        // value must be string or number
+        if (typeof value !== 'string' && typeof value !== 'number') throw new Error(`${key} must be string or number`)
         if (needEncodeField.includes(key)) {
             result.push(`${key}=${encodeURIComponent(value)}`)
             return
