@@ -42,7 +42,7 @@ const HASHIV = process.env.HASHIV || '';
 // 字串組合
 function genDataChain(order) {
     return `MerchantID=${MerchantID}&RespondType=${RespondType}&TimeStamp=${order.TimeStamp}&Version=${Version}&MerchantOrderNo=${order.MerchantOrderNo}&Amt=${order.Amt}&ItemDesc=${encodeURIComponent(order.ItemDesc)}&Email=${encodeURIComponent(order.Email)}&NotifyURL=${encodeURIComponent(order.NotifyURL)}&ClientBackURL=${encodeURIComponent(order.ClientBackURL)}&OrderComment=${encodeURIComponent(order.OrderComment)}
-        $ReturnURL=${encodeURIComponent(order.ReturnURL)}`;
+        &ReturnURL=${encodeURIComponent(order.ReturnURL)}`;
 }
 exports.genDataChain = genDataChain;
 // 對應文件 P16：使用 aes 加密
