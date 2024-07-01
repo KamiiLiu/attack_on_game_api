@@ -1,6 +1,5 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
 import 'module-alias/register';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });

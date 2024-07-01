@@ -28,25 +28,5 @@ router.use('/store', storeRouter_1.default);
 router.use('/', commentRouter_1.default);
 router.use('/review', review_1.default);
 router.use('/payment', payment_1.default);
-router.post('/return', (req, res) => {
-    try {
-        console.log('return:', req.body);
-        res.redirect(`${process.env.FrontEndUrl}/#/player/admin/checkout/success`);
-    }
-    catch (error) {
-        console.log('error:', error);
-        res.send('error');
-    }
-});
-router.post('/notify', (req, res) => {
-    try {
-        console.log('notify:', req.body);
-        res.send('notify');
-    }
-    catch (error) {
-        console.log('error:', error);
-        res.send('error');
-    }
-});
 exports.default = router;
 //# sourceMappingURL=index.js.map

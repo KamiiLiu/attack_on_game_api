@@ -64,17 +64,11 @@ exports.getPaymetData = getPaymetData;
 const getReturnData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = req.body;
-        console.log('response:', response);
-        // const thisShaEncrypt = create_mpg_aes_decrypt(response.TradeInfo);
-        // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
-        // if (!thisShaEncrypt === response.TradeSha) {
-        //     console.log('付款失敗：TradeSha 不一致');
-        //     return res.end();
-        // }
-        // 解密交易內容
-        // const data = create_mpg_aes_decrypt(response.TradeInfo);
-        // console.log('data:', data);
-        return res.redirect(config.FrontEndUrl);
+        const { Status } = response;
+        console.log('Return response:', response);
+        if (Status !== 'SUCCESS')
+            return res.redirect(`${config.FrontEndUrl}/#/player/admin/checkout/fail`);
+        res.redirect(`${config.FrontEndUrl}/#/player/admin/checkout/success`);
     }
     catch (error) {
         console.log('error:', error);
@@ -83,11 +77,18 @@ const getReturnData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.getReturnData = getReturnData;
 const getNotifyData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('getNotifyData:', "Body", req.body, "Query", req.query, "Params", req.params, "Headers", req.headers);
+        const response = req.body;
+        console.log('getNotifyData:', "Body", response);
+        const aesEncrypt = (0, newEbPay_1.create_mpg_aes_encrypt)(response.TradeInfo);
+        if (aesEncrypt !== response.TradeInfo) {
+            console.log('aesEncrypt:', aesEncrypt, response.TradeInfo);
+            return res.end();
+        }
+        const aesDecrypt = (0, newEbPay_1.create_mpg_aes_decrypt)(response.TradeInfo);
+        console.log('aesDecrypt:', aesDecrypt);
         res.end();
     }
     catch (error) {
-        console.log('error:', error);
         res.end();
     }
 });
