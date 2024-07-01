@@ -1,12 +1,13 @@
 import { Schema, Document, model } from 'mongoose';
-
+import dayjs from '@/utils/dayjs';
+import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 export interface IComment extends Document {
   author: Schema.Types.ObjectId;
-  eventId: String;
+  eventId: string;
   storeId: Schema.Types.ObjectId;
-  content: String;
-  createAt: Date;
-  type: String;
+  content: string;
+  createAt: string;
+  type: string;
   messageId: Schema.Types.ObjectId;
 }
 
@@ -26,7 +27,7 @@ const CommentSchema: Schema = new Schema({
     ref: 'stores',
   },
   content: { type: String, require: true },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
   type: { type: String, require: true },
   messageId: {
     type: Schema.Types.ObjectId,

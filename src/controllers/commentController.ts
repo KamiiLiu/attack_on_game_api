@@ -5,8 +5,8 @@ import { getUser } from '@/utils/help';
 import User from '@/models/User';
 import EventModel from '@/models/EventModel';
 import { Store } from '@/models/Store';
-import { request } from 'websocket';
-
+import dayjs from '@/utils/dayjs';
+import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 // GET 取得活動留言板資訊 - Create comment & GET comment?
 
 export const getComments = async (req: Request, res: Response) => {
@@ -78,7 +78,7 @@ export const createComment = async (req: Request, res: Response) => {
       eventId,
       storeId: storeId,
       content,
-      createdAt: Date.now(),
+      createdAt: dayjs().format(TIME_FORMATTER),
       type: typeValue,
       messageId: massageExist,
     });
@@ -135,7 +135,7 @@ export const createReply = async (req: Request, res: Response) => {
       eventId,
       storeId: storeId,
       content,
-      createdAt: Date.now(),
+      createdAt: dayjs().format(TIME_FORMATTER),
       type: typeValue,
       messageId: messageId,
     });

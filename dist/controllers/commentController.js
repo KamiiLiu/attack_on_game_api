@@ -19,6 +19,8 @@ const help_1 = require("@/utils/help");
 const User_1 = __importDefault(require("@/models/User"));
 const EventModel_1 = __importDefault(require("@/models/EventModel"));
 const Store_1 = require("@/models/Store");
+const dayjs_1 = __importDefault(require("@/utils/dayjs"));
+const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
 // GET 取得活動留言板資訊 - Create comment & GET comment?
 const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // check validation result
@@ -89,7 +91,7 @@ const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             eventId,
             storeId: storeId,
             content,
-            createdAt: Date.now(),
+            createdAt: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
             type: typeValue,
             messageId: massageExist,
         });
@@ -145,7 +147,7 @@ const createReply = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             eventId,
             storeId: storeId,
             content,
-            createdAt: Date.now(),
+            createdAt: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
             type: typeValue,
             messageId: messageId,
         });
