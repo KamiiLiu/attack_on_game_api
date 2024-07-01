@@ -11,6 +11,7 @@ dotenv_1.default.config({ path: '.env' });
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+app.use(express_1.default.urlencoded({ extended: true }));
 exports.default = app;
 //TODO:自動更新 MongoDB 的 IP 白名單設置
 //# sourceMappingURL=app.js.map

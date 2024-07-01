@@ -31,7 +31,7 @@ router.use('/payment', payment_1.default);
 router.post('/return', (req, res) => {
     try {
         console.log('return:', req.body);
-        res.send(`${process.env.FrontEndUrl}/#/player/admin/checkout/success`);
+        res.redirect(`${process.env.FrontEndUrl}/#/player/admin/checkout/success`);
     }
     catch (error) {
         console.log('error:', error);
