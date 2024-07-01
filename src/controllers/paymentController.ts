@@ -46,9 +46,9 @@ export const getPaymetData = async (req: Request, res: Response) => {
             TradeInfo: aesEncrypt,
             TradeSha: shaEncrypt,
             Version: config.Version,
-            PayGateWay: config.PayGateWay,
-            ClientBackURL: config.ReturnUrl,
+            ClientBackURL: `${config.FrontEndUrl}/#/player/admin/checkout/success`,
             NotifyURL: config.NotifyUrl,
+            //ReturnURL: config.ReturnUrl,
         });
     } catch (error) {
         console.log('error:', error);
