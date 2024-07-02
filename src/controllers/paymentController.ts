@@ -83,18 +83,22 @@ export const getNotifyData = async (req: Request, res: Response) => {
         }
 
         const aesDecrypt = create_mpg_aes_decrypt(response.TradeInfo);
+        console.log('aesDecrypt:', aesDecrypt);
 
-        const order = await Order.findOne({ idNumber: aesDecrypt.MerchantOrderNo.replace(/_/g, '-') });
-        if (!order) return res.end();
+        const order = await Order.findOne({ idNumber: aesDecrypt.Result.MerchantOrderNo.replace(/_/g, '-') });
+        if (!order) {
+            console.log('can not find order ')
+            return res.end();
+        }
         order.paymentStatus = PaymentStatus.COMPLETED;
         order.paymentMethod = aesDecrypt.PaymentType;
         await order.save();
 
-        console.log('aesDecrypt:', aesDecrypt);
+
 
         res.end();
     } catch (error) {
-
+        console.log('error:', error);
         res.end();
     }
 }

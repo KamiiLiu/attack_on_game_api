@@ -87,16 +87,19 @@ const getNotifyData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             return res.end();
         }
         const aesDecrypt = (0, newEbPay_1.create_mpg_aes_decrypt)(response.TradeInfo);
-        const order = yield OrderModel_1.default.findOne({ idNumber: aesDecrypt.MerchantOrderNo.replace(/_/g, '-') });
-        if (!order)
+        console.log('aesDecrypt:', aesDecrypt);
+        const order = yield OrderModel_1.default.findOne({ idNumber: aesDecrypt.Result.MerchantOrderNo.replace(/_/g, '-') });
+        if (!order) {
+            console.log('can not find order ');
             return res.end();
+        }
         order.paymentStatus = OrderStatus_1.PaymentStatus.COMPLETED;
         order.paymentMethod = aesDecrypt.PaymentType;
         yield order.save();
-        console.log('aesDecrypt:', aesDecrypt);
         res.end();
     }
     catch (error) {
+        console.log('error:', error);
         res.end();
     }
 });
