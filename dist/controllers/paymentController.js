@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNotifyData = exports.getReturnData = exports.getPaymetData = void 0;
 const newEbPay_1 = require("@/utils/newEbPay");
+const OrderModel_1 = __importDefault(require("@/models/OrderModel"));
 const config = {
     MerchantID: process.env.MerchantID || '',
     Version: process.env.VERSION || '2.0',
@@ -21,26 +25,36 @@ const config = {
 };
 const getPaymetData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { eventId, payment } = req.body;
+        const { orderId } = req.body;
+        const orderObj = yield OrderModel_1.default.findOne({ idNumber: orderId }).populate('eventId');
+        if (!orderObj)
+            return res.status(404).json({ message: 'Order not found' });
+        console.log('orderObj:', orderObj);
         const order = {
             TimeStamp: Date.now(),
-            MerchantOrderNo: Date.now(),
-            Amt: payment,
-            ItemDesc: eventId,
+            MerchantOrderNo: orderObj.idNumber.replace(/-/g, '_'),
+            MerchantID: config.MerchantID,
+            Amt: (orderObj.payment - orderObj.discount),
+            Version: config.Version,
+            RespondType: 'JSON',
+            ItemDesc: orderObj.eventId.title,
             Email: "eagle163013@gmail.com",
             ClientBackURL: config.FrontEndUrl,
             NotifyURL: config.NotifyUrl,
-            OrderComment: "Payment test",
+            OrderComment: orderObj.notes,
             ReturnURL: config.ReturnUrl,
         };
         const aesEncrypt = (0, newEbPay_1.create_mpg_aes_encrypt)(order);
         const shaEncrypt = (0, newEbPay_1.create_mpg_sha_encrypt)(aesEncrypt);
         console.log('send data:', aesEncrypt, shaEncrypt);
-        res.send({
-            MerchantID: config.MerchantID,
-            TradeInfo: aesEncrypt,
-            TradeSha: shaEncrypt,
-            Version: config.Version,
+        res.json({
+            status: true,
+            data: {
+                MerchantID: config.MerchantID,
+                TradeInfo: aesEncrypt,
+                TradeSha: shaEncrypt,
+                Version: config.Version,
+            }
         });
     }
     catch (error) {

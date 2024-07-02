@@ -11,12 +11,12 @@ import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 const OrderSchema: Schema = new Schema({
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'events',
+    ref: 'Event',
     required: true,
   },
   playerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'players',
+    ref: 'Player',
     required: true,
   },
   idNumber: { type: String, required: true, unique: true },

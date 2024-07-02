@@ -1,9 +1,10 @@
-import { Document, Types } from 'mongoose';
+import { Document, PopulatedDoc, Types } from 'mongoose';
 import { PaymentStatus, PaymentMethod, Status } from '@/enums/OrderStatus';
+import { EventDocument } from '@/interfaces/EventInterface';
 export interface OrderDocument extends Document {
   _id: Types.ObjectId;
   idNumber: string;
-  eventId: Types.ObjectId;
+  eventId: PopulatedDoc<EventDocument & Document>;
   playerId: Types.ObjectId;
   payment: number;
   discount: number;

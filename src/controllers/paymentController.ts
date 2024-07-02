@@ -1,6 +1,7 @@
 
 import { Request, Response } from 'express';
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '@/utils/newEbPay';
+import Order from '@/models/OrderModel';
 const config = {
     MerchantID: process.env.MerchantID || '',
     Version: process.env.VERSION || '2.0',
@@ -13,29 +14,41 @@ const config = {
 export const getPaymetData = async (req: Request, res: Response) => {
 
     try {
-        const { eventId, payment } = req.body;
+        const { orderId } = req.body;
+
+        const orderObj = await Order.findOne({ idNumber: orderId }).populate('eventId');
+        if (!orderObj) return res.status(404).json({ message: 'Order not found' });
+
+        console.log('orderObj:', orderObj);
 
         const order = {
             TimeStamp: Date.now(),
-            MerchantOrderNo: Date.now(),
-            Amt: payment,
-            ItemDesc: eventId,
+            MerchantOrderNo: orderObj.idNumber.replace(/-/g, '_'),
+            MerchantID: config.MerchantID,
+            Amt: (orderObj.payment - orderObj.discount),
+            Version: config.Version,
+            RespondType: 'JSON',
+            ItemDesc: orderObj.eventId.title,
             Email: "eagle163013@gmail.com",
             ClientBackURL: config.FrontEndUrl,
             NotifyURL: config.NotifyUrl,
-            OrderComment: "Payment test",
+            OrderComment: orderObj.notes,
             ReturnURL: config.ReturnUrl,
         }
 
         const aesEncrypt = create_mpg_aes_encrypt(order)
         const shaEncrypt = create_mpg_sha_encrypt(aesEncrypt);
         console.log('send data:', aesEncrypt, shaEncrypt);
-        res.send({
-            MerchantID: config.MerchantID,
-            TradeInfo: aesEncrypt,
-            TradeSha: shaEncrypt,
-            Version: config.Version,
-        });
+
+        res.json({
+            status: true,
+            data: {
+                MerchantID: config.MerchantID,
+                TradeInfo: aesEncrypt,
+                TradeSha: shaEncrypt,
+                Version: config.Version,
+            }
+        })
     } catch (error) {
         console.log('error:', error);
     }

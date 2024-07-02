@@ -33,12 +33,12 @@ const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
 const OrderSchema = new mongoose_1.Schema({
     eventId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'events',
+        ref: 'Event',
         required: true,
     },
     playerId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'players',
+        ref: 'Player',
         required: true,
     },
     idNumber: { type: String, required: true, unique: true },
