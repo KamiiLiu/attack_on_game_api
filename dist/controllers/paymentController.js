@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNotifyData = exports.getReturnData = exports.getPaymetData = void 0;
 const newEbPay_1 = require("@/utils/newEbPay");
 const OrderModel_1 = __importDefault(require("@/models/OrderModel"));
+const OrderStatus_1 = require("@/enums/OrderStatus");
 const config = {
     MerchantID: process.env.MerchantID || '',
     Version: process.env.VERSION || '2.0',
@@ -80,12 +81,18 @@ const getNotifyData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const response = req.body;
         console.log('getNotifyData:', "Body", response);
-        const aesEncrypt = (0, newEbPay_1.create_mpg_aes_encrypt)(response.TradeInfo);
+        const aesEncrypt = (0, newEbPay_1.create_mpg_sha_encrypt)(response.TradeInfo);
         if (aesEncrypt !== response.TradeSha) {
-            console.log('訊息與訂單資料不一致');
+            console.log('訊息與訂單資料不一致', aesEncrypt, response.TradeSha);
             return res.end();
         }
         const aesDecrypt = (0, newEbPay_1.create_mpg_aes_decrypt)(response.TradeInfo);
+        const order = yield OrderModel_1.default.findOne({ idNumber: aesDecrypt.MerchantOrderNo.replace(/_/g, '-') });
+        if (!order)
+            return res.end();
+        order.paymentStatus = OrderStatus_1.PaymentStatus.COMPLETED;
+        order.paymentMethod = aesDecrypt.PaymentType;
+        yield order.save();
         console.log('aesDecrypt:', aesDecrypt);
         res.end();
     }

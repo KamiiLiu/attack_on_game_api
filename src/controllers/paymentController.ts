@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '@/utils/newEbPay';
 import Order from '@/models/OrderModel';
+import { PaymentStatus } from '@/enums/OrderStatus';
 const config = {
     MerchantID: process.env.MerchantID || '',
     Version: process.env.VERSION || '2.0',
@@ -75,13 +76,19 @@ export const getNotifyData = async (req: Request, res: Response) => {
         const response = req.body;
         console.log('getNotifyData:', "Body", response);
 
-        const aesEncrypt = create_mpg_aes_encrypt(response.TradeInfo);
+        const aesEncrypt = create_mpg_sha_encrypt(response.TradeInfo);
         if (aesEncrypt !== response.TradeSha) {
-            console.log('訊息與訂單資料不一致');
+            console.log('訊息與訂單資料不一致', aesEncrypt, response.TradeSha);
             return res.end();
         }
 
         const aesDecrypt = create_mpg_aes_decrypt(response.TradeInfo);
+
+        const order = await Order.findOne({ idNumber: aesDecrypt.MerchantOrderNo.replace(/_/g, '-') });
+        if (!order) return res.end();
+        order.paymentStatus = PaymentStatus.COMPLETED;
+        order.paymentMethod = aesDecrypt.PaymentType;
+        await order.save();
 
         console.log('aesDecrypt:', aesDecrypt);
 
