@@ -36,7 +36,13 @@ const crypto = __importStar(require("crypto"));
 // Define the types for the global variables
 const HASHKEY = process.env.HASHKEY || '';
 const HASHIV = process.env.HASHIV || '';
-const needEncodeField = ['ItemDesc', 'Email', 'ReturnURL', 'NotifyURL', 'ClientBackURL'];
+const needEncodeField = [
+    'ItemDesc',
+    'Email',
+    'ReturnURL',
+    'NotifyURL',
+    'ClientBackURL',
+];
 // 字串組合
 function genDataChain(order) {
     const result = [];
