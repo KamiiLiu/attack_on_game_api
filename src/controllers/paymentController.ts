@@ -94,8 +94,6 @@ export const getNotifyData = async (req: Request, res: Response) => {
         order.paymentMethod = aesDecrypt.PaymentType;
         await order.save();
 
-
-
         res.end();
     } catch (error) {
         console.log('error:', error);

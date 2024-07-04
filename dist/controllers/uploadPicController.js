@@ -54,7 +54,7 @@ const uploadPic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         yield Store_1.Store.updateOne({ _id: id }, { avatar: imgUrl });
                     }
                     else {
-                        yield EventModel_1.default.updateOne({ idNumber: id }, { eventImageUrl: imgUrl });
+                        yield EventModel_1.default.updateOne({ idNumber: id }, { eventImageUrl: [imgUrl] });
                         const event = yield Store_1.Store.findOne({ idNumber: id });
                     }
                     res.send({
