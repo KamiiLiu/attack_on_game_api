@@ -35,11 +35,11 @@ const getPaymetData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             TimeStamp: Date.now(),
             MerchantOrderNo: orderObj.idNumber.replace(/-/g, '_'),
             MerchantID: config.MerchantID,
-            Amt: (orderObj.payment - orderObj.discount),
+            Amt: orderObj.payment - orderObj.discount,
             Version: config.Version,
             RespondType: 'JSON',
             ItemDesc: orderObj.eventId.title,
-            Email: "eagle163013@gmail.com",
+            Email: 'eagle163013@gmail.com',
             ClientBackURL: config.FrontEndUrl,
             NotifyURL: config.NotifyUrl,
             OrderComment: orderObj.notes,
@@ -55,7 +55,7 @@ const getPaymetData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 TradeInfo: aesEncrypt,
                 TradeSha: shaEncrypt,
                 Version: config.Version,
-            }
+            },
         });
     }
     catch (error) {
@@ -80,7 +80,7 @@ exports.getReturnData = getReturnData;
 const getNotifyData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = req.body;
-        console.log('getNotifyData:', "Body", response);
+        console.log('getNotifyData:', 'Body', response);
         const aesEncrypt = (0, newEbPay_1.create_mpg_sha_encrypt)(response.TradeInfo);
         if (aesEncrypt !== response.TradeSha) {
             console.log('訊息與訂單資料不一致', aesEncrypt, response.TradeSha);
@@ -88,7 +88,9 @@ const getNotifyData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
         const aesDecrypt = (0, newEbPay_1.create_mpg_aes_decrypt)(response.TradeInfo);
         console.log('aesDecrypt:', aesDecrypt);
-        const order = yield OrderModel_1.default.findOne({ idNumber: aesDecrypt.Result.MerchantOrderNo.replace(/_/g, '-') });
+        const order = yield OrderModel_1.default.findOne({
+            idNumber: aesDecrypt.Result.MerchantOrderNo.replace(/_/g, '-'),
+        });
         if (!order) {
             console.log('can not find order ');
             return res.end();

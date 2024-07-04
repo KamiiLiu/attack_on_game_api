@@ -14,10 +14,10 @@ import mongoose from 'mongoose';
 import _ from 'lodash';
 export class EventRepository implements IBaseRepository<EventDocument> {
   async findById(id: string): Promise<EventDocument> {
-    console.log("findEvent by number Id ", id)
+    console.log('findEvent by number Id ', id);
     try {
       const event = await EventModel.findOne({ idNumber: id });
-      console.log("findEvent by number Id ", event)
+      console.log('findEvent by number Id ', event);
       if (_.isEmpty(event)) {
         throw new CustomError(
           CustomResponseType.NOT_FOUND,
