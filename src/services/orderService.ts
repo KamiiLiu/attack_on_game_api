@@ -53,7 +53,7 @@ export class OrderService {
     const orderDTO = this.createOrderDTO(req.body, event, player);
     this.validateOrder(event, orderDTO);
 
-    const order = await this.createOrder(orderDTO); 
+    const order = await this.createOrder(orderDTO);
     await this.updateEventParticipants(event, orderDTO);
     await this.createTickets(
       order._id,
