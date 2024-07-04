@@ -39,7 +39,7 @@ const EventSchema: Schema = new Schema({
   maxParticipants: { type: Number, required: true },
   minParticipants: { type: Number, required: true },
   participationFee: { type: Number, required: true },
-  eventImageUrl: { type: [String], required: true },
+  eventImageUrl: { type: [String], default: [] },
   currentParticipantsCount: { type: Number, default: 0 },
   isPublish: { type: Boolean, default: true },
   createdAt: { type: String, default: dayjs().format(TIME_FORMATTER) },

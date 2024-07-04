@@ -48,7 +48,7 @@ export const uploadPic = async (req: Request, res: Response) => {
             } else {
               await EventModel.updateOne(
                 { idNumber: id },
-                { eventImageUrl: imgUrl },
+                { eventImageUrl: [imgUrl] },
               );
               const event = await Store.findOne({ idNumber: id });
             }
