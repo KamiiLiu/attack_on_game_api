@@ -10,6 +10,7 @@ import MyEventRouter from '@/routers/myEventRouter';
 import PasswordRouter from '@/routers/password';
 import CommentRouter from '../routers/commentRouter';
 import ReviewRouter from '@/routers/review';
+import UploadPicRouter from '@/routers/uploadPicRouter';
 import PaymetRouter from '@/routers/payment';
 
 const router = Router();
@@ -23,5 +24,6 @@ router.use(PasswordRouter);
 router.use('/store', StoreRouter);
 router.use('/', CommentRouter);
 router.use('/review', ReviewRouter);
+router.use('/image', UploadPicRouter);
 router.use('/payment', PaymetRouter);
 export default router;

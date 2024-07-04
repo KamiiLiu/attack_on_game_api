@@ -63,11 +63,13 @@ class OrderService {
             const event = yield this.lookupService.findEventByDbId(eventId);
             const targetOrderDTO = new orderDTO_1.OrderDTO(order);
             const targetEventDTO = new eventDTO_1.EventDTO(event);
+            const store = yield this.lookupService.findStoreByStoreId(targetEventDTO.storeId);
             if (targetOrderDTO.status === OrderStatus_1.Status.CANCEL) {
                 return {
                     event: targetEventDTO.toSummaryDTO(),
                     order: targetOrderDTO.toDetailDTO(),
                     tickets: [],
+                    store,
                 };
             }
             const ticketList = yield this.lookupService.findTickets(order.id, player.user);
@@ -76,6 +78,7 @@ class OrderService {
                 event: targetEventDTO.toSummaryDTO(),
                 order: targetOrderDTO.toDetailDTO(),
                 tickets: targetTicketsDTO,
+                store,
             };
         });
     }

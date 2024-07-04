@@ -11,6 +11,7 @@ import { TicketDTO } from '@/dto/ticketDTO';
 import { CustomError } from '@/errors/CustomError';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { OrderResponseType } from '@/types/OrderResponseType';
+import { IStore as StoreDocument } from '@/models/Store';
 import { OrderDocument } from '@/interfaces/OrderInterface';
 import { EventDocument } from '@/interfaces/EventInterface';
 import { TicketDocument } from '@/interfaces/TicketInterface';
@@ -25,6 +26,7 @@ interface IGetByIdResult {
   event: Partial<EventDocument>;
   order: Partial<OrderDocument>;
   tickets: Partial<TicketDocument>[];
+  store: StoreDocument;
 }
 export class OrderService {
   private orderRepository: OrderRepository;
@@ -84,15 +86,17 @@ export class OrderService {
 
     const targetOrderDTO = new OrderDTO(order);
     const targetEventDTO = new EventDTO(event);
-
+    const store = await this.lookupService.findStoreByStoreId(
+      targetEventDTO.storeId,
+    );
     if (targetOrderDTO.status === Status.CANCEL) {
       return {
         event: targetEventDTO.toSummaryDTO(),
         order: targetOrderDTO.toDetailDTO(),
         tickets: [],
+        store,
       };
     }
-
     const ticketList = await this.lookupService.findTickets(
       order.id,
       player.user,
@@ -100,11 +104,11 @@ export class OrderService {
     const targetTicketsDTO = ticketList.map((ticket) =>
       new TicketDTO(ticket).toDetailDTO(),
     );
-
     return {
       event: targetEventDTO.toSummaryDTO(),
       order: targetOrderDTO.toDetailDTO(),
       tickets: targetTicketsDTO,
+      store,
     };
   }
   async getAll(queryParams: Request): Promise<OrderListDTO[]> {

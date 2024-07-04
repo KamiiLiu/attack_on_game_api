@@ -19,6 +19,9 @@ const help_1 = require("@/utils/help");
 const User_1 = __importDefault(require("@/models/User"));
 const EventModel_1 = __importDefault(require("@/models/EventModel"));
 const Store_1 = require("@/models/Store");
+const dayjs_1 = __importDefault(require("@/utils/dayjs"));
+const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
+const Player_1 = __importDefault(require("@/models/Player"));
 // GET 取得活動留言板資訊 - Create comment & GET comment?
 const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // check validation result
@@ -32,7 +35,9 @@ const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const contents = yield Comment_1.Comment.find({ eventId: eventId });
         // check if comment exist
         if (!contents || contents.length == 0) {
-            return res.status(404).send({ message: 'Comments not found!' });
+            return res
+                .status(202)
+                .send({ contents: contents, message: 'Comments not create yet!' });
         }
         // check if Event exist
         const eventExist = yield EventModel_1.default.findOne({ idNumber: eventId });
@@ -62,11 +67,17 @@ const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const { content } = req.body;
         const author = (0, help_1.getUser)(req)._id;
+        const userRole = (0, help_1.getUser)(req).role;
         const eventId = req.params.eventId;
         // check if User exist
         const userExist = yield User_1.default.findById(author);
         if (!userExist) {
             return res.status(404).send({ message: 'User not found!' });
+        }
+        // check if Player exist
+        const playerExist = yield Player_1.default.findOne({ user: author });
+        if (!playerExist) {
+            return res.status(404).send({ message: 'Player not found!' });
         }
         // check if Event exist
         const eventExist = yield EventModel_1.default.findOne({ idNumber: eventId });
@@ -74,8 +85,7 @@ const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             return res.status(404).send({ message: 'Event not found!' });
         }
         // checke if role of user is "player"
-        const userRole = yield User_1.default.findById(author);
-        if ((userRole === null || userRole === void 0 ? void 0 : userRole.role) !== 'player') {
+        if (userRole !== 'player') {
             return res
                 .status(404)
                 .send({ message: 'The role of user is not player!' });
@@ -84,12 +94,15 @@ const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const typeValue = 'Comment';
         const massageExist = null;
         const storeId = null;
+        const player = yield Player_1.default.findOne({ user: author });
+        const authorName = player === null || player === void 0 ? void 0 : player.name;
         const comment = yield Comment_1.Comment.create({
             author,
+            authorName: authorName,
             eventId,
             storeId: storeId,
             content,
-            createdAt: Date.now(),
+            createdAt: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
             type: typeValue,
             messageId: massageExist,
         });
@@ -114,8 +127,6 @@ const createReply = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const author = (0, help_1.getUser)(req)._id;
         const eventId = req.params.eventId;
         const messageId = req.params.messageId;
-        const store = yield Store_1.Store.findOne({ user: author });
-        const storeId = store === null || store === void 0 ? void 0 : store._id;
         // check if User exist
         const userExist = yield User_1.default.findById(author);
         if (!userExist) {
@@ -125,6 +136,11 @@ const createReply = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const eventExist = yield EventModel_1.default.findOne({ idNumber: eventId });
         if (!eventExist) {
             return res.status(404).send({ message: 'Event not found!' });
+        }
+        // check if Store exist
+        const storeExist = yield Store_1.Store.findOne({ user: author });
+        if (!storeExist) {
+            return res.status(404).send({ message: 'Store not found!' });
         }
         // check if role of user is "store"
         const userRole = yield User_1.default.findById(author);
@@ -136,16 +152,20 @@ const createReply = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         // check if message Exist
         const messageExist = yield Comment_1.Comment.findById(messageId);
         if (!messageExist) {
-            return res.status(404).send({ message: 'Comment not found!' });
+            return res.status(404).send({ message: 'Comment not exist!' });
         }
         // generate "type" filed
+        const store = yield Store_1.Store.findOne({ user: author });
+        const storeId = store === null || store === void 0 ? void 0 : store._id;
+        const authorName = store === null || store === void 0 ? void 0 : store.name;
         const typeValue = 'reply';
         const comment = yield Comment_1.Comment.create({
             author,
+            authorName: authorName,
             eventId,
             storeId: storeId,
             content,
-            createdAt: Date.now(),
+            createdAt: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
             type: typeValue,
             messageId: messageId,
         });
