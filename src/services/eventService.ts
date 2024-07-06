@@ -53,14 +53,14 @@ export class EventService {
     }
     return _.map(eventData, (event) => new EventDTO(event).toDetailDTO());
   }
-  async create(queryParams: Request): Promise<boolean> {
+  async create(queryParams: Request): Promise<EventDTO> {
     const store = await this.lookupService.findStoreById(queryParams);
     const _content = new EventDTO({
       ...queryParams.body,
       storeId: store._id,
     }).toDetailDTO();
-    console.log(_content);
-    return await this.eventRepository.create(_content);
+    const eventDocument = await this.eventRepository.create(_content);
+    return new EventDTO(eventDocument);
   }
   async update(queryParams: Request): Promise<Partial<EventDTO> | null> {
     const store = await this.lookupService.findStore(queryParams);

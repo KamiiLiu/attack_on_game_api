@@ -95,11 +95,11 @@ export class EventRepository implements IBaseRepository<EventDocument> {
     }
   }
 
-  async create(content: Partial<EventDTO>): Promise<boolean> {
+  async create(content: Partial<EventDTO>): Promise<EventDocument> {
     try {
       const event = new EventModel(content);
-      await event.save();
-      return true;
+      const savedEvent = await event.save();
+      return savedEvent;
     } catch (error: any) {
       throw new CustomError(
         CustomResponseType.DATABASE_OPERATION_FAILED,

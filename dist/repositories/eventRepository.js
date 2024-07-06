@@ -81,8 +81,8 @@ class EventRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const event = new EventModel_1.default(content);
-                yield event.save();
-                return true;
+                const savedEvent = yield event.save();
+                return savedEvent;
             }
             catch (error) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);
