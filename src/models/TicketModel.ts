@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import { TicketDocument } from '@/interfaces/TicketInterface';
 import dayjs from '@/utils/dayjs';
 import TIME_FORMATTER from '@/const/TIME_FORMATTER';
+import { TicketStatus } from '@/enums/TicketStatus';
 const TicketSchema: Schema = new Schema({
   orderId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -14,13 +15,15 @@ const TicketSchema: Schema = new Schema({
     required: true,
   },
   idNumber: { type: String, required: true },
-  isQrCodeUsed: {
-    type: Boolean,
-    default: false,
+  qrCodeStatus: {
+    type: String,
+    enum: Object.values(TicketStatus),
+    default: TicketStatus.PENDING,
   },
   qrCodeUrl: { type: String, required: true },
   createdAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
   updatedAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
+  qrCodeUsedTime: { type: String, default: dayjs().format(TIME_FORMATTER) },
 });
 TicketSchema.pre('save', function (next) {
   this.updatedAt = dayjs().format(TIME_FORMATTER);

@@ -1,11 +1,12 @@
 import { Document, Types } from 'mongoose';
+import { TicketStatus } from '@/enums/TicketStatus';
 export interface TicketDocument extends Document {
   _id: Types.ObjectId;
   playerId: Types.ObjectId;
   idNumber: string;
   orderId: Types.ObjectId;
-  isQrCodeUsed: boolean;
-
+  qrCodeStatus: TicketStatus;
+  qrCodeUsedTime: string;
   qrCodeUrl: string;
   createdAt: string;
   updatedAt: string;

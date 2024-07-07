@@ -21,6 +21,7 @@ const qrcode_1 = __importDefault(require("qrcode"));
 const generateCustomNanoId_1 = require("@/utils/generateCustomNanoId");
 const lodash_1 = __importDefault(require("lodash"));
 const ticketDTO_1 = require("@/dto/ticketDTO");
+const OtherResponseType_1 = require("@/types/OtherResponseType");
 function handleDatabaseError(error, message) {
     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${message}:${error.message || error}`);
 }
@@ -43,11 +44,22 @@ class TicketRepository {
             }
         });
     }
+    findAllBuyers(orderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const tickets = yield TicketModel_1.default.find({ orderId: orderId });
+                return tickets;
+            }
+            catch (error) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${OtherResponseType_1.MONGODB_ERROR_MSG}:${error.message || error}`);
+            }
+        });
+    }
     markQrCodeAsUsed(content) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield TicketModel_1.default.findOneAndUpdate({ idNumber: content.idNumber }, {
-                    isQrCodeUsed: true,
+                    qrCodeStatus: true,
                     updatedAt: new Date().toISOString(),
                 }, { new: true }).exec();
             }
@@ -78,6 +90,25 @@ class TicketRepository {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
                 }
                 return tickets;
+            }
+            catch (error) {
+                handleDatabaseError(error, TicketResponseType_1.TicketResponseType.FAILED_FOUND);
+            }
+        });
+    }
+    updateAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // 更新 qrCodeUsedTime 和 qrCodeUrl 字段
+                yield TicketModel_1.default.updateMany({}, {
+                    $unset: { isQrCodeUsed: '' },
+                });
+                // // 更新 qrCodeStatus 字段
+                // await TicketModel.updateMany({ qrCodeStatus: { $exists: false } }, [
+                //   { $set: { qrCodeStatus: 'pending' } },
+                //   { $unset: { isQrCodeUsed: '' } },
+                // ]);
+                return true;
             }
             catch (error) {
                 handleDatabaseError(error, TicketResponseType_1.TicketResponseType.FAILED_FOUND);

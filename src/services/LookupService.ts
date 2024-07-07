@@ -43,16 +43,13 @@ export class LookupService {
   }
   public async findStore(queryParams: Request): Promise<StoreDocument> {
     const reqWithUser = queryParams as unknown as RequestWithUser;
-    console.log(reqWithUser);
     if (!reqWithUser.user) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         OrderResponseType.ERROR_PLAYER_FOUND,
       );
     }
-    console.log(reqWithUser.user._id);
     const store = await Store.findOne({ user: reqWithUser.user._id });
-    console.log('store', store);
     if (_.isEmpty(store)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
@@ -90,7 +87,18 @@ export class LookupService {
     }
     return player;
   }
-
+  public async findPlayerById(
+    playerId: Types.ObjectId,
+  ): Promise<PlayerDocument> {
+    const player = await Player.findOne({ _id: playerId });
+    if (_.isEmpty(player)) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        OrderResponseType.ERROR_PLAYER_FOUND,
+      );
+    }
+    return player;
+  }
   public async findOrder(orderId: string): Promise<OrderDocument> {
     const order = await this.orderRepository.findById(orderId);
     if (!order) {
