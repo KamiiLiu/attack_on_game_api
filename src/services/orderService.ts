@@ -65,7 +65,7 @@ export class OrderService {
     const order = await this.lookupService.findOrder(
       queryParams.params.orderId,
     );
-    if (order.playerId.toString() !== player.user.toString()) {
+    if (order.playerId.toString() !== player._id.toString()) {
       throw new CustomError(
         CustomResponseType.VALIDATION_ERROR,
         OrderResponseType.FAILED_AUTHORIZATION,

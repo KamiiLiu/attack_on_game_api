@@ -53,7 +53,7 @@ class OrderService {
         return __awaiter(this, void 0, void 0, function* () {
             const player = yield this.lookupService.findPlayer(queryParams);
             const order = yield this.lookupService.findOrder(queryParams.params.orderId);
-            if (order.playerId.toString() !== player.user.toString()) {
+            if (order.playerId.toString() !== player._id.toString()) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.VALIDATION_ERROR, OrderResponseType_1.OrderResponseType.FAILED_AUTHORIZATION);
             }
             const eventId = order.eventId;
