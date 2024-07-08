@@ -6,7 +6,7 @@ import firebaseAdmin from '../services/firebase';
 import { Store } from '@/models/Store';
 import Player from '@/models/Player';
 import EventModel from '@/models/EventModel';
-import { Comment } from '@/models/Comment'
+import { Comment } from '@/models/Comment';
 
 const bucket = firebaseAdmin.storage().bucket();
 
@@ -51,7 +51,10 @@ export const uploadPic = async (req: Request, res: Response) => {
               // update player DB
               await Player.updateOne({ user: id }, { avatar: imgUrl });
               // update Comment DB
-              const CommentUpdate = await Comment.updateMany({ author: id }, { $set: { avatar: imgUrl } })
+              const CommentUpdate = await Comment.updateMany(
+                { author: id },
+                { $set: { avatar: imgUrl } },
+              );
             } else if (catagory === 'store') {
               // check if store exist
               const storeExist = await Store.findOne({ user: id });
@@ -61,7 +64,10 @@ export const uploadPic = async (req: Request, res: Response) => {
               // update store DB
               await Store.updateOne({ user: id }, { avatar: imgUrl });
               // update Comment DB
-              const CommentUpdate = await Comment.updateMany({ author: id }, { $set: { avatar: imgUrl } })
+              const CommentUpdate = await Comment.updateMany(
+                { author: id },
+                { $set: { avatar: imgUrl } },
+              );
             } else if (catagory === 'event') {
               // check if event exist
               const eventExist = await EventModel.findOne({ idNumber: id });
@@ -95,8 +101,7 @@ export const uploadPic = async (req: Request, res: Response) => {
     } else {
       return res.status(500).send({ message: 'Route輸入格式錯誤' });
     }
-  } catch (error) {
-  }
+  } catch (error) {}
 };
 
 // 取得檔案夾內圖片

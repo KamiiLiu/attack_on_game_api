@@ -56,7 +56,8 @@ class EventService {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStoreById(queryParams);
             const _content = new eventDTO_1.EventDTO(Object.assign(Object.assign({}, queryParams.body), { storeId: store._id })).toDetailDTO();
-            return yield this.eventRepository.create(_content);
+            const eventDocument = yield this.eventRepository.create(_content);
+            return new eventDTO_1.EventDTO(eventDocument);
         });
     }
     update(queryParams) {
