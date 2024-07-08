@@ -47,10 +47,9 @@ const TicketSchema = new mongoose_1.Schema({
         enum: Object.values(TicketStatus_1.TicketStatus),
         default: TicketStatus_1.TicketStatus.PENDING,
     },
-    qrCodeUrl: { type: String, required: true },
     createdAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
     updatedAt: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
-    qrCodeUsedTime: { type: String, default: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default) },
+    qrCodeUsedTime: { type: String, default: '' },
 });
 TicketSchema.pre('save', function (next) {
     this.updatedAt = (0, dayjs_1.default)().format(TIME_FORMATTER_1.default);

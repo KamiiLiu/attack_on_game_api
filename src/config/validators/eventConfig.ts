@@ -176,7 +176,7 @@ export const validationConfig: {
         .optional()
         .isInt({ min: 1, max: Number(DefaultQuery.MAX_LIMIT) })
         .toInt()
-        .withMessage('請輸入有效的最小參與人數！'),
+        .withMessage('請輸入有效的返回筆數！'),
     ],
     skip: [
       query('skip')

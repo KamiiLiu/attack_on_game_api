@@ -7,7 +7,6 @@ export interface TicketDocument extends Document {
   orderId: Types.ObjectId;
   qrCodeStatus: TicketStatus;
   qrCodeUsedTime: string;
-  qrCodeUrl: string;
   createdAt: string;
   updatedAt: string;
 }

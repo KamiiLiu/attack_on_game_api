@@ -137,7 +137,7 @@ exports.validationConfig = {
                 .optional()
                 .isInt({ min: 1, max: Number(EventRequest_1.DefaultQuery.MAX_LIMIT) })
                 .toInt()
-                .withMessage('請輸入有效的最小參與人數！'),
+                .withMessage('請輸入有效的返回筆數！'),
         ],
         skip: [
             (0, express_validator_1.query)('skip')

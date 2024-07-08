@@ -22,7 +22,7 @@ export class TicketCodeDTO {
       ticketDto.qrCodeUsedTime || dayjs().format(TIME_FORMATTER);
     this.idNumber = ticketDto.idNumber || '';
   }
-  public toDetailDTO(): Partial<TicketDTO> {
+  public toDetailDTO(): TicketCodeDTO {
     return this;
   }
 }

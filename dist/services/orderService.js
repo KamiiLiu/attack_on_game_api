@@ -45,7 +45,7 @@ class OrderService {
             this.validateOrder(event, orderDTO);
             const order = yield this.createOrder(orderDTO);
             yield this.updateEventParticipants(event, orderDTO);
-            yield this.createTickets(order._id, player.user, orderDTO.registrationCount);
+            yield this.createTickets(order._id, player._id, orderDTO.registrationCount);
             return order;
         });
     }
@@ -72,7 +72,7 @@ class OrderService {
                     store,
                 };
             }
-            const ticketList = yield this.lookupService.findTickets(order.id, player.user);
+            const ticketList = yield this.lookupService.findTickets(order.id, player._id);
             const targetTicketsDTO = ticketList.map((ticket) => new ticketDTO_1.TicketDTO(ticket).toDetailDTO());
             return {
                 event: targetEventDTO.toSummaryDTO(),
@@ -86,7 +86,7 @@ class OrderService {
         return __awaiter(this, void 0, void 0, function* () {
             const player = yield this.findPlayer(queryParams);
             const { limit, status, skip } = queryParams.query;
-            const orderList = yield this.lookupService.findOrderList(player.user, {
+            const orderList = yield this.lookupService.findOrderList(player._id, {
                 limit,
                 status,
                 skip,
@@ -172,7 +172,7 @@ class OrderService {
         });
     }
     createOrderDTO(body, event, player) {
-        return new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, body), { eventId: event._id, playerId: player.user }));
+        return new orderDTO_1.OrderDTO(Object.assign(Object.assign({}, body), { eventId: event._id, playerId: player._id }));
     }
     validateOrder(event, orderDTO) {
         const targetEventDTO = new eventDTO_1.EventDTO(event);

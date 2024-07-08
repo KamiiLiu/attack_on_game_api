@@ -22,12 +22,20 @@ class MyEventRouter extends BaseRouter {
       this.handleRequest(this.controller.getAll),
     );
     this.router.get(
-      '/:eventId',
+      '/:eventId/qr-code',
+      jwtAuthenticator,
+      EventValidator.validateEventParam(),
+      handleValidationErrors,
+      this.handleRequest(this.controller.getTicketById),
+    );
+    this.router.get(
+      '/:eventId/player',
       jwtAuthenticator,
       EventValidator.validateEventParam(),
       handleValidationErrors,
       this.handleRequest(this.controller.getById),
     );
+
     // this.router.patch(
     //   '/cancel-user',
     //   jwtAuthenticator,

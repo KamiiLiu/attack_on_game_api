@@ -44,9 +44,16 @@ export class MyEventService {
     }
     const eventDTO = new EventDTO(eventData[0]);
     const buyers = await this.orderRepository.findAllBuyers(eventDTO._id);
+    const buyersWithTickets: UserOrderDTO[] = [];
+
+    for (const buyer of buyers) {
+      const player = await this.lookupService.findPlayerById(buyer.playerId);
+
+      buyersWithTickets.push(new UserOrderDTO(player, buyer));
+    }
     return {
       event: eventDTO.toDetailDTO(),
-      user: buyers.map((x) => new UserOrderDTO(x)),
+      user: buyersWithTickets,
     };
   }
   public async getTicketByEventId(req: Request): Promise<TicketCodeDTO[]> {
@@ -63,32 +70,33 @@ export class MyEventService {
     }
     const eventDTO = new EventDTO(eventData[0]);
     const buyers = await this.orderRepository.findAllBuyers(eventDTO._id);
-    const buyersWithTickets = await Promise.all(
-      buyers.map(async (buyer) => {
-        const buyerTickets = await this.ticketRepository.findAllBuyers(
-          buyer._id,
-        );
+    const buyersWithTickets: TicketCodeDTO[] = [];
 
-        const player = await this.lookupService.findPlayerById(buyer.playerId);
-        return new TicketCodeDTO(buyerTickets, buyer, player);
-      }),
-    );
+    for (const buyer of buyers) {
+      const buyerTickets = await this.ticketRepository.findAllBuyers(buyer._id);
+      const player = await this.lookupService.findPlayerById(buyer.playerId);
+
+      const tickets = buyerTickets.map(
+        (ticket) => new TicketCodeDTO(ticket, buyer, player),
+      );
+      buyersWithTickets.push(...tickets);
+    }
     return buyersWithTickets;
   }
-  public async getAllEventOrder(): Promise<boolean> {
-    this.ticketRepository.updateAll();
-    return true;
-    // const store = await this.lookupService.findStore(queryParams);
-    // const eventData = await this.eventRepository.getEventsByAprilStoreId(
-    //   store._id,
-    // );
-    // if (!eventData.length) {
-    //   throw new CustomError(
-    //     CustomResponseType.NOT_FOUND,
-    //     EventResponseType.FAILED_FOUND,
-    //   );
-    // }
-    // return eventData.map((event) => new EventDTO(event).toDetailDTO());
+  public async getAllEventOrder(
+    queryParams: Request,
+  ): Promise<Partial<EventDTO>[]> {
+    const store = await this.lookupService.findStore(queryParams);
+    const eventData = await this.eventRepository.getEventsByAprilStoreId(
+      store._id,
+    );
+    if (!eventData.length) {
+      throw new CustomError(
+        CustomResponseType.NOT_FOUND,
+        EventResponseType.FAILED_FOUND,
+      );
+    }
+    return eventData.map((event) => new EventDTO(event).toDetailDTO());
   }
 }
 

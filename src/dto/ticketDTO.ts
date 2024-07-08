@@ -7,8 +7,8 @@ import { TicketStatus } from '@/enums/TicketStatus';
 export class TicketDTO extends BaseDTO {
   readonly orderId: Types.ObjectId;
   readonly qrCodeStatus: TicketStatus;
-  readonly qrCodeUrl: string;
   readonly playerId: Types.ObjectId;
+  readonly qrCodeUsedTime: string;
   constructor(dto: Partial<TicketDocument>) {
     const dtoWithId = {
       _id: dto._id || new Types.ObjectId(),
@@ -24,13 +24,14 @@ export class TicketDTO extends BaseDTO {
     this.orderId = dto.orderId || new Types.ObjectId();
     this.playerId = dto.playerId || new Types.ObjectId();
     this.qrCodeStatus = dto.qrCodeStatus || TicketStatus.PENDING;
-    this.qrCodeUrl = dto.qrCodeUrl || '';
+    this.qrCodeUsedTime = dto.qrCodeUsedTime || '';
   }
   public toDetailDTO(): Partial<TicketDocument> {
     return {
       orderId: this.orderId,
+      idNumber: this.idNumber,
       qrCodeStatus: this.qrCodeStatus,
-      qrCodeUrl: this.qrCodeUrl,
+      qrCodeUsedTime: this.qrCodeUsedTime,
     };
   }
 }

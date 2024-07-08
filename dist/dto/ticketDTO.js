@@ -24,13 +24,14 @@ class TicketDTO extends baseDTO_1.BaseDTO {
         this.orderId = dto.orderId || new mongoose_1.Types.ObjectId();
         this.playerId = dto.playerId || new mongoose_1.Types.ObjectId();
         this.qrCodeStatus = dto.qrCodeStatus || TicketStatus_1.TicketStatus.PENDING;
-        this.qrCodeUrl = dto.qrCodeUrl || '';
+        this.qrCodeUsedTime = dto.qrCodeUsedTime || '';
     }
     toDetailDTO() {
         return {
             orderId: this.orderId,
+            idNumber: this.idNumber,
             qrCodeStatus: this.qrCodeStatus,
-            qrCodeUrl: this.qrCodeUrl,
+            qrCodeUsedTime: this.qrCodeUsedTime,
         };
     }
 }

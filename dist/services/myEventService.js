@@ -36,9 +36,14 @@ class MyEventService {
             }
             const eventDTO = new eventDTO_1.EventDTO(eventData[0]);
             const buyers = yield this.orderRepository.findAllBuyers(eventDTO._id);
+            const buyersWithTickets = [];
+            for (const buyer of buyers) {
+                const player = yield this.lookupService.findPlayerById(buyer.playerId);
+                buyersWithTickets.push(new userOrderDTO_1.UserOrderDTO(player, buyer));
+            }
             return {
                 event: eventDTO.toDetailDTO(),
-                user: buyers.map((x) => new userOrderDTO_1.UserOrderDTO(x)),
+                user: buyersWithTickets,
             };
         });
     }
@@ -51,29 +56,24 @@ class MyEventService {
             }
             const eventDTO = new eventDTO_1.EventDTO(eventData[0]);
             const buyers = yield this.orderRepository.findAllBuyers(eventDTO._id);
-            const buyersWithTickets = yield Promise.all(buyers.map((buyer) => __awaiter(this, void 0, void 0, function* () {
+            const buyersWithTickets = [];
+            for (const buyer of buyers) {
                 const buyerTickets = yield this.ticketRepository.findAllBuyers(buyer._id);
                 const player = yield this.lookupService.findPlayerById(buyer.playerId);
-                return new TicketCodeDTO_1.TicketCodeDTO(buyerTickets, buyer, player);
-            })));
+                const tickets = buyerTickets.map((ticket) => new TicketCodeDTO_1.TicketCodeDTO(ticket, buyer, player));
+                buyersWithTickets.push(...tickets);
+            }
             return buyersWithTickets;
         });
     }
-    getAllEventOrder() {
+    getAllEventOrder(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.ticketRepository.updateAll();
-            return true;
-            // const store = await this.lookupService.findStore(queryParams);
-            // const eventData = await this.eventRepository.getEventsByAprilStoreId(
-            //   store._id,
-            // );
-            // if (!eventData.length) {
-            //   throw new CustomError(
-            //     CustomResponseType.NOT_FOUND,
-            //     EventResponseType.FAILED_FOUND,
-            //   );
-            // }
-            // return eventData.map((event) => new EventDTO(event).toDetailDTO());
+            const store = yield this.lookupService.findStore(queryParams);
+            const eventData = yield this.eventRepository.getEventsByAprilStoreId(store._id);
+            if (!eventData.length) {
+                throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, EventResponseType_1.EventResponseType.FAILED_FOUND);
+            }
+            return eventData.map((event) => new eventDTO_1.EventDTO(event).toDetailDTO());
         });
     }
 }

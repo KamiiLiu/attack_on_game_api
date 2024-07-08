@@ -20,10 +20,9 @@ const TicketSchema: Schema = new Schema({
     enum: Object.values(TicketStatus),
     default: TicketStatus.PENDING,
   },
-  qrCodeUrl: { type: String, required: true },
   createdAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
   updatedAt: { type: String, default: dayjs().format(TIME_FORMATTER) },
-  qrCodeUsedTime: { type: String, default: dayjs().format(TIME_FORMATTER) },
+  qrCodeUsedTime: { type: String, default: '' },
 });
 TicketSchema.pre('save', function (next) {
   this.updatedAt = dayjs().format(TIME_FORMATTER);
