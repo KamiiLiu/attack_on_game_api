@@ -23,9 +23,6 @@ export const getPaymetData = async (req: Request, res: Response) => {
       'eventId',
     );
     if (!orderObj) return res.status(404).json({ message: 'Order not found' });
-
-    console.log('orderObj:', orderObj);
-
     const order = {
       TimeStamp: Date.now(),
       MerchantOrderNo: orderObj.idNumber.replace(/-/g, '_'),

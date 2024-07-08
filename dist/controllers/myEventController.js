@@ -23,7 +23,6 @@ class MyEventController extends baseController_1.BaseController {
             return yield this.handleServiceResponse(() => this.eventService.getAllEventOrder(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
         });
         this.getTicketById = (req) => __awaiter(this, void 0, void 0, function* () {
-            console.log('xxx');
             return this.handleServiceResponse(() => this.eventService.getTicketByEventId(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
         });
         this.eventService = new myEventService_1.MyEventService();

@@ -30,7 +30,6 @@ const getPaymetData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const orderObj = yield OrderModel_1.default.findOne({ idNumber: orderId }).populate('eventId');
         if (!orderObj)
             return res.status(404).json({ message: 'Order not found' });
-        console.log('orderObj:', orderObj);
         const order = {
             TimeStamp: Date.now(),
             MerchantOrderNo: orderObj.idNumber.replace(/-/g, '_'),

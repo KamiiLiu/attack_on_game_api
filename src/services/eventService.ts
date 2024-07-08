@@ -59,7 +59,6 @@ export class EventService {
       ...queryParams.body,
       storeId: store._id,
     }).toDetailDTO();
-    console.log(_content);
     return await this.eventRepository.create(_content);
   }
   async update(queryParams: Request): Promise<Partial<EventDTO> | null> {
@@ -67,9 +66,6 @@ export class EventService {
     const findEvent = await this.eventRepository.findById(
       queryParams.params.id,
     );
-    console.log('findEvent', findEvent);
-    console.log('store', store);
-    console.log('queryParams.params.id', queryParams.params.id);
     if (store._id.toString() === findEvent.storeId.toString()) {
       const updateContent = {
         _id: findEvent._id,

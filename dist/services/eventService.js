@@ -56,7 +56,6 @@ class EventService {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStoreById(queryParams);
             const _content = new eventDTO_1.EventDTO(Object.assign(Object.assign({}, queryParams.body), { storeId: store._id })).toDetailDTO();
-            console.log(_content);
             return yield this.eventRepository.create(_content);
         });
     }
@@ -64,9 +63,6 @@ class EventService {
         return __awaiter(this, void 0, void 0, function* () {
             const store = yield this.lookupService.findStore(queryParams);
             const findEvent = yield this.eventRepository.findById(queryParams.params.id);
-            console.log('findEvent', findEvent);
-            console.log('store', store);
-            console.log('queryParams.params.id', queryParams.params.id);
             if (store._id.toString() === findEvent.storeId.toString()) {
                 const updateContent = Object.assign({ _id: findEvent._id, idNumber: findEvent.idNumber, storeId: store._id }, queryParams.body);
                 const _content = new eventDTO_1.EventDTO(updateContent);
