@@ -17,6 +17,7 @@ const firebase_1 = __importDefault(require("../services/firebase"));
 const Store_1 = require("@/models/Store");
 const Player_1 = __importDefault(require("@/models/Player"));
 const EventModel_1 = __importDefault(require("@/models/EventModel"));
+const Comment_1 = require("@/models/Comment");
 const bucket = firebase_1.default.storage().bucket();
 const uploadPic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -32,7 +33,7 @@ const uploadPic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (validcategory.includes(catagory)) {
             // generate related filename
             const originalname = file.originalname;
-            const extension = originalname.split('.').pop() || 'jpg';
+            const extension = 'jpg';
             const filename = `${req.params.id}.${extension}`;
             const id = req.params.id;
             const blob = bucket.file(`${req.params.catagory}/${filename}`);
@@ -48,14 +49,35 @@ const uploadPic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             .send({ message: '取得檔案網址失敗', error: err.message });
                     }
                     if (catagory === 'player') {
-                        yield Player_1.default.updateOne({ _id: id }, { avatar: imgUrl });
+                        // check if player exist
+                        const playerExist = yield Player_1.default.findOne({ user: id });
+                        if (!playerExist) {
+                            return res.status(404).send({ message: 'player not found' });
+                        }
+                        // update player DB
+                        yield Player_1.default.updateOne({ user: id }, { avatar: imgUrl });
+                        // update Comment DB
+                        const CommentUpdate = yield Comment_1.Comment.updateMany({ author: id }, { $set: { avatar: imgUrl } });
                     }
                     else if (catagory === 'store') {
-                        yield Store_1.Store.updateOne({ _id: id }, { avatar: imgUrl });
+                        // check if store exist
+                        const storeExist = yield Store_1.Store.findOne({ user: id });
+                        if (!storeExist) {
+                            return res.status(404).send({ message: 'store not found' });
+                        }
+                        // update store DB
+                        yield Store_1.Store.updateOne({ user: id }, { avatar: imgUrl });
+                        // update Comment DB
+                        const CommentUpdate = yield Comment_1.Comment.updateMany({ author: id }, { $set: { avatar: imgUrl } });
                     }
-                    else {
-                        yield EventModel_1.default.updateOne({ idNumber: id }, { eventImageUrl: [imgUrl] });
-                        const event = yield Store_1.Store.findOne({ idNumber: id });
+                    else if (catagory === 'event') {
+                        // check if event exist
+                        const eventExist = yield EventModel_1.default.findOne({ idNumber: id });
+                        if (!eventExist) {
+                            return res.status(404).send({ message: 'store not found' });
+                        }
+                        // update event DB
+                        yield EventModel_1.default.updateOne({ idNumber: id }, { eventImageUrl: imgUrl });
                     }
                     res.send({
                         success: true,
@@ -79,7 +101,6 @@ const uploadPic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (error) {
-        res.status(500).send({ message: 'Error image uploading.', error: error });
     }
 });
 exports.uploadPic = uploadPic;

@@ -17,6 +17,9 @@ const CommentSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    avatar: {
+        type: String,
+    },
     eventId: {
         type: String,
         ref: 'events',
@@ -24,6 +27,10 @@ const CommentSchema = new mongoose_1.Schema({
     },
     storeId: {
         type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'stores',
+    },
+    storeName: {
+        type: String,
         ref: 'stores',
     },
     content: { type: String, require: true },

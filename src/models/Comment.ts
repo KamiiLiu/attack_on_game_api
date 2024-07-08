@@ -4,8 +4,10 @@ import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 export interface IComment extends Document {
   author: Schema.Types.ObjectId;
   authorName: string;
+  avatar: string;
   eventId: string;
   storeId: Schema.Types.ObjectId;
+  storeName: string;
   content: string;
   createAt: string;
   type: string;
@@ -22,6 +24,9 @@ const CommentSchema: Schema = new Schema({
     type: String,
     required: true,
   },
+  avatar: {
+    type: String,
+  },
   eventId: {
     type: String,
     ref: 'events',
@@ -29,6 +34,10 @@ const CommentSchema: Schema = new Schema({
   },
   storeId: {
     type: Schema.Types.ObjectId,
+    ref: 'stores',
+  },
+  storeName: {
+    type: String,
     ref: 'stores',
   },
   content: { type: String, require: true },

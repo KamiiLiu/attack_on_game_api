@@ -112,7 +112,7 @@ exports.validationConfig = {
             (0, express_validator_1.body)('participationFee')
                 .notEmpty()
                 .withMessage('參與費用不能為空哦！')
-                .isInt({ min: 0 })
+                .isInt({ min: 1 })
                 .withMessage('參與費用必須是一個非負數哦！'),
         ],
         eventImageUrl: [
