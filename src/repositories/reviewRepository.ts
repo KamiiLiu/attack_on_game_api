@@ -50,6 +50,12 @@ export class ReviewRepository {
           `訂單編號錯誤`,
         );
       }
+      if (order.isCommented) {
+        throw new CustomError(
+          CustomResponseType.BAD_REQUEST,
+          `此訂單已被評論，不可重複評論`,
+        );
+      }
       const event = await Event.findById(order?.eventId).select('storeId');
       if (!event) {
         throw new CustomError(
@@ -93,7 +99,8 @@ export class ReviewRepository {
           content: [newContent],
         });
       }
-
+      order.isCommented = true
+      await order.save()
       return true;
     } catch (error: any) {
       throw new CustomError(
