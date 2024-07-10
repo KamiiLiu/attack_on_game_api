@@ -19,6 +19,7 @@ class OrderDTO extends baseDTO_1.BaseDTO {
         this.name = order.name;
         this.phone = order.phone;
         this.registrationCount = order.registrationCount;
+        this.email = order.email;
         this.notes = order.notes;
         this.isCommented = order.isCommented || false;
         this.status = order.status || OrderStatus_1.DefaultStatus.STATUS;
@@ -41,6 +42,7 @@ class OrderDTO extends baseDTO_1.BaseDTO {
             name: this.name,
             phone: this.phone,
             registrationCount: this.registrationCount,
+            email: this.email,
             notes: this.notes,
             paymentStatus: this.paymentStatus,
             paymentMethod: this.paymentMethod,

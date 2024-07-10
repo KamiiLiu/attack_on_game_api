@@ -13,6 +13,7 @@ export class OrderDTO extends BaseDTO {
   readonly name: string;
   readonly phone: string;
   readonly registrationCount: number;
+  readonly email: string;
   readonly notes: string;
   readonly paymentStatus: PaymentStatus;
   readonly paymentMethod: PaymentMethod;
@@ -28,6 +29,7 @@ export class OrderDTO extends BaseDTO {
     this.name = order.name;
     this.phone = order.phone;
     this.registrationCount = order.registrationCount;
+    this.email = order.email;
     this.notes = order.notes;
     this.isCommented = order.isCommented || false;
     this.status = order.status || DefaultStatus.STATUS;
@@ -50,6 +52,7 @@ export class OrderDTO extends BaseDTO {
       name: this.name,
       phone: this.phone,
       registrationCount: this.registrationCount,
+      email: this.email,
       notes: this.notes,
       paymentStatus: this.paymentStatus,
       paymentMethod: this.paymentMethod,

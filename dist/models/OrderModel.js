@@ -47,6 +47,7 @@ const OrderSchema = new mongoose_1.Schema({
     discount: { type: Number, required: true },
     name: { type: String, required: true },
     phone: { type: String, required: true },
+    email: { type: String, default: '', required: true },
     notes: { type: String, default: '' },
     isCommented: { type: Boolean, default: false },
     status: {

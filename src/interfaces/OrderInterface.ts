@@ -11,6 +11,7 @@ export interface OrderDocument extends Document {
   name: string;
   phone: string;
   registrationCount: number;
+  email: string;
   notes: string;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
