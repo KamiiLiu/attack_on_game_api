@@ -8,6 +8,7 @@ import { MONGODB_ERROR_MSG } from '@/types/OtherResponseType';
 import Order from '@/models/OrderModel';
 import Event from '@/models/EventModel';
 import { getUser } from '@/utils/help';
+import Player from '@/models/Player';
 
 type ReviewContentRequest = {
   rate: number;
@@ -20,7 +21,7 @@ export class ReviewRepository {
   }
   async findAll(queryParams: any): Promise<ReviewDocument[]> {
     try {
-      const reviews = await ReviewModel.find(queryParams);
+      const reviews = await ReviewModel.find(queryParams).populate("content.author");
       if (_.isEmpty(reviews)) {
         throw new Error('No reviews found');
       }
@@ -41,8 +42,7 @@ export class ReviewRepository {
 
       // use order number to get store id
       const order = await Order.findOne(
-        { idNumber: orderNumber },
-        'eventId -_id',
+        { idNumber: orderNumber }
       );
       if (!order) {
         throw new CustomError(
@@ -67,10 +67,18 @@ export class ReviewRepository {
 
       // use store id to check if review exists
       const reviewExists = await ReviewModel.findOne({ storeId });
+      // get player id
+      const player = await Player.findOne({ user: userId })
+      if (!player) {
+        throw new CustomError(
+          CustomResponseType.DATABASE_OPERATION_FAILED,
+          `評論者不存在`,
+        );
+      }
       // create content object
       const newContent: ContentObject = {
         rate,
-        author: userId,
+        author: player?.id,
         orderNo: orderNumber,
         content: content,
       };
@@ -89,8 +97,6 @@ export class ReviewRepository {
         reviewExists.content.push(newContent);
         reviewExists.rate = newRating;
         await reviewExists.save();
-
-        return true;
       } else {
         // create new review
         await ReviewModel.create({

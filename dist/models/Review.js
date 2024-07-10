@@ -11,7 +11,7 @@ const { Schema } = mongoose_1.default;
 // 定義 ContentObject 的 Schema
 const ContentObjectSchema = new Schema({
     rate: { type: Number, required: true },
-    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    author: { type: Schema.Types.ObjectId, ref: 'Player', required: true },
     orderNo: { type: String, required: true },
     // eventId: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
     content: { type: String, required: true },

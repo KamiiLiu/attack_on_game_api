@@ -20,6 +20,7 @@ const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const OtherResponseType_1 = require("@/types/OtherResponseType");
 const OrderModel_1 = __importDefault(require("@/models/OrderModel"));
 const EventModel_1 = __importDefault(require("@/models/EventModel"));
+const Player_1 = __importDefault(require("@/models/Player"));
 class ReviewRepository {
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,7 +30,7 @@ class ReviewRepository {
     findAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const reviews = yield Review_1.ReviewModel.find(queryParams);
+                const reviews = yield Review_1.ReviewModel.find(queryParams).populate("content.author");
                 if (lodash_1.default.isEmpty(reviews)) {
                     throw new Error('No reviews found');
                 }
@@ -45,9 +46,12 @@ class ReviewRepository {
             try {
                 const { orderNumber, content, rate } = contentObj;
                 // use order number to get store id
-                const order = yield OrderModel_1.default.findOne({ idNumber: orderNumber }, 'eventId -_id');
+                const order = yield OrderModel_1.default.findOne({ idNumber: orderNumber });
                 if (!order) {
                     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `訂單編號錯誤`);
+                }
+                if (order.isCommented) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.BAD_REQUEST, `此訂單已被評論，不可重複評論`);
                 }
                 const event = yield EventModel_1.default.findById(order === null || order === void 0 ? void 0 : order.eventId).select('storeId');
                 if (!event) {
@@ -56,10 +60,15 @@ class ReviewRepository {
                 const storeId = event === null || event === void 0 ? void 0 : event.storeId;
                 // use store id to check if review exists
                 const reviewExists = yield Review_1.ReviewModel.findOne({ storeId });
+                // get player id
+                const player = yield Player_1.default.findOne({ user: userId });
+                if (!player) {
+                    throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `評論者不存在`);
+                }
                 // create content object
                 const newContent = {
                     rate,
-                    author: userId,
+                    author: player === null || player === void 0 ? void 0 : player.id,
                     orderNo: orderNumber,
                     content: content,
                 };
@@ -72,7 +81,6 @@ class ReviewRepository {
                     reviewExists.content.push(newContent);
                     reviewExists.rate = newRating;
                     yield reviewExists.save();
-                    return true;
                 }
                 else {
                     // create new review
@@ -82,6 +90,8 @@ class ReviewRepository {
                         content: [newContent],
                     });
                 }
+                order.isCommented = true;
+                yield order.save();
                 return true;
             }
             catch (error) {
