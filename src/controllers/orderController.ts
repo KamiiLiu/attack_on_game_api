@@ -6,6 +6,9 @@ import { IBaseController } from '@/controllers/IBaseController';
 import { OrderResponseType } from '@/types/OrderResponseType';
 import { RequestWithUser } from '@/types/commonRequest';
 import { CustomResponseType } from '@/enums/CustomResponseType';
+import { IPlayer as PlayerDocument } from '@/models/Player';
+import Player from '@/models/Player';
+import User from '@/models/User';
 export class OrderController extends BaseController implements IBaseController {
   private orderService: OrderService;
 
@@ -43,8 +46,17 @@ export class OrderController extends BaseController implements IBaseController {
     );
   };
   public create = async (req: Request): Promise<ResponseDTO> => {
+    const playerList = await Player.find();
+    const playerCut = playerList.slice(0, 12);
+
+    for (const element of playerCut) {
+      const user = await User.findOne({ _id: element.user });
+      if (user) {
+        await this.orderService.createByme(element, user, '29whndk9');
+      }
+    }
     return this.handleServiceResponse(
-      () => this.orderService.create(req),
+      () => this.orderService.getAll(req),
       OrderResponseType.SUCCESS_CREATED,
     );
   };

@@ -16,12 +16,15 @@ import { OrderDocument } from '@/interfaces/OrderInterface';
 import { EventDocument } from '@/interfaces/EventInterface';
 import { TicketDocument } from '@/interfaces/TicketInterface';
 import { IPlayer as PlayerDocument } from '@/models/Player';
+import Player from '@/models/Player';
 import { EventResponseType } from '@/types/EventResponseType';
 import { TicketResponseType } from '@/types/TicketResponseType';
-import Player from '@/models/Player';
+
 import { Types } from 'mongoose';
 import { Status } from '@/enums/OrderStatus';
 import { IQuery } from '@/enums/OrderRequest';
+import { IUser } from '@/models/User';
+
 interface IGetByIdResult {
   event: Partial<EventDocument>;
   order: Partial<OrderDocument>;
@@ -43,7 +46,28 @@ export class OrderService {
       new TicketRepository(),
     );
   }
-
+  public async createByme(
+    player: PlayerDocument,
+    user: IUser,
+    eventId: string,
+  ): Promise<OrderDocument> {
+    const event = await this.lookupService.findEventById(eventId);
+    const order = new OrderDTO({
+      eventId: new Types.ObjectId(event._id),
+      playerId: new Types.ObjectId(player._id),
+      payment: event.participationFee ?? 0,
+      discount: 0,
+      name: player.name,
+      phone: player.phone,
+      registrationCount: 1,
+      email: user.email,
+      notes: '',
+    });
+    const orderDto = await this.createOrder(order);
+    await this.updateEventParticipants(event, order);
+    await this.createTickets(orderDto._id, player._id, order.registrationCount);
+    return orderDto;
+  }
   public async create(req: Request): Promise<OrderDocument> {
     const { eventId } = req.body;
 

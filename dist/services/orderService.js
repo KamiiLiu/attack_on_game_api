@@ -25,9 +25,10 @@ const ticketDTO_1 = require("@/dto/ticketDTO");
 const CustomError_1 = require("@/errors/CustomError");
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const OrderResponseType_1 = require("@/types/OrderResponseType");
+const Player_1 = __importDefault(require("@/models/Player"));
 const EventResponseType_1 = require("@/types/EventResponseType");
 const TicketResponseType_1 = require("@/types/TicketResponseType");
-const Player_1 = __importDefault(require("@/models/Player"));
+const mongoose_1 = require("mongoose");
 const OrderStatus_1 = require("@/enums/OrderStatus");
 class OrderService {
     constructor() {
@@ -35,6 +36,27 @@ class OrderService {
         this.eventRepository = new EventRepository_1.EventRepository();
         this.ticketRepository = new TicketRepository_1.TicketRepository();
         this.lookupService = new LookupService_1.LookupService(this.orderRepository, new EventRepository_1.EventRepository(), new TicketRepository_1.TicketRepository());
+    }
+    createByme(player, user, eventId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const event = yield this.lookupService.findEventById(eventId);
+            const order = new orderDTO_1.OrderDTO({
+                eventId: new mongoose_1.Types.ObjectId(event._id),
+                playerId: new mongoose_1.Types.ObjectId(player._id),
+                payment: (_a = event.participationFee) !== null && _a !== void 0 ? _a : 0,
+                discount: 0,
+                name: player.name,
+                phone: player.phone,
+                registrationCount: 1,
+                email: user.email,
+                notes: '',
+            });
+            const orderDto = yield this.createOrder(order);
+            yield this.updateEventParticipants(event, order);
+            yield this.createTickets(orderDto._id, player._id, order.registrationCount);
+            return orderDto;
+        });
     }
     create(req) {
         return __awaiter(this, void 0, void 0, function* () {

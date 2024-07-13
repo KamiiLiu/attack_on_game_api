@@ -19,7 +19,7 @@ export class OrderDTO extends BaseDTO {
   readonly paymentMethod: PaymentMethod;
   readonly isCommented: boolean;
   readonly status: Status;
-  constructor(order: OrderDocument) {
+  constructor(order: any) {
     super(order);
     this.idNumber = order.idNumber ?? generateOrderNumber();
     this.eventId = order.eventId;
