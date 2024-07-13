@@ -8,6 +8,8 @@ import _ from 'lodash';
 import { TicketDTO } from '@/dto/ticketDTO';
 import { Types } from 'mongoose';
 import { MONGODB_ERROR_MSG } from '@/types/OtherResponseType';
+import TIME_FORMATTER from '@/const/TIME_FORMATTER';
+import dayjs from '@/utils/dayjs';
 function handleDatabaseError(error: any, message: string): never {
   throw new CustomError(
     CustomResponseType.DATABASE_OPERATION_FAILED,
@@ -52,7 +54,7 @@ export class TicketRepository {
         { idNumber: content.idNumber },
         {
           qrCodeStatus: true,
-          updatedAt: new Date().toISOString(),
+          updatedAt: dayjs().format(TIME_FORMATTER),
         },
         { new: true },
       ).exec();
@@ -100,7 +102,13 @@ export class TicketRepository {
       // const tss = ts.map((x) => x.idNumber);
       await TicketModel.updateMany(
         { idNumber: { $in: objectIds } },
-        { $set: { qrCodeStatus: TicketStatus.COMPLETED } },
+        {
+          $set: {
+            qrCodeStatus: TicketStatus.COMPLETED,
+            qrCodeUsedTime: dayjs().format(TIME_FORMATTER),
+            updatedAt: dayjs().format(TIME_FORMATTER),
+          },
+        },
       );
       return true;
     } catch (error: any) {
