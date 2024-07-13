@@ -17,6 +17,7 @@ const TicketModel_1 = __importDefault(require("@/models/TicketModel"));
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const CustomError_1 = require("@/errors/CustomError");
 const TicketResponseType_1 = require("@/types/TicketResponseType");
+const TicketStatus_1 = require("@/enums/TicketStatus");
 const lodash_1 = __importDefault(require("lodash"));
 const ticketDTO_1 = require("@/dto/ticketDTO");
 const OtherResponseType_1 = require("@/types/OtherResponseType");
@@ -93,18 +94,13 @@ class TicketRepository {
             }
         });
     }
-    updateAll() {
+    updateStatus(objectIds) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // 更新 qrCodeUsedTime 和 qrCodeUrl 字段
-                yield TicketModel_1.default.updateMany({}, {
-                    $unset: { isQrCodeUsed: '' },
-                });
-                // // 更新 qrCodeStatus 字段
-                // await TicketModel.updateMany({ qrCodeStatus: { $exists: false } }, [
-                //   { $set: { qrCodeStatus: 'pending' } },
-                //   { $unset: { isQrCodeUsed: '' } },
-                // ]);
+                console.log(objectIds);
+                const ts = yield TicketModel_1.default.find();
+                const tss = ts.map((x) => x.idNumber);
+                yield TicketModel_1.default.updateMany({ idNumber: { $in: tss } }, { $set: { qrCodeStatus: TicketStatus_1.TicketStatus.PENDING } });
                 return true;
             }
             catch (error) {

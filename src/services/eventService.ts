@@ -113,7 +113,6 @@ export class EventService {
       EventResponseType.FAILED_FOUND,
     );
   }
-
   public async getSummaryEvents(id: string): Promise<Partial<EventDTO>> {
     const event = await this.eventRepository.findById(id);
     if (_.isEmpty(event)) {

@@ -1,15 +1,7 @@
-import {
-  body,
-  query,
-  param,
-  ValidationChain,
-  CustomValidator,
-} from 'express-validator';
+import { body, query, param, ValidationChain } from 'express-validator';
 import {
   isValidNanoid,
   isValidObjectId,
-  isValidDateFormat,
-  isPastDate,
 } from '@/config/validators/commonConfig';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -18,16 +10,7 @@ import { DefaultQuery } from '@/enums/EventRequest';
 type ValidationConfig = {
   [key: string]: ValidationChain[];
 };
-const validateEventTimesOrder: CustomValidator = (value, { req }) => {
-  const { startTime, endTime } = req.query as {
-    startTime: string;
-    endTime: string;
-  };
 
-  if (dayjs(startTime).isAfter(dayjs(endTime))) {
-    throw new Error('註冊開始時間不能晚於註冊結束時間哦！');
-  }
-};
 export const validationConfig: {
   body: ValidationConfig;
   query: ValidationConfig;

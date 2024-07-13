@@ -10,6 +10,8 @@ import { OrderRepository } from '@/repositories/OrderRepository';
 import { TicketRepository } from '@/repositories/TicketRepository';
 import { UserOrderDTO } from '@/dto/userOrderDTO';
 import { TicketCodeDTO } from '@/dto/TicketCodeDTO';
+import { TicketStatus } from '@/enums/TicketStatus';
+import _ from 'lodash';
 interface IUserOrderDTO {
   event: Partial<EventDocument>;
   user: UserOrderDTO[];
@@ -97,6 +99,35 @@ export class MyEventService {
       );
     }
     return eventData.map((event) => new EventDTO(event).toDetailDTO());
+  }
+  public async validateQrCode(queryParams: Request): Promise<Partial<boolean>> {
+    const store = await this.lookupService.findStore(queryParams);
+    const ticketsByStore = await this.getTicketByEventId(queryParams);
+    const event = await this.eventRepository.findById(
+      queryParams.params.eventId,
+    );
+    if (event.storeId.toString() !== store._id.toString()) {
+      throw new CustomError(
+        CustomResponseType.UNAUTHORIZED,
+        EventResponseType.FAILED_AUTHORIZATION,
+      );
+    }
+    const tickets: string[] = queryParams.body.tickets;
+    const qrCodeList: string[] = [];
+    tickets.forEach((x) => {
+      const targetTickrt = ticketsByStore.find((t) => t.idNumber === x);
+      if (
+        !_.isEmpty(targetTickrt) &&
+        targetTickrt.qrCodeStatus === TicketStatus.PENDING
+      ) {
+        qrCodeList.push(targetTickrt.idNumber);
+      }
+    });
+    //await this.ticketRepository.updateStatus(qrCodeList);
+    if (!_.isEmpty(qrCodeList)) {
+      await this.ticketRepository.updateStatus(qrCodeList);
+    }
+    return true;
   }
 }
 
