@@ -95,12 +95,12 @@ export class TicketRepository {
   }
   async updateStatus(objectIds: string[]): Promise<boolean> {
     try {
-      console.log(objectIds);
-      const ts = await TicketModel.find();
-      const tss = ts.map((x) => x.idNumber);
+      // console.log(objectIds);
+      // const ts = await TicketModel.find();
+      // const tss = ts.map((x) => x.idNumber);
       await TicketModel.updateMany(
-        { idNumber: { $in: tss } },
-        { $set: { qrCodeStatus: TicketStatus.PENDING } },
+        { idNumber: { $in: objectIds } },
+        { $set: { qrCodeStatus: TicketStatus.COMPLETED } },
       );
       return true;
     } catch (error: any) {
