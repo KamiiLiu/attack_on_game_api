@@ -7,6 +7,7 @@ import { Store } from '@/models/Store';
 import Player from '@/models/Player';
 import EventModel from '@/models/EventModel';
 import { Comment } from '@/models/Comment';
+import User from '@/models/User';
 
 const bucket = firebaseAdmin.storage().bucket();
 
@@ -43,11 +44,6 @@ export const uploadPic = async (req: Request, res: Response) => {
                 .send({ message: '取得檔案網址失敗', error: err.message });
             }
             if (catagory === 'player') {
-              // check if player exist
-              const playerExist = await Player.findOne({ user: id });
-              if (!playerExist) {
-                return res.status(404).send({ message: 'player not found' });
-              }
               // update player DB
               await Player.updateOne({ user: id }, { avatar: imgUrl });
               // update Comment DB
@@ -56,11 +52,6 @@ export const uploadPic = async (req: Request, res: Response) => {
                 { $set: { avatar: imgUrl } },
               );
             } else if (catagory === 'store') {
-              // check if store exist
-              const storeExist = await Store.findOne({ user: id });
-              if (!storeExist) {
-                return res.status(404).send({ message: 'store not found' });
-              }
               // update store DB
               await Store.updateOne({ user: id }, { avatar: imgUrl });
               // update Comment DB
@@ -69,11 +60,6 @@ export const uploadPic = async (req: Request, res: Response) => {
                 { $set: { avatar: imgUrl } },
               );
             } else if (catagory === 'event') {
-              // check if event exist
-              const eventExist = await EventModel.findOne({ idNumber: id });
-              if (!eventExist) {
-                return res.status(404).send({ message: 'store not found' });
-              }
               // update event DB
               await EventModel.updateOne(
                 { idNumber: id },
@@ -101,7 +87,7 @@ export const uploadPic = async (req: Request, res: Response) => {
     } else {
       return res.status(500).send({ message: 'Route輸入格式錯誤' });
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
 // 取得檔案夾內圖片
@@ -123,7 +109,6 @@ export const getPics = async (req: Request, res: Response) => {
             action: 'read',
             expires: '12-31-2500',
           });
-          console.log(file.name);
           fileList.push({
             fileName: file.name,
             imgUrl: fileUrl,

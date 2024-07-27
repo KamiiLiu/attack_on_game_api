@@ -49,33 +49,18 @@ const uploadPic = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             .send({ message: '取得檔案網址失敗', error: err.message });
                     }
                     if (catagory === 'player') {
-                        // check if player exist
-                        const playerExist = yield Player_1.default.findOne({ user: id });
-                        if (!playerExist) {
-                            return res.status(404).send({ message: 'player not found' });
-                        }
                         // update player DB
                         yield Player_1.default.updateOne({ user: id }, { avatar: imgUrl });
                         // update Comment DB
                         const CommentUpdate = yield Comment_1.Comment.updateMany({ author: id }, { $set: { avatar: imgUrl } });
                     }
                     else if (catagory === 'store') {
-                        // check if store exist
-                        const storeExist = yield Store_1.Store.findOne({ user: id });
-                        if (!storeExist) {
-                            return res.status(404).send({ message: 'store not found' });
-                        }
                         // update store DB
                         yield Store_1.Store.updateOne({ user: id }, { avatar: imgUrl });
                         // update Comment DB
                         const CommentUpdate = yield Comment_1.Comment.updateMany({ author: id }, { $set: { avatar: imgUrl } });
                     }
                     else if (catagory === 'event') {
-                        // check if event exist
-                        const eventExist = yield EventModel_1.default.findOne({ idNumber: id });
-                        if (!eventExist) {
-                            return res.status(404).send({ message: 'store not found' });
-                        }
                         // update event DB
                         yield EventModel_1.default.updateOne({ idNumber: id }, { eventImageUrl: imgUrl });
                     }
@@ -121,7 +106,6 @@ const getPics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     action: 'read',
                     expires: '12-31-2500',
                 });
-                console.log(file.name);
                 fileList.push({
                     fileName: file.name,
                     imgUrl: fileUrl,
