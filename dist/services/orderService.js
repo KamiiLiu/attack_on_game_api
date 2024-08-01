@@ -109,7 +109,6 @@ class OrderService {
                     return new orderListDTO_1.OrderListDTO(order, findEvent);
                 return undefined;
             })
-
                 .filter((x) => x !== undefined);
             console.log(result.length);
             return result;

@@ -94,7 +94,7 @@ export class MyEventService {
       buyers.map((buyer) => [
         buyer._id.toString(),
         allTickets.filter(
-          (ticket) => ticket.playerId.toString() === buyer.playerId.toString(),
+          (ticket) => ticket.orderId.toString() === buyer._id.toString(),
         ),
       ]),
     );
