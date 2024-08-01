@@ -46,7 +46,6 @@ class TicketRepository {
     }
     findTicketsByBuyerIds(buyerIds) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('buyers', buyerIds);
             return yield TicketModel_1.default.find({ playerId: { $in: buyerIds } });
         });
     }
@@ -105,9 +104,6 @@ class TicketRepository {
     updateStatus(objectIds) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // console.log(objectIds);
-                // const ts = await TicketModel.find();
-                // const tss = ts.map((x) => x.idNumber);
                 yield TicketModel_1.default.updateMany({ idNumber: { $in: objectIds } }, {
                     $set: {
                         qrCodeStatus: TicketStatus_1.TicketStatus.COMPLETED,

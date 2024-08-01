@@ -30,7 +30,6 @@ class EventController extends baseController_1.BaseController {
             return this.handleServiceResponse(() => this.eventService.update(req), EventResponseType_1.EventResponseType.SUCCESS_UPDATE);
         });
         this.delete = (req) => __awaiter(this, void 0, void 0, function* () {
-            console.log(req);
             throw new Error('Method not implemented.');
         });
         this.getEventSummary = (req) => __awaiter(this, void 0, void 0, function* () {

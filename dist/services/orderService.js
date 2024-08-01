@@ -29,6 +29,8 @@ const EventResponseType_1 = require("@/types/EventResponseType");
 const TicketResponseType_1 = require("@/types/TicketResponseType");
 const Player_1 = __importDefault(require("@/models/Player"));
 const OrderStatus_1 = require("@/enums/OrderStatus");
+const SKIP = 0;
+const LIMIT = 100;
 class OrderService {
     constructor() {
         this.orderRepository = new OrderRepository_1.OrderRepository();
@@ -89,16 +91,17 @@ class OrderService {
     getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const player = yield this.findPlayer(queryParams);
-            const { limit, status, skip } = queryParams.query;
+            const { limit = LIMIT, status, skip = SKIP } = queryParams.query;
             const orderList = yield this.lookupService.findOrderList(player._id, {
                 limit,
                 status,
                 skip,
             });
+            console.log(orderList.length);
             const eventIds = orderList.map((x) => x.eventId);
             const eventList = yield this.eventRepository.getEventsData({
                 _id: { $in: eventIds },
-            });
+            }, 0, 100);
             const result = orderList
                 .map((order) => {
                 const findEvent = eventList.find((event) => event._id.toString() === order.eventId.toString());
@@ -107,6 +110,7 @@ class OrderService {
                 return undefined;
             })
                 .filter((x) => x !== undefined);
+            console.log(result.length);
             return result;
         });
     }
@@ -130,16 +134,19 @@ class OrderService {
     }
     findOrderList(playerId, query) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const queryObject = {
                 playerId,
             };
             if (query.status) {
                 queryObject.status = query.status;
             }
+            const LIMIT_Q = (_a = query.limit) !== null && _a !== void 0 ? _a : LIMIT;
             const order = yield this.orderRepository.findAll(queryObject, {
-                limit: query.limit,
-                skip: query.skip,
+                limit: LIMIT_Q,
+                skip: query.skip || SKIP,
             });
+            console.log(order.length);
             if (lodash_1.default.isEmpty(order)) {
                 throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.NOT_FOUND, OrderResponseType_1.OrderResponseType.FAILED_FOUND);
             }
