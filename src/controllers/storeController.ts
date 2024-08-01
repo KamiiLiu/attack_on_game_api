@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import User from '@/models/User';
 import { Store } from '@/models/Store';
-import { UserRole } from '@/models/User';
 import { getUser } from '@/utils/help';
 
 // Create a new store
@@ -43,7 +42,6 @@ export const createStore = async (req: Request, res: Response) => {
       phone,
     });
     res.status(201).send({ success: true, message: '註冊成功', store });
-    // console.log({ message: 'Store created successfully!!', store })
   } catch (error) {
     console.error('Error creating store', error);
     res.status(500).send({ message: 'Error creating store', error });

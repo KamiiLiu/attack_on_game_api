@@ -28,6 +28,8 @@ interface IGetByIdResult {
   tickets: Partial<TicketDocument>[];
   store: StoreDocument;
 }
+const SKIP = 0;
+const LIMIT = 100;
 export class OrderService {
   private orderRepository: OrderRepository;
   private lookupService: LookupService;
@@ -117,18 +119,21 @@ export class OrderService {
 
   async getAll(queryParams: Request): Promise<OrderListDTO[]> {
     const player = await this.findPlayer(queryParams);
-    const { limit, status, skip } = queryParams.query as IQuery;
-
+    const { limit = LIMIT, status, skip = SKIP } = queryParams.query as IQuery;
     const orderList = await this.lookupService.findOrderList(player._id, {
       limit,
       status,
       skip,
     });
-
+    console.log(orderList.length);
     const eventIds = orderList.map((x) => x.eventId);
-    const eventList = await this.eventRepository.getEventsData({
-      _id: { $in: eventIds },
-    });
+    const eventList = await this.eventRepository.getEventsData(
+      {
+        _id: { $in: eventIds },
+      },
+      0,
+      100,
+    );
 
     const result = orderList
       .map((order) => {
@@ -139,7 +144,7 @@ export class OrderService {
         return undefined;
       })
       .filter((x): x is OrderListDTO => x !== undefined);
-
+    console.log(result.length);
     return result;
   }
 
@@ -174,10 +179,12 @@ export class OrderService {
     if (query.status) {
       queryObject.status = query.status;
     }
+    const LIMIT_Q = query.limit ?? LIMIT;
     const order = await this.orderRepository.findAll(queryObject, {
-      limit: query.limit,
-      skip: query.skip,
+      limit: LIMIT_Q,
+      skip: query.skip || SKIP,
     });
+    console.log(order.length);
     if (_.isEmpty(order)) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
