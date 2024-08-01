@@ -25,6 +25,9 @@ class MyEventController extends baseController_1.BaseController {
         this.getTicketById = (req) => __awaiter(this, void 0, void 0, function* () {
             return this.handleServiceResponse(() => this.eventService.getTicketByEventId(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
         });
+        this.validateQrCode = (req) => __awaiter(this, void 0, void 0, function* () {
+            return this.handleServiceResponse(() => this.eventService.validateQrCode(req), myEventResponseType_1.ResponseType.SUCCESS_REQUEST);
+        });
         this.eventService = new myEventService_1.MyEventService();
     }
 }

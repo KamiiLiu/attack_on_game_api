@@ -16,8 +16,9 @@ class MyEventRouter extends baseRouter_1.BaseRouter {
     }
     setRouters() {
         this.router.get('/list', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventQuery(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getAll));
-        this.router.get('/:eventId/qr-code', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventParam(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getTicketById));
-        this.router.get('/:eventId/player', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventParam(), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getById));
+        this.router.get('/:eventId/qr-code', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventParam('eventId'), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getTicketById));
+        this.router.get('/:eventId/player', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventParam('eventId'), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.getById));
+        this.router.post('/:eventId/validate-qr-code', auth_1.jwtAuthenticator, myEventValidator_1.EventValidator.validateEventParam('eventId'), handleValidationErrors_1.handleValidationErrors, this.handleRequest(this.controller.validateQrCode));
         // this.router.patch(
         //   '/cancel-user',
         //   jwtAuthenticator,

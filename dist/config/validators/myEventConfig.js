@@ -10,12 +10,6 @@ const dayjs_1 = __importDefault(require("dayjs"));
 const isSameOrBefore_1 = __importDefault(require("dayjs/plugin/isSameOrBefore"));
 dayjs_1.default.extend(isSameOrBefore_1.default);
 const EventRequest_1 = require("@/enums/EventRequest");
-const validateEventTimesOrder = (value, { req }) => {
-    const { startTime, endTime } = req.query;
-    if ((0, dayjs_1.default)(startTime).isAfter((0, dayjs_1.default)(endTime))) {
-        throw new Error('註冊開始時間不能晚於註冊結束時間哦！');
-    }
-};
 exports.validationConfig = {
     body: {
         playerId: [

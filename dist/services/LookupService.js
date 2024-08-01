@@ -84,6 +84,11 @@ class LookupService {
             return player;
         });
     }
+    findPlayersByIds(playerIds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield Player_1.default.find({ _id: { $in: playerIds } });
+        });
+    }
     findOrder(orderId) {
         return __awaiter(this, void 0, void 0, function* () {
             const order = yield this.orderRepository.findById(orderId);

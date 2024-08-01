@@ -37,7 +37,6 @@ export class EventController extends BaseController implements IBaseController {
     );
   };
   public delete = async (req: Request): Promise<ResponseDTO> => {
-    console.log(req);
     throw new Error('Method not implemented.');
   };
   public getEventSummary = async (req: Request): Promise<ResponseDTO> => {
