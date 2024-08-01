@@ -99,6 +99,11 @@ export class LookupService {
     }
     return player;
   }
+  public async findPlayersByIds(
+    playerIds: Types.ObjectId[],
+  ): Promise<PlayerDocument[]> {
+    return await Player.find({ _id: { $in: playerIds } });
+  }
   public async findOrder(orderId: string): Promise<OrderDocument> {
     const order = await this.orderRepository.findById(orderId);
     if (!order) {

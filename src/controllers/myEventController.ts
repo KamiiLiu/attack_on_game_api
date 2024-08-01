@@ -33,7 +33,12 @@ export class MyEventController
       ResponseType.SUCCESS_REQUEST,
     );
   };
-
+  public validateQrCode = async (req: Request): Promise<ResponseDTO> => {
+    return this.handleServiceResponse(
+      () => this.eventService.validateQrCode(req),
+      ResponseType.SUCCESS_REQUEST,
+    );
+  };
   // public deletUser = async (req: Request): Promise<ResponseDTO> => {
   //   return this.handleServiceResponse(
   //     () => this.eventService.deletUser(req),

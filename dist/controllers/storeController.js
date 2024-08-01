@@ -54,7 +54,6 @@ const createStore = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             phone,
         });
         res.status(201).send({ success: true, message: '註冊成功', store });
-        // console.log({ message: 'Store created successfully!!', store })
     }
     catch (error) {
         console.error('Error creating store', error);

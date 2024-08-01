@@ -9,8 +9,8 @@ class EventValidator {
     static validateEventQuery() {
         return Object.values(myEventConfig_1.validationConfig.query).flat();
     }
-    static validateEventParam() {
-        return Object.values(myEventConfig_1.validationConfig.param).flat();
+    static validateEventParam(parameters) {
+        return myEventConfig_1.validationConfig.param[parameters];
     }
 }
 exports.EventValidator = EventValidator;

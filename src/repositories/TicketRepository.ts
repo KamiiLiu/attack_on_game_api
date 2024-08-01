@@ -3,14 +3,13 @@ import { TicketDocument } from '@/interfaces/TicketInterface';
 import { CustomResponseType } from '@/enums/CustomResponseType';
 import { CustomError } from '@/errors/CustomError';
 import { TicketResponseType } from '@/types/TicketResponseType';
-import QRCode from 'qrcode';
-import { generateCustomNanoId } from '@/utils/generateCustomNanoId';
+import { TicketStatus } from '@/enums/TicketStatus';
 import _ from 'lodash';
 import { TicketDTO } from '@/dto/ticketDTO';
 import { Types } from 'mongoose';
 import { MONGODB_ERROR_MSG } from '@/types/OtherResponseType';
+import TIME_FORMATTER from '@/const/TIME_FORMATTER';
 import dayjs from '@/utils/dayjs';
-import Player from '../models/Player';
 function handleDatabaseError(error: any, message: string): never {
   throw new CustomError(
     CustomResponseType.DATABASE_OPERATION_FAILED,
@@ -36,6 +35,11 @@ export class TicketRepository {
       handleDatabaseError(error, TicketResponseType.FAILED_CREATED);
     }
   }
+  public async findTicketsByBuyerIds(
+    buyerIds: Types.ObjectId[],
+  ): Promise<TicketDocument[]> {
+    return await TicketModel.find({ playerId: { $in: buyerIds } });
+  }
   async findAllBuyers(orderId: Types.ObjectId): Promise<TicketDocument[]> {
     try {
       const tickets = await TicketModel.find({ orderId: orderId });
@@ -55,7 +59,7 @@ export class TicketRepository {
         { idNumber: content.idNumber },
         {
           qrCodeStatus: true,
-          updatedAt: new Date().toISOString(),
+          updatedAt: dayjs().format(TIME_FORMATTER),
         },
         { new: true },
       ).exec();
@@ -96,22 +100,18 @@ export class TicketRepository {
       handleDatabaseError(error, TicketResponseType.FAILED_FOUND);
     }
   }
-  async updateAll(): Promise<boolean> {
+  async updateStatus(objectIds: string[]): Promise<boolean> {
     try {
-      // 更新 qrCodeUsedTime 和 qrCodeUrl 字段
       await TicketModel.updateMany(
-        {},
+        { idNumber: { $in: objectIds } },
         {
-          $unset: { isQrCodeUsed: '' },
+          $set: {
+            qrCodeStatus: TicketStatus.COMPLETED,
+            qrCodeUsedTime: dayjs().format(TIME_FORMATTER),
+            updatedAt: dayjs().format(TIME_FORMATTER),
+          },
         },
       );
-
-      // // 更新 qrCodeStatus 字段
-      // await TicketModel.updateMany({ qrCodeStatus: { $exists: false } }, [
-      //   { $set: { qrCodeStatus: 'pending' } },
-      //   { $unset: { isQrCodeUsed: '' } },
-      // ]);
-
       return true;
     } catch (error: any) {
       handleDatabaseError(error, TicketResponseType.FAILED_FOUND);

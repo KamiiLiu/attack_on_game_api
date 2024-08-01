@@ -17,9 +17,12 @@ const TicketModel_1 = __importDefault(require("@/models/TicketModel"));
 const CustomResponseType_1 = require("@/enums/CustomResponseType");
 const CustomError_1 = require("@/errors/CustomError");
 const TicketResponseType_1 = require("@/types/TicketResponseType");
+const TicketStatus_1 = require("@/enums/TicketStatus");
 const lodash_1 = __importDefault(require("lodash"));
 const ticketDTO_1 = require("@/dto/ticketDTO");
 const OtherResponseType_1 = require("@/types/OtherResponseType");
+const TIME_FORMATTER_1 = __importDefault(require("@/const/TIME_FORMATTER"));
+const dayjs_1 = __importDefault(require("@/utils/dayjs"));
 function handleDatabaseError(error, message) {
     throw new CustomError_1.CustomError(CustomResponseType_1.CustomResponseType.DATABASE_OPERATION_FAILED, `${message}:${error.message || error}`);
 }
@@ -41,6 +44,11 @@ class TicketRepository {
             }
         });
     }
+    findTicketsByBuyerIds(buyerIds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield TicketModel_1.default.find({ playerId: { $in: buyerIds } });
+        });
+    }
     findAllBuyers(orderId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -57,7 +65,7 @@ class TicketRepository {
             try {
                 return yield TicketModel_1.default.findOneAndUpdate({ idNumber: content.idNumber }, {
                     qrCodeStatus: true,
-                    updatedAt: new Date().toISOString(),
+                    updatedAt: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
                 }, { new: true }).exec();
             }
             catch (error) {
@@ -93,18 +101,16 @@ class TicketRepository {
             }
         });
     }
-    updateAll() {
+    updateStatus(objectIds) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // 更新 qrCodeUsedTime 和 qrCodeUrl 字段
-                yield TicketModel_1.default.updateMany({}, {
-                    $unset: { isQrCodeUsed: '' },
+                yield TicketModel_1.default.updateMany({ idNumber: { $in: objectIds } }, {
+                    $set: {
+                        qrCodeStatus: TicketStatus_1.TicketStatus.COMPLETED,
+                        qrCodeUsedTime: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
+                        updatedAt: (0, dayjs_1.default)().format(TIME_FORMATTER_1.default),
+                    },
                 });
-                // // 更新 qrCodeStatus 字段
-                // await TicketModel.updateMany({ qrCodeStatus: { $exists: false } }, [
-                //   { $set: { qrCodeStatus: 'pending' } },
-                //   { $unset: { isQrCodeUsed: '' } },
-                // ]);
                 return true;
             }
             catch (error) {

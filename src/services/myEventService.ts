@@ -10,6 +10,8 @@ import { OrderRepository } from '@/repositories/OrderRepository';
 import { TicketRepository } from '@/repositories/TicketRepository';
 import { UserOrderDTO } from '@/dto/userOrderDTO';
 import { TicketCodeDTO } from '@/dto/TicketCodeDTO';
+import { TicketStatus } from '@/enums/TicketStatus';
+import _ from 'lodash';
 interface IUserOrderDTO {
   event: Partial<EventDocument>;
   user: UserOrderDTO[];
@@ -19,6 +21,7 @@ export class MyEventService {
   private lookupService: LookupService;
   private orderRepository: OrderRepository;
   private ticketRepository: TicketRepository;
+
   constructor() {
     this.orderRepository = new OrderRepository();
     this.eventRepository = new EventRepository();
@@ -36,51 +39,74 @@ export class MyEventService {
       store._id,
       { idNumber: req.params.eventId },
     );
+
     if (!eventData.length) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         EventResponseType.FAILED_FOUND,
       );
     }
+
     const eventDTO = new EventDTO(eventData[0]);
     const buyers = await this.orderRepository.findAllBuyers(eventDTO._id);
-    const buyersWithTickets: UserOrderDTO[] = [];
 
-    for (const buyer of buyers) {
-      const player = await this.lookupService.findPlayerById(buyer.playerId);
+    const buyersWithTickets: UserOrderDTO[] = await Promise.all(
+      buyers.map(async (buyer) => {
+        const player = await this.lookupService.findPlayerById(buyer.playerId);
+        return new UserOrderDTO(player, buyer);
+      }),
+    );
 
-      buyersWithTickets.push(new UserOrderDTO(player, buyer));
-    }
     return {
       event: eventDTO.toDetailDTO(),
       user: buyersWithTickets,
     };
   }
+
   public async getTicketByEventId(req: Request): Promise<TicketCodeDTO[]> {
     const store = await this.lookupService.findStore(req);
     const eventData = await this.eventRepository.getEventsByAprilStoreId(
       store._id,
       { idNumber: req.params.eventId },
     );
+
     if (!eventData.length) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         EventResponseType.FAILED_FOUND,
       );
     }
+
     const eventDTO = new EventDTO(eventData[0]);
     const buyers = await this.orderRepository.findAllBuyers(eventDTO._id);
-    const buyersWithTickets: TicketCodeDTO[] = [];
 
-    for (const buyer of buyers) {
-      const buyerTickets = await this.ticketRepository.findAllBuyers(buyer._id);
-      const player = await this.lookupService.findPlayerById(buyer.playerId);
+    const buyerIds = buyers.map((buyer) => buyer.playerId);
+    const playerIds = buyers.map((buyer) => buyer.playerId);
 
-      const tickets = buyerTickets.map(
-        (ticket) => new TicketCodeDTO(ticket, buyer, player),
-      );
-      buyersWithTickets.push(...tickets);
-    }
+    const [players, allTickets] = await Promise.all([
+      this.lookupService.findPlayersByIds(playerIds),
+      this.ticketRepository.findTicketsByBuyerIds(buyerIds),
+    ]);
+    const playersMap = new Map(
+      players.map((player) => [player._id.toString(), player]),
+    );
+    const ticketsMap = new Map(
+      buyers.map((buyer) => [
+        buyer._id.toString(),
+        allTickets.filter(
+          (ticket) => ticket.playerId.toString() === buyer.playerId.toString(),
+        ),
+      ]),
+    );
+    const buyersWithTickets: TicketCodeDTO[] = buyers
+      .filter((buyer) => playersMap.has(buyer.playerId.toString()))
+      .flatMap((buyer) => {
+        const player = playersMap.get(buyer.playerId.toString());
+        const buyerTickets = ticketsMap.get(buyer._id.toString()) || [];
+        return buyerTickets.map(
+          (ticket) => new TicketCodeDTO(ticket, buyer, player!),
+        );
+      });
     return buyersWithTickets;
   }
   public async getAllEventOrder(
@@ -90,13 +116,49 @@ export class MyEventService {
     const eventData = await this.eventRepository.getEventsByAprilStoreId(
       store._id,
     );
+
     if (!eventData.length) {
       throw new CustomError(
         CustomResponseType.NOT_FOUND,
         EventResponseType.FAILED_FOUND,
       );
     }
+
     return eventData.map((event) => new EventDTO(event).toDetailDTO());
+  }
+
+  public async validateQrCode(queryParams: Request): Promise<Partial<boolean>> {
+    const store = await this.lookupService.findStore(queryParams);
+    const ticketsByStore = await this.getTicketByEventId(queryParams);
+    const event = await this.eventRepository.findById(
+      queryParams.params.eventId,
+    );
+
+    if (event.storeId.toString() !== store._id.toString()) {
+      throw new CustomError(
+        CustomResponseType.UNAUTHORIZED,
+        EventResponseType.FAILED_AUTHORIZATION,
+      );
+    }
+
+    const tickets: string[] = queryParams.body.tickets;
+    const qrCodeList: string[] = [];
+
+    tickets.forEach((x) => {
+      const targetTicket = ticketsByStore.find((t) => t.idNumber === x);
+      if (
+        !_.isEmpty(targetTicket) &&
+        targetTicket.qrCodeStatus === TicketStatus.PENDING
+      ) {
+        qrCodeList.push(targetTicket.idNumber);
+      }
+    });
+
+    if (!_.isEmpty(qrCodeList)) {
+      await this.ticketRepository.updateStatus(qrCodeList);
+    }
+
+    return true;
   }
 }
 
