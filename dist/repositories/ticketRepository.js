@@ -46,7 +46,8 @@ class TicketRepository {
     }
     findTicketsByBuyerIds(buyerIds) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield TicketModel_1.default.find({ buyerId: { $in: buyerIds } });
+            console.log('buyers', buyerIds);
+            return yield TicketModel_1.default.find({ playerId: { $in: buyerIds } });
         });
     }
     findAllBuyers(orderId) {

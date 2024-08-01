@@ -38,7 +38,8 @@ export class TicketRepository {
   public async findTicketsByBuyerIds(
     buyerIds: Types.ObjectId[],
   ): Promise<TicketDocument[]> {
-    return await TicketModel.find({ buyerId: { $in: buyerIds } });
+    console.log('buyers', buyerIds);
+    return await TicketModel.find({ playerId: { $in: buyerIds } });
   }
   async findAllBuyers(orderId: Types.ObjectId): Promise<TicketDocument[]> {
     try {

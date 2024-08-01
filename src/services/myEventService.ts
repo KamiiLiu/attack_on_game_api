@@ -87,7 +87,7 @@ export class MyEventService {
       this.lookupService.findPlayersByIds(playerIds),
       this.ticketRepository.findTicketsByBuyerIds(buyerIds),
     ]);
-
+    //console.log('allTickets', allTickets);
     const playersMap = new Map(
       players.map((player) => [player._id.toString(), player]),
     );
@@ -95,11 +95,14 @@ export class MyEventService {
       buyers.map((buyer) => [
         buyer._id.toString(),
         allTickets.filter(
-          (ticket) => ticket.playerId.toString() === buyer._id.toString(),
+          (ticket) => ticket.playerId.toString() === buyer.playerId.toString(),
         ),
       ]),
     );
-
+    console.log('allTickets', allTickets[0]);
+    console.log('buyers', buyers[0]);
+    // console.log('playersMap', playersMap);
+    // console.log('ticketsMap', ticketsMap);
     const buyersWithTickets: TicketCodeDTO[] = buyers
       .filter((buyer) => playersMap.has(buyer.playerId.toString()))
       .flatMap((buyer) => {
@@ -109,7 +112,7 @@ export class MyEventService {
           (ticket) => new TicketCodeDTO(ticket, buyer, player!),
         );
       });
-
+    //console.log('bbb', buyersWithTickets);
     return buyersWithTickets;
   }
   public async getAllEventOrder(
