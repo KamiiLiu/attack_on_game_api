@@ -78,6 +78,7 @@ class MyEventService {
                 const buyerTickets = ticketsMap.get(buyer._id.toString()) || [];
                 return buyerTickets.map((ticket) => new TicketCodeDTO_1.TicketCodeDTO(ticket, buyer, player));
             });
+
             return buyersWithTickets;
         });
     }
