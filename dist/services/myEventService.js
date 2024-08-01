@@ -41,11 +41,10 @@ class MyEventService {
             }
             const eventDTO = new eventDTO_1.EventDTO(eventData[0]);
             const buyers = yield this.orderRepository.findAllBuyers(eventDTO._id);
-            const buyersWithTickets = [];
-            for (const buyer of buyers) {
+            const buyersWithTickets = yield Promise.all(buyers.map((buyer) => __awaiter(this, void 0, void 0, function* () {
                 const player = yield this.lookupService.findPlayerById(buyer.playerId);
-                buyersWithTickets.push(new userOrderDTO_1.UserOrderDTO(player, buyer));
-            }
+                return new userOrderDTO_1.UserOrderDTO(player, buyer);
+            })));
             return {
                 event: eventDTO.toDetailDTO(),
                 user: buyersWithTickets,
@@ -61,13 +60,24 @@ class MyEventService {
             }
             const eventDTO = new eventDTO_1.EventDTO(eventData[0]);
             const buyers = yield this.orderRepository.findAllBuyers(eventDTO._id);
-            const buyersWithTickets = [];
-            for (const buyer of buyers) {
-                const buyerTickets = yield this.ticketRepository.findAllBuyers(buyer._id);
-                const player = yield this.lookupService.findPlayerById(buyer.playerId);
-                const tickets = buyerTickets.map((ticket) => new TicketCodeDTO_1.TicketCodeDTO(ticket, buyer, player));
-                buyersWithTickets.push(...tickets);
-            }
+            const buyerIds = buyers.map((buyer) => buyer.playerId);
+            const playerIds = buyers.map((buyer) => buyer.playerId);
+            const [players, allTickets] = yield Promise.all([
+                this.lookupService.findPlayersByIds(playerIds),
+                this.ticketRepository.findTicketsByBuyerIds(buyerIds),
+            ]);
+            const playersMap = new Map(players.map((player) => [player._id.toString(), player]));
+            const ticketsMap = new Map(buyers.map((buyer) => [
+                buyer._id.toString(),
+                allTickets.filter((ticket) => ticket.playerId.toString() === buyer._id.toString()),
+            ]));
+            const buyersWithTickets = buyers
+                .filter((buyer) => playersMap.has(buyer.playerId.toString()))
+                .flatMap((buyer) => {
+                const player = playersMap.get(buyer.playerId.toString());
+                const buyerTickets = ticketsMap.get(buyer._id.toString()) || [];
+                return buyerTickets.map((ticket) => new TicketCodeDTO_1.TicketCodeDTO(ticket, buyer, player));
+            });
             return buyersWithTickets;
         });
     }
@@ -92,13 +102,12 @@ class MyEventService {
             const tickets = queryParams.body.tickets;
             const qrCodeList = [];
             tickets.forEach((x) => {
-                const targetTickrt = ticketsByStore.find((t) => t.idNumber === x);
-                if (!lodash_1.default.isEmpty(targetTickrt) &&
-                    targetTickrt.qrCodeStatus === TicketStatus_1.TicketStatus.PENDING) {
-                    qrCodeList.push(targetTickrt.idNumber);
+                const targetTicket = ticketsByStore.find((t) => t.idNumber === x);
+                if (!lodash_1.default.isEmpty(targetTicket) &&
+                    targetTicket.qrCodeStatus === TicketStatus_1.TicketStatus.PENDING) {
+                    qrCodeList.push(targetTicket.idNumber);
                 }
             });
-            //await this.ticketRepository.updateStatus(qrCodeList);
             if (!lodash_1.default.isEmpty(qrCodeList)) {
                 yield this.ticketRepository.updateStatus(qrCodeList);
             }

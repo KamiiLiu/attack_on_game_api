@@ -47,8 +47,10 @@ export class OrderService {
   public async create(req: Request): Promise<OrderDocument> {
     const { eventId } = req.body;
 
-    const event = await this.lookupService.findEventById(eventId);
-    const player = await this.lookupService.findPlayer(req);
+    const [event, player] = await Promise.all([
+      this.lookupService.findEventById(eventId),
+      this.lookupService.findPlayer(req),
+    ]);
 
     const orderDTO = this.createOrderDTO(req.body, event, player);
     this.validateOrder(event, orderDTO);
