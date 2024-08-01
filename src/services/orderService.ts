@@ -47,8 +47,10 @@ export class OrderService {
   public async create(req: Request): Promise<OrderDocument> {
     const { eventId } = req.body;
 
-    const event = await this.lookupService.findEventById(eventId);
-    const player = await this.lookupService.findPlayer(req);
+    const [event, player] = await Promise.all([
+      this.lookupService.findEventById(eventId),
+      this.lookupService.findPlayer(req),
+    ]);
 
     const orderDTO = this.createOrderDTO(req.body, event, player);
     this.validateOrder(event, orderDTO);
@@ -61,16 +63,18 @@ export class OrderService {
   }
 
   public async getById(queryParams: Request): Promise<IGetByIdResult> {
-    const player = await this.lookupService.findPlayer(queryParams);
-    const order = await this.lookupService.findOrder(
-      queryParams.params.orderId,
-    );
+    const [player, order] = await Promise.all([
+      this.lookupService.findPlayer(queryParams),
+      this.lookupService.findOrder(queryParams.params.orderId),
+    ]);
+
     if (order.playerId.toString() !== player._id.toString()) {
       throw new CustomError(
         CustomResponseType.VALIDATION_ERROR,
         OrderResponseType.FAILED_AUTHORIZATION,
       );
     }
+
     const eventId = order.eventId;
     if (!eventId) {
       throw new CustomError(
@@ -78,6 +82,7 @@ export class OrderService {
         OrderResponseType.FAILED_VALIDATION_EVENT_ID,
       );
     }
+
     const event = await this.lookupService.findEventByDbId(eventId);
 
     const targetOrderDTO = new OrderDTO(order);
@@ -93,6 +98,7 @@ export class OrderService {
         store,
       };
     }
+
     const ticketList = await this.lookupService.findTickets(
       order.id,
       player._id,
@@ -100,6 +106,7 @@ export class OrderService {
     const targetTicketsDTO = ticketList.map((ticket) =>
       new TicketDTO(ticket).toDetailDTO(),
     );
+
     return {
       event: targetEventDTO.toSummaryDTO(),
       order: targetOrderDTO.toDetailDTO(),
@@ -107,29 +114,35 @@ export class OrderService {
       store,
     };
   }
+
   async getAll(queryParams: Request): Promise<OrderListDTO[]> {
     const player = await this.findPlayer(queryParams);
     const { limit, status, skip } = queryParams.query as IQuery;
+
     const orderList = await this.lookupService.findOrderList(player._id, {
       limit,
       status,
       skip,
     });
+
     const eventIds = orderList.map((x) => x.eventId);
     const eventList = await this.eventRepository.getEventsData({
       _id: { $in: eventIds },
     });
+
     const result = orderList
-      .map((x) => {
-        const findEvent = eventList.find((y) => {
-          return y._id.toString() == x.eventId.toString();
-        });
-        if (findEvent) return new OrderListDTO(x, findEvent);
+      .map((order) => {
+        const findEvent = eventList.find(
+          (event) => event._id.toString() === order.eventId.toString(),
+        );
+        if (findEvent) return new OrderListDTO(order, findEvent);
         return undefined;
       })
       .filter((x): x is OrderListDTO => x !== undefined);
+
     return result;
   }
+
   private async findPlayer(queryParams: Request): Promise<PlayerDocument> {
     const player = await Player.findOne({ user: queryParams.user });
     if (_.isEmpty(player)) {
@@ -140,6 +153,7 @@ export class OrderService {
     }
     return player;
   }
+
   private async findOrder(orderId: string): Promise<OrderDocument> {
     const order = await this.orderRepository.findById(orderId);
     if (_.isEmpty(order)) {

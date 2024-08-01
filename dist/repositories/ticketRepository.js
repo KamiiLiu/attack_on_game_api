@@ -44,6 +44,12 @@ class TicketRepository {
             }
         });
     }
+    findTicketsByBuyerIds(buyerIds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('buyers', buyerIds);
+            return yield TicketModel_1.default.find({ playerId: { $in: buyerIds } });
+        });
+    }
     findAllBuyers(orderId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

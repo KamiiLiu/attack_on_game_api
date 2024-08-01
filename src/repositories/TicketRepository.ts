@@ -35,6 +35,12 @@ export class TicketRepository {
       handleDatabaseError(error, TicketResponseType.FAILED_CREATED);
     }
   }
+  public async findTicketsByBuyerIds(
+    buyerIds: Types.ObjectId[],
+  ): Promise<TicketDocument[]> {
+    console.log('buyers', buyerIds);
+    return await TicketModel.find({ playerId: { $in: buyerIds } });
+  }
   async findAllBuyers(orderId: Types.ObjectId): Promise<TicketDocument[]> {
     try {
       const tickets = await TicketModel.find({ orderId: orderId });
