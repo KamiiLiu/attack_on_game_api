@@ -74,10 +74,11 @@ class MyEventService {
             const buyersWithTickets = buyers
                 .filter((buyer) => playersMap.has(buyer.playerId.toString()))
                 .flatMap((buyer) => {
-                    const player = playersMap.get(buyer.playerId.toString());
-                    const buyerTickets = ticketsMap.get(buyer._id.toString()) || [];
-                    return buyerTickets.map((ticket) => new TicketCodeDTO_1.TicketCodeDTO(ticket, buyer, player));
-                });
+                const player = playersMap.get(buyer.playerId.toString());
+                const buyerTickets = ticketsMap.get(buyer._id.toString()) || [];
+                return buyerTickets.map((ticket) => new TicketCodeDTO_1.TicketCodeDTO(ticket, buyer, player));
+            });
+
             return buyersWithTickets;
         });
     }

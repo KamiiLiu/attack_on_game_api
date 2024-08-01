@@ -104,11 +104,12 @@ class OrderService {
             }, 0, 100);
             const result = orderList
                 .map((order) => {
-                    const findEvent = eventList.find((event) => event._id.toString() === order.eventId.toString());
-                    if (findEvent)
-                        return new orderListDTO_1.OrderListDTO(order, findEvent);
-                    return undefined;
-                })
+                const findEvent = eventList.find((event) => event._id.toString() === order.eventId.toString());
+                if (findEvent)
+                    return new orderListDTO_1.OrderListDTO(order, findEvent);
+                return undefined;
+            })
+
                 .filter((x) => x !== undefined);
             console.log(result.length);
             return result;

@@ -99,20 +99,22 @@ const getPics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 return data[0];
             })
             .then((files) => __awaiter(void 0, void 0, void 0, function* () {
-                const fileList = [];
-                for (const file of files) {
-                    // get file url
-                    const fileUrl = yield file.getSignedUrl({
-                        action: 'read',
-                        expires: '12-31-2500',
-                    });
-                    fileList.push({
-                        fileName: file.name,
-                        imgUrl: fileUrl,
-                    });
-                }
-                res.send({ fileList });
-            }))
+
+            const fileList = [];
+            for (const file of files) {
+                // get file url
+                const fileUrl = yield file.getSignedUrl({
+                    action: 'read',
+                    expires: '12-31-2500',
+                });
+                fileList.push({
+                    fileName: file.name,
+                    imgUrl: fileUrl,
+                });
+            }
+            res.send({ fileList });
+        }))
+
             .catch((err) => {
                 res.status(500).send({ message: '取得圖片列表失敗' });
             });
