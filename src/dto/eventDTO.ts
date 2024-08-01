@@ -16,9 +16,9 @@ export class EventDTO extends BaseDTO {
   readonly isFoodAllowed: boolean;
   readonly description: string;
   readonly title!: string;
+  readonly eventImageUrl!: string[];
   readonly eventStartTime!: string;
   readonly eventEndTime!: string;
-  readonly eventImageUrl!: string[];
   readonly registrationStartTime!: string;
   readonly registrationEndTime!: string;
   readonly maxParticipants!: number;
