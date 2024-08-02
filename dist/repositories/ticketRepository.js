@@ -73,6 +73,13 @@ class TicketRepository {
             }
         });
     }
+    bulkCreate(ticketsData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(ticketsData);
+            yield TicketModel_1.default.insertMany(ticketsData);
+            return true;
+        });
+    }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

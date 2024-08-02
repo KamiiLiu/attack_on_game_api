@@ -50,6 +50,7 @@ class OrderService {
             const order = yield this.createOrder(orderDTO);
             yield this.updateEventParticipants(event, orderDTO);
             yield this.createTickets(order._id, player._id, orderDTO.registrationCount);
+            console.log(order);
             return order;
         });
     }
@@ -109,7 +110,6 @@ class OrderService {
                     return new orderListDTO_1.OrderListDTO(order, findEvent);
                 return undefined;
             })
-
                 .filter((x) => x !== undefined);
             console.log(result.length);
             return result;
@@ -211,11 +211,11 @@ class OrderService {
     }
     createTickets(orderId, userId, registrationCount) {
         return __awaiter(this, void 0, void 0, function* () {
-            const ticketPromises = [];
-            for (let index = 0; index < registrationCount; index++) {
-                ticketPromises.push(this.ticketRepository.create(orderId, userId));
-            }
-            yield Promise.all(ticketPromises);
+            const ticketsData = Array.from({ length: registrationCount }, () => ({
+                orderId: orderId,
+                userId: userId,
+            }));
+            yield this.ticketRepository.bulkCreate(ticketsData);
         });
     }
 }

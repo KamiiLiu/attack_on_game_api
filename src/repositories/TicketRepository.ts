@@ -67,7 +67,11 @@ export class TicketRepository {
       handleDatabaseError(error, TicketResponseType.FAILED_UPDATE);
     }
   }
-
+  async bulkCreate(ticketsData: any[]): Promise<boolean> {
+    console.log(ticketsData);
+    await TicketModel.insertMany(ticketsData);
+    return true;
+  }
   async findById(id: string): Promise<TicketDocument | null> {
     try {
       const ticket = await TicketModel.findOne({ idNumber: id });

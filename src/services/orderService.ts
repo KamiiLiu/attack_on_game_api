@@ -60,7 +60,7 @@ export class OrderService {
     const order = await this.createOrder(orderDTO);
     await this.updateEventParticipants(event, orderDTO);
     await this.createTickets(order._id, player._id, orderDTO.registrationCount);
-
+    console.log(order);
     return order;
   }
 
@@ -290,11 +290,11 @@ export class OrderService {
     userId: Types.ObjectId,
     registrationCount: number,
   ): Promise<void> {
-    const ticketPromises = [];
-    for (let index = 0; index < registrationCount; index++) {
-      ticketPromises.push(this.ticketRepository.create(orderId, userId));
-    }
-    await Promise.all(ticketPromises);
+    const ticketsData = Array.from({ length: registrationCount }, () => ({
+      orderId: orderId,
+      userId: userId,
+    }));
+    await this.ticketRepository.bulkCreate(ticketsData);
   }
 }
 
