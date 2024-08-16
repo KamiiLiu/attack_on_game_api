@@ -30,7 +30,7 @@ class ReviewRepository {
     findAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const reviews = yield Review_1.ReviewModel.find(queryParams).populate("content.author");
+                const reviews = yield Review_1.ReviewModel.find(queryParams).populate('content.author');
                 if (lodash_1.default.isEmpty(reviews)) {
                     throw new Error('No reviews found');
                 }

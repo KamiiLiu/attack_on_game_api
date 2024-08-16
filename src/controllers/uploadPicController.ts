@@ -87,7 +87,7 @@ export const uploadPic = async (req: Request, res: Response) => {
     } else {
       return res.status(500).send({ message: 'Route輸入格式錯誤' });
     }
-  } catch (error) { }
+  } catch (error) {}
 };
 
 // 取得檔案夾內圖片
