@@ -21,7 +21,8 @@ export class ReviewRepository {
   }
   async findAll(queryParams: any): Promise<ReviewDocument[]> {
     try {
-      const reviews = await ReviewModel.find(queryParams).populate("content.author");
+      const reviews =
+        await ReviewModel.find(queryParams).populate('content.author');
       if (_.isEmpty(reviews)) {
         throw new Error('No reviews found');
       }
@@ -41,9 +42,7 @@ export class ReviewRepository {
       const { orderNumber, content, rate } = contentObj;
 
       // use order number to get store id
-      const order = await Order.findOne(
-        { idNumber: orderNumber }
-      );
+      const order = await Order.findOne({ idNumber: orderNumber });
       if (!order) {
         throw new CustomError(
           CustomResponseType.DATABASE_OPERATION_FAILED,
@@ -68,7 +67,7 @@ export class ReviewRepository {
       // use store id to check if review exists
       const reviewExists = await ReviewModel.findOne({ storeId });
       // get player id
-      const player = await Player.findOne({ user: userId })
+      const player = await Player.findOne({ user: userId });
       if (!player) {
         throw new CustomError(
           CustomResponseType.DATABASE_OPERATION_FAILED,
@@ -105,8 +104,8 @@ export class ReviewRepository {
           content: [newContent],
         });
       }
-      order.isCommented = true
-      await order.save()
+      order.isCommented = true;
+      await order.save();
       return true;
     } catch (error: any) {
       throw new CustomError(
