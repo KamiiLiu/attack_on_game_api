@@ -12,7 +12,7 @@ import CommentRouter from '../routers/commentRouter';
 import ReviewRouter from '@/routers/review';
 import UploadPicRouter from '@/routers/uploadPicRouter';
 import PaymetRouter from '@/routers/payment';
-
+import SettingRouter from '@/routers/settingRouter';
 const router = Router();
 router.use('/user', UserRouter);
 router.use('/player', jwtAuthenticator, PlayerRouter);
@@ -21,6 +21,7 @@ router.use('/event', EventRouter);
 router.use('/myevent', MyEventRouter);
 router.use('/order', OrderRouter);
 router.use(PasswordRouter);
+router.use(SettingRouter);
 router.use('/store', StoreRouter);
 router.use('/', CommentRouter);
 router.use('/review', ReviewRouter);

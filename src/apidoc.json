@@ -1,0 +1,17 @@
+{
+  "name": "AttackOnGame API 文檔",
+  "version": "1.5.0",
+  "description": "本文檔詳細說明了AttackOnGame API的所有端點、請求參數、響應格式和錯誤處理。API支持用戶認證、活動管理、訂單處理等功能，為桌遊揪團網站【聚人】提供完整的後端支持。開發者可通過本文檔了解如何正確調用API並處理各種情況。",
+  "title": "AttackOnGame API 文檔",
+  "url": "https://attack-on-game-api.onrender.com/api/v1",
+  "header": {
+    "title": "AttackOnGame API 概覽",
+    "filename": "header.md"
+  },
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  },
+  "order": ["EVENT_桌遊活動", "MyEvent_賣家活動管理", "ORDER_買家訂單管理"],
+  "sampleUrl": "https://attack-on-game-api.onrender.com/api/v1"
+}

@@ -96,10 +96,9 @@ const getPics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         bucket
             .getFiles({ prefix: folderPath })
             .then((data) => {
-                return data[0];
-            })
+            return data[0];
+        })
             .then((files) => __awaiter(void 0, void 0, void 0, function* () {
-
             const fileList = [];
             for (const file of files) {
                 // get file url
@@ -114,10 +113,9 @@ const getPics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
             res.send({ fileList });
         }))
-
             .catch((err) => {
-                res.status(500).send({ message: '取得圖片列表失敗' });
-            });
+            res.status(500).send({ message: '取得圖片列表失敗' });
+        });
     }
     else {
         return res.status(500).send({ message: 'Route輸入格式錯誤' });
